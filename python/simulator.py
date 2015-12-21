@@ -75,9 +75,9 @@ def build_vus(pi, pj):
 		us[int(pj[i])] = pi[i]
 	return us
 
-def hadamard(q):
-	n = q.size
-	bits = int(np.log2(n))
+#def hadamard(q):
+#	n = q.size
+#	bits = int(np.log2(n))
 
 def collapse(a, b):
 	v = np.random.random_sample()
@@ -137,15 +137,20 @@ def measures(c, v, n):
 	return (st, result)
 
 def hadamard(bits):
-	return qutip.Qobj(qutip.hadamard_transform(bits).data)
+	#return qutip.Qobj(qutip.hadamard_transform(bits).data)
+	return qutip.hadamard_transform(bits)
 
 def identity(bits):
-	return qutip.Qobj(qutip.identity(2**bits).data)
+	#return qutip.Qobj(qutip.identity(2**bits).data)
+	return qutip.identity(2**bits)
 
 def h_i(bits):
 	h = hadamard(bits)
 	i = identity(bits)
 	return qutip.Qobj(qutip.tensor(h, i).data)
+
+def tensor(a, b):
+	return qutip.Qobj(qutip.tensor(a, b).data)
 
 def build_us(bits, alpha):
 	n = 2**(bits*2)
@@ -180,20 +185,26 @@ def get_values(state, bits):
 	values = np.unique(nz>>bits)
 	return values
 
+def ket(st, bits):
+	return qutip.basis(2**bits, st)
+
 def get_simon_state(bits, alpha, s):
-	n = 2**(bits*2)
 	check(bits, alpha, s)
 
-	qx = qutip.ket([0]*bits)
-	qy = qutip.ket([0]*bits)
+	x = ket(0, bits)
+	y = ket(0, bits)
 
-	phi0 = qutip.Qobj(qutip.tensor(qx, qy).data)
-	phi1 = h_i(bits) * phi0
-	phi2 = build_us(bits, alpha) * phi1
-	phi3 = h_i(bits) * phi2
+	H = hadamard(bits)
+	I = identity(bits)
+	U = build_us(bits, alpha)
+	HI = tensor(H, I)
+
+	phi0 = tensor(x, y)
+	phi1 = HI * phi0
+	phi2 = U  * phi1
+	phi3 = HI * phi2
 
 	return phi3
-
 
 def simon(bits, alpha, s):
 	n = 2**(bits*2)
@@ -288,7 +299,12 @@ def test_simon(bits, max_N):
 	tic = time.clock()
 	phi = get_simon_state(bits, alpha, s)
 	t_simon = time.clock() - tic
+
+	tic = time.clock()
 	values = get_values(phi, bits)
+	t_values = time.clock() - tic
+
+	print("Time simon = {}, time values = {}".format(t_simon, t_values))
 
 	i = 0
 	while True:
@@ -324,7 +340,7 @@ def test_simon(bits, max_N):
 
 def test_bits(bits):
 #	bits = 7
-	N = 1000
+	N = 100
 	max_it = 1000
 	steps = 0
 	step_v = np.zeros(N)
@@ -342,22 +358,22 @@ def test_bits(bits):
 		step_v[i] = p
 		step_t[i] = t
 
-		print("{}\t{}\t{:.3f}\t{:.3f}".format(i, p, t, t/p))
+#		print("{}\t{}\t{:.3f}\t{:.3f}".format(i, p, t, t/p))
 
-		mean_n = np.mean(step_v[0:i+1])
-		var_n = np.var(step_v[0:i+1])
-		mean_t = np.mean(step_t[0:i+1] / step_v[0:i+1])
-		var_t = np.var(step_t[0:i+1] / step_v[0:i+1])
+	mean_n = np.mean(step_v[0:i+1])
+	var_n = np.var(step_v[0:i+1])
+	mean_t = np.mean(step_t[0:i+1] / step_v[0:i+1])
+	var_t = np.var(step_t[0:i+1] / step_v[0:i+1])
 
-		print("Analysis of simulated data.")
-		print("Mean steps = {}".format(mean_n))
-		print("Var steps = {}".format(var_n))
-		print("Mean time/step = {}".format(mean_t))
-		print("Var time/step = {}".format(var_t))
+	print("Analysis of simulated data.")
+	print("Mean steps = {}".format(mean_n))
+	print("Var steps = {}".format(var_n))
+	print("Mean time/step = {}".format(mean_t))
+	print("Var time/step = {}".format(var_t))
 
 def main():
-	for i in range(2, 6+1):
+	for i in range(7, 7+1):
 		test_bits(i)
 
 #main()
-test_bits(5)
+test_bits(7)
