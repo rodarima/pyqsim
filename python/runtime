@@ -1,0 +1,21 @@
+N	t(s)	t(min)
+1 rodrigo@hop ~/qc/qc/python (git)-[master] % python qc.py 4                                                 :(
+N = 4
+10
+rodrigo@hop ~/qc/qc/python (git)-[master] % time python qc.py 4
+N = 4
+12
+python qc.py 4  1,05s user 0,06s system 98% cpu 1,123 total
+rodrigo@hop ~/qc/qc/python (git)-[master] % time python qc.py 5
+N = 5
+23
+python qc.py 5  1,09s user 0,08s system 98% cpu 1,190 total
+rodrigo@hop ~/qc/qc/python (git)-[master] % time python qc.py 6
+N = 6
+60
+6	1,28s	1,344
+7	1,68s	1,783
+8	3,61s	3,711
+9	16,73s	16,864
+10	156,64	2:36,97
+11	2401,25	40:13,11

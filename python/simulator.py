@@ -376,4 +376,4 @@ def main():
 		test_bits(i)
 
 #main()
-test_bits(7)
+#test_bits(7)

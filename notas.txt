@@ -1,0 +1,8 @@
+Motivos para elegir QuTIP:
+	- Implementación con matrices dispersas.
+	- Facilidad para productos tensoriales
+	- Estructuras de datos implementadas
+Problemas:
+	- Complejidad de uso para circuitos
+
+

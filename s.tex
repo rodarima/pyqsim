@@ -121,9 +121,9 @@ Si la matriz \textbf{A} contiene \textit{muchos} elementos nulos, se considera
 una matriz \textit{hueca}. Aprovechar esta propiedad permite: por una parte 
 reducir el número de elementos que es necesario almacenar, y por otra, reducir 
 el número de sumas y multiplicaciones al operar con la matriz.
-$$ \textbf{A} = \mat{ a_{11} & \ldots & a_{1n} \\
+$$ \textbf{A} = \mat{ a_{11} & \cdots & a_{1n} \\
 		\vdots &   & \vdots \\
-		a_{m1} & \ldots & a_{mn}\\
+		a_{m1} & \cdots & a_{mn}\\
 	}
 $$
 
@@ -159,9 +159,9 @@ $$ \textbf{A} = \mat{
 	0 & 0 & 0 & 0 & 4 }
 \quad
 \begin{aligned}
-	\text{AA} = \arr{ 1 & 2 & 3 & 4 & 5 & 9 & \textbf{8} & 6 & 5 & 4} \\
-	\text{JR} = \arr{ 1 & 1 & 2 & 2 & 2 & 3 & \textbf{3} & 4 & 4 & 5} \\
-	\text{JC} = \arr{ 1 & 4 & 1 & 2 & 4 & 1 & \textbf{3} & 3 & 4 & 5}
+	AA = \arr{ 1 & 2 & 3 & 4 & 5 & 9 & \textbf{8} & 6 & 5 & 4} \\
+	JR = \arr{ 1 & 1 & 2 & 2 & 2 & 3 & \textbf{3} & 4 & 4 & 5} \\
+	JC = \arr{ 1 & 4 & 1 & 2 & 4 & 1 & \textbf{3} & 3 & 4 & 5}
 \end{aligned}
 $$
 \end{ejemplo}
@@ -209,8 +209,95 @@ AA[7] = 8.
 
 \subsection{Construcción de la puerta de Simon $U_s$}
 
+Partiendo de una función $f$ conocida, con un período $s$, el conjunto de 
+vectores $Y$ que satisface $y_i \oplus s = 0$
+$$Y = \{ y_1, y_2 \ldots y_n \}$$
+La puerta de Simon denominada $U_s$, es un operador que aplicado sobre un estado 
+$\ket{x}\ket{y}$ lo transforma en $\ket{x}\ket{f(x) \oplus y}$
+\begin{equation}
+\label{Us_def} U_s\ket{x} \ket{y} = \ket{x} \ket{f(x) \oplus y}
+\end{equation}
+%
+% XXX: No caer en la tentación de divulgar contenido carente de comprobación
+% rigurosa. Comprobar siempre los pasos realizados.
+%
+% BEGIN contenido incorrecto
+%
+
+%Para construir dicho operador, será necesario una matriz de 
+%$2^{2n}\times2^{2n}$. Dado que $Us$ no realiza ninguna operación sobre 
+%$\ket{x}$, es posible dividirla en dos partes. La puerta identidad, que no 
+%realiza cambios, y otra operación en el resto.
+%$$ U_s = I^{\otimes n} \otimes F_s $$
+%De este modo,
+%$$
+%	(I^{\otimes n} \otimes F_s)\ket{x} \otimes \ket{y} =
+%	I^{\otimes n} \ket{x} \otimes F_s\ket{y} =
+%	\ket{x} \otimes F_s\ket{y}
+%$$
+%Y partiendo de \ref{Us_def}, se obtiene:
+%$$
+%	\ket{x} \otimes F_s\ket{y} = \ket{x} \otimes \ket{f(x) \oplus y}
+%	%Comprobar esto!
+%$$
+
+%
+% END contenido incorrecto
+%
+
+$$
+\begin{aligned}
+	\ket{a} = \ket{x}\otimes\ket{y},& \quad a_H = x, \quad a_L = y \\
+\end{aligned}
+$$
+$$ b_H = a_H, \quad b_L = f(a_H) \oplus a_L $$
+Si $a,b \in \{0,1\}^{2n}, a = a_{2n-1} \ldots a_1, a_0 $, $a_L = a_{n-1} \ldots 
+a_0$ y $a_H = a_{2n-1} \ldots a_n$.
+De modo que, $U_s\ket{a} = \ket{b}$, adicionalmente:
+$$
+	U_s[b, a] = 1
+$$
+
+\begin{ejemplo}
+Sea $f$ la función con período $s=01$, definida fomo sigue:
+\begin{tabular}{|c|c|}
+	\hline
+	$x$ & $f(x)$ \\\hline
+	00 & 00 \\
+	01 & 00 \\
+	10 & 01 \\
+	11 & 01 \\\hline
+\end{tabular}
+
+Para calcular $U_s$:
+
+\begin{tabular}{|c|cccc|cccc|cccc|cccc|}
+	\hline
+	$a$     &0&1&2&3& 4&5&6&7& 8&9&A&B &C&D&E&F \\
+	$a_H$   &0&0&0&0& 1&1&1&1& 2&2&2&2 &3&3&3&3 \\
+	$a_L$   &0&1&2&3& 0&1&2&3& 0&1&2&3 &0&1&2&3 \\
+	$f(a_H)$&0&0&0&0& 0&0&0&0& 1&1&1&1 &1&1&1&1 \\
+	$b_H$   &0&0&0&0& 1&1&1&1& 2&2&2&2 &3&3&3&3 \\
+	$b_L$   &0&1&2&3& 0&1&2&3& 1&0&3&2 &1&0&3&2 \\
+	$b$     &0&1&2&3& 4&5&6&7& 9&8&B&A &D&C&F&A \\
+	\hline
+\end{tabular}
+
+De modo que:
+
+\begin{tabular}{|c|cccc|cccc|cccc|cccc|}
+	\hline
+	$a$     &0&1&2&3& 4&5&6&7& 8&9&A&B &C&D&E&F \\
+	$b$     &0&1&2&3& 4&5&6&7& 9&8&B&A &D&C&F&A \\
+	\hline
+\end{tabular}
+
+El operador $U_s$ es reversible.
+Si $U_s[b,a] = 1$, tambien $U_s[a,b] = 1$
 
 
+
+\end{ejemplo}
 
 
 
