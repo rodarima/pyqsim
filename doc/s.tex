@@ -65,6 +65,7 @@
 
 \begin{document}
 
+%\tableofcontents
 
 \section{Introducción a la computación cuántica}
 \subsection{Preliminares}
@@ -257,6 +258,26 @@ Por ejemplo $11000001_b = 193_d$
 
 
 \subsection{Operaciones}
+
+
+
+Para realizar una operación sobre un estado cuántico, se emplea un operador 
+expresado por una matriz.
+
+Por ejemplo, la puerta NOT que invierte el estado de un bit, tiene una operación 
+análoga en la computación cuántica.
+%
+$$ NOT = \mat{0 & 1 \\ 1 & 0} $$
+%
+De modo que al aplicarla sobre un estado $\ket{\psi} = \mat{\alpha & \beta}^T$, 
+se obtiene:
+%
+$$ NOT \ket{\psi} = \mat{0 & 1 \\ 1 & 0} \mat{\alpha \\ \beta} = \mat{\beta \\ 
+\alpha} $$
+%
+Las amplitudes se han invertido, de forma análoga a un estado clásico. Si 
+$\ket{\psi} = \ket{0}$, entonces $NOT\ket{0} = NOT \mat{1 & 0}^T = \mat{0 & 
+1}^T = \ket{1}$. Y de igual forma para $NOT \ket{1} = \ket{0}$.
 
 \newpage
 
@@ -557,30 +578,47 @@ Si $U_s[b,a] = 1$, tambien $U_s[a,b] = 1$
 \newpage
 
 \section{Algoritmo de Simon}
-\subsection{Introducción}
+\subsection{Descripción del problema}
+
+Daniel R. Simon encontró un extraño problema que presentaba una cierta 
+complejidad al tratar de resolverlo mediante métodos de computación 
+tradicionales. Sin embargo, al abordarlo mediante una solución cuántica, dicha 
+complejidad disminuía de orden.
+
+El problema consiste en encontrar una cadena binaria denominada $s$, que 
+contiene $n$ dígitos, partiendo de una función $f$ dada. Esta función, $f:V 
+\rightarrow V$, cumple la restricción $f(x) = f(x \oplus s)$ para todo $x$.  
+Partiendo de la función, una solución clásica consistiría en evaluar al menos 
+$2^{n/2} + 1$ entradas, es decir, la mitad más una de las entradas, y observar 
+que dos entradas producen la misma salida. Al menos una de ellas debe ser igual, 
+dado que sólo existen $2^{n/2}$ entradas con salidas diferentes. De modo que la 
+solución clásica se sitúa en una complejidad del orden de 
+$\mathcal{O}(2^{n/2})$.
+
+\subsection{Solución cuántica}
 %
 El algoritmo de Simon consiste en un circuito cuántico con dos líneas, cada una
 de $n$ qbits.
 \begin{center}
-	\begin{tikzpicture}[thick]
+	\begin{tikzpicture}%[thick]
 	% `operator' will only be used by Hadamard (H) gates here.
 	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
 	%
 	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
-	% First row.
-	\node (q1) {$\ket{0^n}$}; &
-	\node[operator] (H11) {$H^{\otimes n}$}; &
-	\node[operator] (P13) {}; &
-	\node[operator] (H11) {$H^{\otimes n}$}; &
-	\node[operator] (M11) {$M$};&
-	\coordinate (end1); \\
-	% Second row.
-	\node (q2) {$\ket{0^n}$}; & & \node[operator] (P23) {}; & & & \coordinate (end2);\\
-	% Third row
-	\node (q31) {}; & \node (q32) {}; & \node (q33) {}; &
-	\node (q34) {}; & \node (q35) {}; & \node (q36) {}; \\
-	\node (q41) {}; & \node (q42) {}; & \node (q43) {}; &
-	\node (q44) {}; & \node (q45) {}; & \node (q46) {}; \\
+		% First row
+		\node (q1) {$\ket{0^n}$}; &
+		\node[operator] (H11) {$H^{\otimes n}$}; &
+		\node[operator] (P13) {}; &
+		\node[operator] (H11) {$H^{\otimes n}$}; &
+		\node[operator] (M11) {$M$};&
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{0^n}$}; & & \node[operator] (P23) {}; & & & \coordinate (end2);\\
+		% Third row
+		\node (q31) {}; & \node (q32) {}; & \node (q33) {}; &
+		\node (q34) {}; & \node (q35) {}; & \node (q36) {}; \\
+		\node (q41) {}; & \node (q42) {}; & \node (q43) {}; &
+		\node (q44) {}; & \node (q45) {}; & \node (q46) {}; \\
 	};
 	\node[operator] (Us) [fit = (P13) (P23), minimum width=1cm] {$U_s$};
 
@@ -593,11 +631,15 @@ de $n$ qbits.
 	\node (psi1) [fit = (q42) (q43)] {$\ket{\psi_1}$};
 	\node (psi2) [fit = (q43) (q44)] {$\ket{\psi_2}$};
 	\node (psi3) [fit = (q44) (q45)] {$\ket{\psi_3}$};
+
+	\node[fill=white, fit=(end1) (end2)] (cover) {};
+
 	\begin{pgfonlayer}{background}
 		% Draw lines.
-		\draw[thick] (q1) -- (M11)  (q2) -- (end2);
-		\draw[thick, double] (M11) -- (end1);
+		\draw (q1) -- (M11)  (q2) -- (end2);
+		\draw[double, double distance=2pt] (M11) -- (end1);
 	\end{pgfonlayer}
+
 	%
 	\end{tikzpicture}
 \end{center}

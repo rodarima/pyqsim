@@ -1,0 +1,28 @@
+digraph {
+	//graph [rankdir=LR];
+	node [shape=plaintext];
+
+	"Bit" -> "Pbit";
+	"Bit" -> "Qbit";
+
+	"Pbit" -> "Qbit" [style=dotted, constraint=false];
+
+	"Qbit" -> "Registro\ncuántico";
+	"Superposición" -> "Registro\ncuántico";
+
+	"Registro\ncuántico" -> "Medición";
+	//"Qbit" -> "Medición";
+
+	"Registro\ncuántico" -> "Operador";
+
+	"Operador" -> "Circuito\ncuántico";
+	"Medición" -> "Circuito\ncuántico";
+
+	//bit -> prob_simon;
+
+	"Prob. Simon" -> "Sol. clásica";
+
+	"Prob. Simon" -> "Alg. Simon";
+
+	"Circuito\ncuántico" -> "Alg. Simon";
+}
