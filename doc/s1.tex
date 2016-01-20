@@ -10,7 +10,7 @@ Fundamenta su utilidad en el hecho de que algunos problemas que tienen una alta
 complejidad en los ordenadores clásicos, y son intratables, pasan a ser
 tratables en un ordenador cuántico.
 
-\subsection{Bits y qubits}
+\subsection{El bit y el qubit}
 
 \subsubsection{Bit clásico}
 %Explicar lo que es un bit, y diferenciar entre el estado interno y lo que 
@@ -94,6 +94,27 @@ $$ |\alpha|^2 + |\beta|^2 = 1 $$
 %
 Los números $\alpha$ y $\beta$ se denominan \textit{amplitudes}, y tienen 
 asociada una probabilidad que es $|\alpha|^2$ y $|\beta|^2$ respectivamente.
+
+\subsection{Múltiples qubits}
+% Combinar dos bits para representar 4 estados, dos monedas para 4 estados
+% probabilísticos, y 2 qubits para un 2-qubit.
+
+\subsection{Operador}
+
+Un sistema clásico puede contener varios bits, de forma que el número de 
+posibles estados en los que se puede encontrar es $2^n$ para $n$ bits. Por 
+ejemplo, en una tarjeta perforada del telar de Jacquard de $8$ filas por 26 
+columnas, con un total de 208 celdas, existen $2^{208} \approx 
+4.11 \cdot 10^{62}$ posibles combinaciones.
+
+Si se emplean 108 monedas, el número de posibles combinaciones de cara y cruz 
+sería el mismo. Sin embargo, justo antes de caer, el sistema se encuentra en un 
+estado en el que cada posible combinación tiene la misma probabilidad de 
+ocurrir. Del mismo modo que para un bit probabilístico, para $n$ se puede 
+emplear un vector $y$ que describa la probabilidad para cada estado posible
+$$
+	y = \mat{y_0 & \cdots & y_{2^n-1}}^T
+$$
 
 \subsection{Registros cuánticos}
 Para almacenar más de un qbit se emplean los registros cuánticos, que son 

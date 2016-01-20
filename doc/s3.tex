@@ -1,0 +1,676 @@
+\input{preamble}
+\setcounter{section}{2}
+
+\newcommand*\NO[1]{ \overline{#1}}
+\newcommand*\NI[1]{ \overline{I^{#1}}\,}
+
+\begin{document}
+
+\section{Algoritmo de Simon}
+\subsection{Descripción del problema}
+
+Daniel R. Simon encontró un problema que presentaba una complejidad exponencial 
+al tratar de resolverse mediante métodos de computación tradicionales. Sin 
+embargo, al abordarlo mediante una solución cuántica, dicha complejidad 
+disminuía de orden, a una lineal.
+
+El problema consiste en encontrar una cadena binaria desconocida, denominada 
+$s$, que contiene $n$ bits, relacionada con una función $f$. Sea $V$ el conjunto 
+de cadenas de $n$ bits, $V = \{0,1\}^n$, entonces la función $f$ asigna a cada 
+cadena de $V$ otra cadena del mismo conjunto, $f:V \rightarrow V$.
+
+Además la función cumple la restricción
+%
+\begin{equation}
+	\label{eq:simon_f}
+	f(x_1) = f(x_2) \iff x_1 = x_2 \oplus s
+\end{equation}
+%
+Por una parte, si el resultado de dos salidas es idéntico, es decir $f(x_1) = 
+f(x_2)$ entonces entradas deben cumplir que $x_1 = x_2 \oplus s$:
+%
+$$ f(x_1) = f(x_2) \implies x_1 = x_2 \oplus s $$
+%
+Y por otra parte, si dos pares de entradas cumplen $x_1 = x_2 \oplus s$ entonces 
+sus salidas serán idénticas:
+%
+$$ x_1 = x_2 \oplus s \implies f(x_1) = f(x_2) $$
+%
+Con un ejemplo de 2 bits, y una cadena $s = 01$, se define $f$:
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c|}
+	\hline
+	$x$ & $f(x)$ & $x \oplus s$ & $f(x \oplus s)$\\
+	\hline
+	00 & 00 & 01 & 00\\
+	01 & 00 & 00 & 00\\
+	10 & 01 & 11 & 01\\
+	11 & 01 & 10 & 01\\
+	\hline
+\end{tabular}
+\end{center}
+%
+Se observa que $f(x)$ es idéntico a $f(x \oplus s)$, de modo que esta función 
+cumple los requisitos para el problema.
+
+\subsubsection{Solución clásica}
+
+Una solución clásica consistiría en evaluar $f$ con entradas diferentes hasta 
+encontrar una entrada $x_1$ que produzca una salida que ya se hubiera observado 
+con otra entrada $x_2$. Entonces, debido a la restricción \ref{eq:simon_f} se 
+tiene que $x_2 = x_1 \oplus s$, y por lo tanto se puede calcular $s$ como $s = 
+x_1 \oplus x_2$.
+
+Debido a que dos entradas producen la misma salida, y que todas las posibles 
+entradas forman pares de la forma $x_2 = x_1 \oplus s$, la función $f$ tendrá la 
+mitad de sus salidas iguales. Es decir, que sólo existen $2^{n/2}$ salidas 
+diferentes, por lo que al evaluar una más, $2^{n/2} + 1$ se asegura encontrar 
+dos entradas que produzcan la misma salida. De esta forma la complejidad se 
+sitúa en $\mathcal{O}(2^{n/2})$.
+
+Esta solución tiene el inconveniente de ser muy costosa computacionalmente, dado 
+que para encontrar una coincidencia en la salida es necesario evaluar la función 
+un número exponencial de veces con respecto al número de bits $n$.
+
+Empleando la función del ejemplo, bastaría con evaluarla $k$ veces con
+$$k = 2^{2/2}+1 = 3$$
+Entonces si $y_i = f(x_i)$, se obtiene $\V x = \mat{00 & 01 & 10}$ y $ \V y = 
+\mat{00 &00 & 01}$.  Como se puede observar $y_1 = y_2$, de modo que $x_1 = x_2 
+\oplus s$, y por lo tanto $s = x_1 \oplus x_2 = 00 \oplus 01 = 01$
+
+\subsection{Solución cuántica}
+%
+El algoritmo de Simon consiste en un circuito cuántico con dos líneas, cada una
+de $n$ qubits.
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0^n}$}; &
+		\node[operator] (H11) {$H^{\otimes n}$}; &
+		\node[operator] (P13) {}; &
+		\node[operator] (H11) {$H^{\otimes n}$}; &
+		\node[operator] (M11) {$M$};&
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{0^n}$}; & & \node[operator] (P23) {}; & & & \coordinate (end2);\\
+		% Third row
+		\node (q31) {}; & \node (q32) {}; & \node (q33) {}; &
+		\node (q34) {}; & \node (q35) {}; & \node (q36) {}; \\
+		\node (q41) {}; & \node (q42) {}; & \node (q43) {}; &
+		\node (q44) {}; & \node (q45) {}; & \node (q46) {}; \\
+	};
+	\node[operator] (Us) [fit = (P13) (P23), minimum width=1cm] {$U_s$};
+
+	\node (arr0) [fit = (q31) (q32)] {$\uparrow$};
+	\node (arr1) [fit = (q32) (q33)] {$\uparrow$};
+	\node (arr2) [fit = (q33) (q34)] {$\uparrow$};
+	\node (arr3) [fit = (q34) (q35)] {$\uparrow$};
+
+	\node (psi0) [fit = (q41) (q42)] {$\ket{\psi_0}$};
+	\node (psi1) [fit = (q42) (q43)] {$\ket{\psi_1}$};
+	\node (psi2) [fit = (q43) (q44)] {$\ket{\psi_2}$};
+	\node (psi3) [fit = (q44) (q45)] {$\ket{\psi_3}$};
+
+	\node[fill=white, fit=(end1) (end2)] (cover) {};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw (q1) -- (M11)  (q2) -- (end2);
+		\draw[double, double distance=2pt] (M11) -- (end1);
+	\end{pgfonlayer}
+
+	%
+	\end{tikzpicture}
+\end{center}
+%
+Primero el sistema se inicia con ambas líneas a $\ket{0^n}$. Luego se aplica un 
+operador de Hadamard sobre la primera, que creará una superposición de estados.  
+Posteriormente, el operador $U_s$ computa los resultados de la función $f$ de 
+forma simultánea. Para terminar, se revierte el operador de Hadamard sobre la 
+primera línea, que finalmente se mide.
+
+Los estados asociados a cada paso de la computación, han sido etiquetados como 
+$\ket{\psi_i}$, de forma que en todo momento se pueda determinar el lugar al que 
+corresponden en el circuito.
+
+\subsection{Funcionamiento}
+Para comprender el funcionamiento del algoritmo, se empleará un ejemplo sencillo 
+con sólo dos bits, $n=2$ y de período $s=01$:
+%
+\begin{center}
+\begin{tabular}{|c|c|}
+	\hline
+	$x$ & $f(x)$ \\
+	\hline
+	00 & 00 \\
+	01 & 00 \\
+	10 & 01 \\
+	11 & 01 \\
+	\hline
+\end{tabular}
+\end{center}
+%
+Sea $V = \{0,1\}^n$ entonces $f:V\rightarrow V$ y $f(x) = f(x\oplus s)$. De esta 
+forma, $f(00) = f(00 \oplus s) = f(01)$ y también $f(10) = f(10 \oplus s) = 
+f(11)$.
+
+El sistema ha de iniciarse con ambas líneas a $\ket{0^n}$, de modo que:
+%
+$$ \ket{\psi_0} = \ket{0^n} \otimes \ket{0^n} $$
+%
+A continuación, el operador de Hadamard es aplicado sobre la línea superior.
+%
+\begin{equation}
+\begin{split}
+\ket{\psi_1} & = (H^{\otimes n} \otimes I^{\otimes n}) \ket{\phi_0} \\
+	& = (H^{\otimes n} \otimes I^{\otimes n}) (\ket{0^n} \otimes \ket{0^n}) \\
+	& = (H^{\otimes n} \ket{0^n}) \otimes (I^{\otimes n} \ket{0^n}) \\
+	& = \frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, 0^n}
+\end{split}
+\end{equation}
+%
+Produciendo el estado entrelazado
+%
+\begin{equation}
+\ket{\psi_1} = \frac{1}{\sqrt{2^2}} (\ket{00,00} + \ket{01,00} + \ket{10,00} + 
+\ket{11,00})
+\end{equation}
+%
+Posteriormente, la puerta $U_s$ actúa sobre $\ket{\psi_1}$ transformándolo en
+%
+\begin{equation}
+\ket{\psi_2} = \frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, f(x) \oplus 00} = 
+\frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, f(x)}
+\end{equation}
+%
+En este estado, la función $f$ está siendo evaluada simultáneamente en todo $V$, 
+y este efecto será clave para la reducción de complejidad. Con la función $f$ 
+previamente descrita, dicho estado es
+%
+\begin{equation}
+\ket{\psi_2} = \frac{1}{\sqrt{2^2}} (\ket{00,00} + \ket{01,00} + \ket{10,01} + 
+\ket{11,01})
+\end{equation}
+%
+Finalmente, el operador de Hadamard es nuevamente aplicado sobre la línea 
+superior, de este modo se obtiene
+% TODO: Explicar el origen de esta expresion
+\begin{equation}
+\ket{\psi_3} = \frac{1}{2^n} \sum_{x \in V} \sum_{z \in V}
+	(-1)^{\braket{z|x}} \ket{z, f(x)}
+\end{equation}
+%
+Por consiguiente, el coeficiente de cada ket será
+%
+\begin{equation}
+c_k = \frac{1}{2^n} (-1)^{\braket{z|x}}
+\end{equation}
+%
+Pero dado que $f(x) = f(x \oplus s)$, los kets $\ket{z, f(x)}$ y $\ket{z, f(x 
+\oplus s)}$ serán el mismo, por lo que el coeficiente para este ket será
+%
+\begin{equation}
+c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x \oplus 
+s}}\right)
+\end{equation}
+%
+El producto interno $\braket{z|x \oplus s}$ puede descomponerse en $\braket{z|x} 
+\oplus \braket{z|s}$, y substituyendo
+%
+\begin{equation}
+\begin{split}
+c_k & = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x} \oplus 
+\braket{z|s}} \right) \\
+	& = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x}}
+	(-1)^{\braket{z|s}} \right)
+\end{split}
+\end{equation}
+%
+Cuando $\braket{z|s} = 1$, el coeficiente $c_k$ será
+%
+\begin{equation}
+\begin{split}
+c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} - (-1)^{\braket{z|x}} \right) =
+	\frac{1}{2^n} (0) = 0
+\end{split}
+\end{equation}
+%
+Y cuando $\braket{z|s} = 0$, será
+%
+\begin{equation}
+c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x}} \right)
+	= \frac{1}{2^n} (\pm 2) = \pm 2^{1-n}
+\end{equation}
+%
+De modo que $c_k \neq 0$ si en el ket $\ket{z, f(x)}$ se cumple que 
+$\braket{z|s} = 0$. Así que sólo los estados de esta forma tendrán coeficientes 
+no nulos. En el caso del ejemplo será
+%
+\begin{equation}
+\begin{split}
+\ket{\psi_3} = 2^{-n} \big( &
+		+ \ket{00,00} + \ket{01,00} + \ket{10,00} + \ket{11,00} \\
+	& + \ket{00,00} - \ket{01,00} + \ket{10,00} - \ket{11,00} \\
+	& + \ket{00,01} + \ket{01,01} - \ket{10,01} - \ket{11,01} \\
+	& + \ket{00,01} - \ket{01,01} - \ket{10,01} + \ket{11,01}
+	\big)
+\end{split}
+\end{equation}
+%
+Finalmente, tras anular los términos en los que $\braket{z|01} = 1$, es decir 
+$z=01$ y $z=11$, queda
+%
+\begin{equation}
+	\ket{\psi_3} = 2^{1-n} \left( \ket{00,00} + \ket{10,00} + \ket{00,01} - 
+\ket{10,01} \right)
+\end{equation}
+%
+En este estado, si se realiza una medición de $z$, el resultado siempre cumplirá 
+la restricción $\braket{z|s} = 0$. Una vez que se obtengan $n-1$ vectores 
+linealmente independientes, será posible construir un sistema de ecuaciones y 
+calcular $s$.
+
+En este ejemplo, después de medir la primera línea, el conjunto de vectores 
+posibles resulta $z \in \{00, 10\}$. En todo caso, se tiene que $\braket{z|s} = 
+0$ de modo que $\braket{00|s} = 0$ y $\braket{10|s} = 0$, produciendo las 
+ecuaciones:
+%
+\begin{equation}
+\begin{split}
+	0 s_0 \oplus 0 s_1 = 0 \\
+	1 s_0 \oplus 0 s_1 = 0
+\end{split}
+\end{equation}
+%
+Cuyas soluciones son $s \in \{00, 01\}$, pero dado que $s \neq 00$, se obtiene 
+$s = 01$.
+
+\subsection{Análisis de complejidad}
+
+El algoritmo de Simon produce en la salida tras la medición, un vector $z$ que 
+pertenece a un conjunto $W$, de forma que $W = \{z / \braket{z|s} = 0\}$ para 
+todo $z \in V$.
+
+En cuanto se obtienen $n-1$ vectores independientes, el proceso concluye, ya que 
+es posible averiguar $s$. Sin embargo, todos los vectores de $W$ pueden salir 
+con igual probabilidad.
+
+Sea $R$ una variable aleatoria discreta que mide el número de ejecuciones 
+necesarias para completar los $n-1$ vectores independientes. El valor medio de 
+ejecuciones $E[R]$, puede medir cual es la media de ejecuciones que son 
+necesarias a la larga. Para calcularlo:
+%
+$$ E[R] = \sum^{\infty}_{x=1} x \cdot p(R=x) $$
+%
+Es necesario determinar cual es la probabilidad de terminar en $x$ ejecuciones 
+consecutivas del algoritmo, o pasos.
+
+\subsubsection{Probabilidad de terminar}
+
+La probabilidad de terminar en $p$ pasos depende del número de bits $n$ y del 
+número de vectores linealmente independientes $i$ ya obtenidos previamente.  
+
+Sea $T^i_p$ la probabilidad de terminar en $p$ pasos, cuando ya se han obtenido 
+$i$ vectores independientes de los $n-1$ necesarios. La probabilidad de que el 
+algoritmo termine desde el comienzo en $p$ pasos será $T^0_p$, puesto que al 
+comienzo no se tiene ningún vector.
+
+Tras un paso de la ejecución, será posible encontrar un nuevo vector 
+independiente con una probabilidad $I^i$, partiendo de que ya se tenían $i$ 
+previamente. La probabilidad de no obtenerlo será entonces representada por $\NI 
+i$, siendo $\NI i = 1 - I^i$.
+
+De este modo, la probabilidad $T^i_p$ se puede expresar como una recurrencia, 
+dividida en dos casos:
+
+Cuando al obtener un nuevo vector, éste no es linealmente independiente, con 
+probabilidad $\NI i$, de forma que será necesario resolver el problema con un 
+paso menos, y los mismos vectores $i$, representado dicha probabilidad como 
+$T^i_{p-1}$.
+
+Y cuando se obtiene un vector linealmente independiente, con probabilidad $I^i$, 
+que entonces existirá un nuevo vector, pero con un paso menos, con la 
+probabilidad $T^{i+1}_{p-1}$ de terminar.
+
+En forma general, se tiene:
+%
+\begin{equation}
+	\label{eq:rec_T}
+	T^i_p = \NI i T^i_{p-1} + I^i \, T^{i+1}_{p-1}
+\end{equation}
+%
+Adicionalmente, cuando el número de pasos $p$ restantes es 0, y se han 
+conseguido exactamente $n-1$ vectores, la probabilidad de acabar es total:
+%
+$$ T^{n-1}_0 = 1 $$
+%
+En cualquier otro caso, cuando $i \neq n-1$, será nula, debido a que o bien se 
+ha resuelto el problema antes de lo previsto, o no se han conseguido los 
+vectores necesarios.
+%
+$$ T^i_0 = 0 $$
+%
+Finalmente, las probabilidades de obtener y no obtener un vector linealmente 
+independiente, partiendo de $i$ previamente, en un problema de $n$ bits son, 
+respectivamente:
+% TODO: Esxplicar de donde sale esto
+\begin{equation}
+\begin{split}
+	I^i & = 1 - 2^{i-n+1}
+\\
+	\NI i & = 2^{i-n+1}
+\end{split}
+\end{equation}
+%
+Al poder determinar la probabilidad con la que el algoritmo resuelve el problema 
+en $p$ pasos, es posible determinar el valor estimado de pasos a la larga.
+
+\subsubsection{Valor esperado de ejecuciones}
+%
+El valor esperado de ejecuciones mide el número promedio de veces que es 
+necesario repetir el algoritmo cuántico, a la larga, para resolver el problema.  
+El número de ejecuciones $R$ es una variable aleatoria discreta, y el valor 
+esperado $E[R]$ puede calcularse partiendo de las probabilidades de cada valor 
+de $R$. Si $p(R=r) = T^0_r$, entonces se define el valor esperado de $R$ como
+%
+\begin{equation}
+	E[R] = \sum^{\infty}_{p=1} p \cdot T^0_p
+\end{equation}
+%
+\subsubsection{Resolución de la recurrencia $T^0_p$}
+Para resolver la recurrencia \eqref{eq:rec_T} se empleará un método de prueba y 
+simplificación hasta dar con un patrón. Se comprobarán los primeros casos para 
+$3 \leq n \leq 5$, ya que crecen muy rápidamente.
+%
+Caso para $n=3$
+%
+\begin{equation}
+\label{eq:rec_T3}
+\begin{split}
+	T^0_0 &= T^0_1 = 0 \\
+	T^0_2 &= I^0I^1 \\
+	T^0_3 &= I^0I^1(\NI 0 + \NI 1 ) \\
+	T^0_4 &= I^0I^1(\NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1 ) \\
+	T^0_5 &= I^0I^1(\NI 0 \NI 0 \NI 0 + \NI 0 \NI 0 \NI 1  + \NI 0 \NI 1 \NI 1 + 
+\NI 1 \NI 1 \NI 1) \\
+\end{split}
+\end{equation}
+%
+Para $n=4$:
+%
+\begin{equation}
+\begin{split}
+	T^0_0 &= T^0_1 = T^0_2 = 0 \\
+	T^0_3 &= I^0I^1I^2 \\
+	T^0_4 &= I^0I^1I^2 (\NI 0 + \NI 1 + \NI 2) \\
+	T^0_5 &= I^0I^1I^2 (
+		\NI 0 \NI 0 +
+		\NI 0 \NI 1 +
+		\NI 0 \NI 2 +
+		\NI 1 \NI 1 +
+		\NI 1 \NI 2 +
+		\NI 2 \NI 2) \\
+	T^0_6 &= I^0I^1I^2 (
+		\NI 0 \NI 0 \NI 0 +
+		\NI 0 \NI 0 \NI 1 +
+		\NI 0 \NI 0 \NI 2 +
+		\NI 0 \NI 1 \NI 1 +
+		\NI 0 \NI 1 \NI 2 + \\
+		& \NI 0 \NI 2 \NI 2 +
+		\NI 1 \NI 1 \NI 1 +
+		\NI 1 \NI 1 \NI 2 +
+		\NI 1 \NI 2 \NI 2 +
+		\NI 2 \NI 2 \NI 2) \\
+\end{split}
+\end{equation}
+%
+Para $n=5$:
+%
+\begin{equation}
+\begin{split}
+	T^0_0 &= T^0_1 = T^0_2 = T^0_3 = 0 \\
+%
+	T^0_4 &= I^0I^1I^2I^3 \\
+%
+	T^0_5 &= I^0I^1I^2I^3 (\NI 0 + \NI 1 + \NI 2 + \NI 3) \\
+%
+	T^0_6 &= I^0I^1I^2I^3 (
+		\NI 0 \NI 0 +
+		\NI 0 \NI 1 +
+		\NI 0 \NI 2 +
+		\NI 0 \NI 3 +
+		\NI 1 \NI 1 +
+		\NI 1 \NI 2 +\\
+&		\NI	1 \NI 3 +
+		\NI 2 \NI 2 +
+		\NI 2 \NI 3 +
+		\NI 3 \NI 3) \\
+%
+	T^0_7 &= I^0I^1I^2I^3 (
+		\NI 0 \NI 0 \NI 0 +
+		\NI 0 \NI 0 \NI 1 +
+		\NI 0 \NI 0 \NI 2 +
+		\NI 0 \NI 0 \NI 3 +
+		\NI 0 \NI 1 \NI 1 +
+\\&	\NI 0 \NI 1 \NI 2 +
+		\NI 0 \NI 1 \NI 3 +
+		\NI 0 \NI 2 \NI 2 +
+		\NI 0 \NI 2 \NI 3 +
+		\NI 0 \NI 3 \NI 3 +
+		\NI 1 \NI 1 \NI 1 +
+\\&	\NI 1 \NI 1 \NI 2 +
+		\NI 1 \NI 1 \NI 3 +
+		\NI 1 \NI 2 \NI 2 +
+		\NI 1 \NI 2 \NI 3 +
+		\NI 1 \NI 3 \NI 3 +
+		\NI 2 \NI 2 \NI 2 +
+\\&	\NI 2 \NI 2 \NI 3 +
+		\NI 2 \NI 3 \NI 3 +
+		\NI 3 \NI 3 \NI 3) \\
+\end{split}
+\end{equation}
+%
+Se observa que en cada expresión $T_p^0$ se encuentra un producto de $I^j$. Dado 
+que es necesario encontrar exactamente $n-1$ vectores linealmente 
+independientes, este producto se corresponde con las probabilidades de encontrar 
+los $n-1$ vectores uno detrás de otro. Primero partiendo de $0$ vectores, luego 
+de $1$ y así sucesivamente hasta $n-2$. Dado que se conoce $n-1$ este producto 
+se puede expresar como
+$$
+	J =\prod^{n-2}_{j=0} I^j
+$$
+%
+El resto de la ecuación se denotará como $S_p$, de forma que se obtiene
+$$
+	T^0_p = J \cdot S_p
+$$
+%
+La expresión $S_p$ es una suma de probabilidades, y representan las diferentes 
+combinaciones de obtener los $n-1$ vectores. Por ejemplo, para $n=3$, es 
+necesario obtener 2 vectores linealmente independientes. Sea el número de pasos 
+$p = 4$. Se empleará una cadena binaria de $p$ bits para representar si en una 
+ejecución se obtiene un nuevo vector independiente indicado con un 1, o con un 0 
+si no se obtiene.
+
+Dado que son necesarios exactamente $n-1$ vectores, todas las ejecuciones 
+contendrán exactamente dos unos.  Además no puede haber ejecuciones que consigan 
+haber conseguido 2 unos antes de terminar, dado que entonces habrían resuelto el 
+problema en menos pasos de los necesarios.  Las 
+3 posibles ejecuciones son:
+\begin{itemize}
+\item Conseguirlos al final de todo: 0011
+\item Conseguir uno en la segunda ejecución y otro al final: 0101
+\item Conseguir uno al principio y otro al final: 1001
+\end{itemize}
+La probabilidad de que no se obtenga un vector linealmente independiente, 
+expresada como $\NI i$, tan sólo depende del número de vectores independientes 
+de los que ya se dispone. De esta forma, las probabilidades de obtener el primer 
+resultado 0011 serán:
+$$ \NI 0 \NI 0 I^0 I^1 $$
+Para el segundo, 0101:
+$$ \NI 0 I^0 \NI 1 I^1 $$
+Y para el último, 1001:
+$$ I^0 \NI 1 \NI 1 I^1 $$
+Estas probabilidades son las tres posibles opciones que resuelven el problema en 
+exactamente 4 pasos. Al sumarlas se obtiene la probabilidad de que el problema 
+sea resuelto empleando alguna posible ejecución correcta. Dado que cada 
+ejecución es independiente se tiene:
+\begin{equation}
+\begin{split}
+\NI 0 \NI 0 I^0 I^1 + \NI 0 I^0 \NI 1 I^1 + I^0 \NI 1 \NI 1 I^1 =
+I^0I^1(\NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1 )
+\end{split}
+\end{equation}
+Que es exactamente la misma expresión obtenida por la recurrencia 
+\eqref{eq:rec_T3} con $T^0_4$ para $n=3$:
+%
+$$
+	T^0_4 = \underbrace{I^0I^1}_J
+	(\underbrace{\NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1 }_{S_p}) $$
+%
+
+El siguiente paso, será determinar como se forman las secuencias $S_p$.
+Dado que son necesarios $n-1$ vectores linealmente independientes, el resto de 
+ejecuciones $p - (n-1)$ proporcionan vectores dependientes o repetidos. Es decir 
+que se obtendrán secuencias de $\NI i$ con $p - (n-1)$ elementos.
+
+Sea $K$ una sucesión de $m$ productos $K = \NI{i_1} \NI{i_2} \ldots \NI{i_m}$, 
+partiendo de la definición de $\NI i$, se tiene:
+%
+\begin{equation}
+\label{NI_seq}
+\begin{split}
+	K &= 2^{i_1-n+1} \, 2^{i_2-n+1} \ldots 2^{i_m-n+1} \\
+		&= 2^{(i_1-n+1) + (i_2-n+1) + \ldots + (i_m-n+1)} \\
+		&= 2^{m(-n+1) + i_1 + i_2 + \ldots + i_m} \\
+		& = 2^{m(-n+1)} \, 2^{i_1 + i_2 + \ldots + {i_m}}
+\end{split}
+\end{equation}
+%
+Examinando las secuencias de productos para $n = 3$, con $p \geq n$:
+%
+\begin{equation}
+\begin{split}
+	S_3 &= \NI 0 + \NI 1\\
+	S_4 &= \NI 0 \NI 0 + \NI 0 \NI 1 + \NI 1 \NI 1 \\
+	S_5 &= \NI 0 \NI 0 \NI 0 + \NI 0 \NI 0 \NI 1  + \NI 0 \NI 1 \NI 1 + \NI 1 \NI 
+1 \NI 1 \\
+\end{split}
+\end{equation}
+%
+Reemplazando las secuencias con la ecuación \eqref{NI_seq}:
+%
+\begin{equation}
+\begin{split}
+	S_3 &= 2^{1(-n+1)} (2^0+2^1) = 1/4^1 \cdot 3\\
+	S_4 &= 2^{2(-n+1)} (2^{0+0} + 2^{0+1} + 2^{1+1}) = 1/4^2 \cdot 7\\
+	S_5 &= 2^{3(-n+1)} (2^{0+0+0}+2^{0+0+1}+2^{0+1+1}+2^{1+1+1}) = 1/4^3 \cdot 
+15\\
+\end{split}
+\end{equation}
+%
+Para $n = 4$:
+%
+\begin{equation}
+\begin{split}
+	S_4 &= 1/8^1 \cdot 7\\
+	S_5 &= 1/8^2 \cdot 35\\
+	S_6 &= 1/8^3 \cdot 155\\
+\end{split}
+\end{equation}
+%
+Para $n = 5$:
+%
+\begin{equation}
+\begin{split}
+	S_5 &= 1/16^1 \cdot 15 \\
+	S_6 &= 1/16^2 \cdot 155 \\
+	S_7 &= \underbrace{1/16^3}_{P_p} \cdot
+		\underbrace{\vphantom{1/16^3}1395}_{Q_p} \\
+\end{split}
+\end{equation}
+%
+Por una parte, $S_p$ contiene la potencia $P_p = 2^{(p-n+1)(-n+1)}$, y por otra, 
+un número $Q_p$, de modo que
+$$ S_p = P_p \cdot Q_p$$
+%
+Al examinar las secuencias $Q_p$, se obtienen los valores:
+\begin{center}
+	\begin{tabular}{|c|c *{4}{|c}|}
+		\hline
+		$n$ & $Q_{n}$ & $Q_{n+1}$ & $Q_{n+2}$ & $Q_{n+3}$ & $Q_{n+4}$ \\ \hline
+		3   & 3       & 7         & 15        & 31        & 63        \\
+		4   & 7       & 35        & 155       & 651       & 2667      \\
+		5   & 31      & 651       & 11811     & 2007878   & 3309747   \\
+		\hline
+	\end{tabular}
+\end{center}
+%
+Estas secuencias se corresponden con los coeficientes binomiales de Gauss con el 
+parámetro $q=2$, definidos para $r\leq m$, como:
+$$
+	{m \choose r}_{q=2} = \frac
+		{\prod_{i=m}^{m-r+1}{(1-2^i)}}
+		{\prod_{i=1}^{r}{(1-2^i)}} =
+	\prod_{i = 0}^{r-1}{\frac
+		{(2^m-2^i)}
+		{(2^r-2^i)}}
+$$
+De esta forma, el valor de $Q_p$ se determina como:
+$$
+Q_p = {p-1 \choose n-2}_{q=2}
+$$
+%
+Reunificando todos los componentes que forman la recurrencia, se obtiene
+\begin{equation}
+\label{eq_T}
+\begin{split}
+	T^0_p &= J \cdot S_p = J \cdot P_p \cdot Q_p = \\
+	&= \prod^{n-2}_{j=0} I^j \cdot P_p \cdot Q_p = \\
+	&= \prod^{n-2}_{j=0} I^j \cdot 2^{(p-n+1)(-n+1)} \cdot Q_p = \\
+	&= \prod^{n-2}_{j=0} I^j \cdot 2^{(p-n+1)(-n+1)} \cdot {p-1 \choose n-2}_{q=2}
+\end{split}
+\end{equation}
+%
+\subsubsection{Cálculo del valor medio}
+Una vez obtenida la ecuación \eqref{eq_T}, se puede reemplazar la probabilidad 
+$T_p^0$ en $E[R]$, quedando:
+%
+\begin{equation}
+\begin{split}
+	E[R] &= \sum_{p=1}^\infty p T^0_p =\\
+	&= \sum_{p=1}^\infty p \cdot \prod^{n-2}_{j=0} I^j \cdot 2^{(p-n+1)(-n+1)} 
+\cdot {p-1 \choose n-2}_{q=2} = \\
+	&= \prod^{n-2}_{j=0} I^j \cdot \sum_{p=1}^\infty p \cdot 2^{(p-n+1)(-n+1)} 
+\cdot {p-1 \choose n-2}_{q=2}
+\end{split}
+\end{equation}
+%
+De este modo, se pueden computar los valores teóricos esperados de ejecuciones 
+que cabría esperar a la larga.
+\begin{table}[h]
+	\begin{tabular}{|c|*{9}{|c}|}
+		\hline
+		$n$      & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\ \hline
+		$E[R]$   &
+2.000& 3.333& 4.476& 5.542& 6.575& 7.591& 8.598& 9.602& 10.60
+\\
+		$\frac{E[R]}{n}$ &
+1.000& 1.111& 1.119& 1.109& 1.096& 1.084& 1.075& 1.067& 1.060\\
+		\hline
+	\end{tabular}
+\caption{Valor esperado de ejecuciones del algoritmo de Simon}
+\label{tabla_E}
+\end{table}
+%
+
+Se observa como $E[R]$ se va aproximando cada vez más a $n$. De esta forma, el 
+algoritmo se comporta con una complejidad a la larga de $O(n)$.
+
+\end{document}
