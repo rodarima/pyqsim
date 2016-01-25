@@ -1,0 +1,89 @@
+\input{preamble}
+
+\setcounter{section}{4}
+\usetikzlibrary{shapes,arrows,chains}
+\usetikzlibrary{decorations.markings}
+
+\begin{document}
+
+\section{Implementación}
+La simulación se realizará en el lenguaje de programación \texttt{python}, 
+empleando paquetes externos que aportarán las partes comunes del simulador. De 
+esta forma se realiza una reutilización del software ya existente.
+
+Para los cálculos numéricos se emplea \texttt{numpy} y \texttt{scipy}.
+
+\subsection{Estructuras de datos}
+El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
+los operadores. Esta representación, se realiza mediante matrices huecas. La 
+clase \texttt{qutip.Qobj} permite emplear de forma implícita las matrices huecas 
+de \texttt{scipy.sparse}.
+
+De esta forma, un estado $\ket{\phi_0} = \ket{000} $
+
+
+\section{Análisis de la simulación}
+% Comentar que es lo que se va a medir. Como se realiza el proceso de medición, 
+% y finalmente cuales son los resultados.
+
+El proceso de la simulación se analiza exhaustivamente para determinar por una 
+parte la \textit{eficiencia} del simulador, midiendo el tiempo empleado y la 
+memoria. Además también se observa el número de ejecuciones del algoritmo 
+cuántico, para calcular su \textit{complejidad}.
+
+%
+\begin{center}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered, minimum 
+height=2cm]
+\tikzstyle{line} = [draw, thick, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 3cm, auto]
+	% Place nodes
+	\node[block] (qc0) {Simulación cuántica inicial};
+	\node[block, right of=qc0] (qcf) {Finalizar simulación cuántica};
+	\node[block, right of=qcf] (measure) {Medición};
+	\node[block, right of=measure] (classic) {Procesado clásico};
+	% Draw edges
+	\draw [line] (qc0.west)+(-1cm,0) -- (qc0.west);
+	\draw [line] (qc0) -> (qcf);
+	\draw [line] (qcf) -- (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (qc0.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_1$} 
+(qc0)+(-2em,-1em);
+	\draw [line] (qcf.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+(qcf)+(-2em,-1em);
+	\draw [line] (measure.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+(measure)+(-2em,-1em);
+	\draw [line] (classic.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+(classic)+(-2em,-1em);
+	\draw [line] (classic.east) -- +(+1cm,0);
+
+\end{tikzpicture}
+\end{center}
+%
+
+\subsection{Detalles del análisis}
+Para calcular con precisión los datos medidos sobre cada simulación, se realizan 
+varias ejecuciones, y posteriormente se analiza la media y varianza de las 
+medidas obtenidas.
+
+Cada etapa se mide de forma independiente, permitiendo una mayor precisión en la 
+medida de la complejidad.
+
+El análisis de la simulación cuántica, se divide en dos procesos. La parte 
+inicial calcula el estado intermedio $\ket{psi_1}$ que es independiente de la 
+función $f$ del problema. Permitiendo la reutilización de los cálculo previos.
+
+La parte final del análisis, toma el estado $\ket{psi_1}$ previamente calculado, 
+y continúa la simulación del circuito hasta el estado final.
+
+De esta forma, al determinar cómo se comporta el circuito con diferentes 
+funciones $f$, la parte inicial no requiere ser computada en cada simulación.
+
+El número de ejecuciones es independiente
+
+\end{document}

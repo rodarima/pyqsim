@@ -30,6 +30,13 @@ class QCircuit:
 
 class QSimon(QCircuit):
 	def init(self):
+		self.sz = {}
+		self.size_all = -1
+		self.U = None
+		self.H = None
+		self.phi1 = None
+		self.qstate = None
+
 		self.bits = self.config['bits']
 		self.simon_init(self.bits)
 
@@ -40,6 +47,7 @@ class QSimon(QCircuit):
 		H = hadamard(bits)
 		I = identity(bits)
 		#HI = tensor(H, I)
+		#print("HI : {}".format(self.size_qobj(HI)))
 		self.H = H
 
 		phi0 = tensor(x, y)
@@ -48,7 +56,28 @@ class QSimon(QCircuit):
 
 		# Save some initial work
 		self.phi1 = phi1
-		self.qstate = phi1
+		self.qstate = None
+		self.update_size()
+
+	def size_qobj(self, o):
+		if o == None: return 0
+		data = o.data
+		ptr = data.indptr.nbytes
+		ind = data.indices.nbytes
+		d = data.indices.nbytes
+		return ptr + ind + d
+
+	def update_size(self):
+		self.sz = {}
+		self.size_all = -1
+
+		sz = self.sz
+		sz['H'] = self.size_qobj(self.H)
+		sz['U'] = self.size_qobj(self.U)
+		sz['phi1'] = self.size_qobj(self.phi1)
+		sz['qstate'] = self.size_qobj(self.qstate)
+		sz['all'] = np.sum(list(sz.values()))
+		print('Updated size: {}'.format(str(sz)))
 
 	def HI(self, state):
 		bits = self.bits
@@ -69,14 +98,18 @@ class QSimon(QCircuit):
 
 	def run(self, params):
 		# Start from the precomputed state
-		phi1 = self.qstate
+		phi1 = self.phi1
 		f = params['f']
 
-		U = self.build_U(f)
-		phi2 = U * phi1
+		self.U = self.build_U(f)
+		#print('size U = %d' % self.size_qobj(U))
+		phi2 = self.U * phi1
 		#print(phi2.data.nnz, np.prod(phi2.data.shape))
 		phi3 = self.HI(phi2)
 		self.qstate = phi3
+
+		self.update_size()
+
 		return phi3
 
 	def build_U(self, f):
@@ -251,36 +284,61 @@ def profile():
 
 	qp = QProfiler(timeout=Tmax)
 
-#	print("Profile of QSimon.init()")
-#	for i in range(Nmin, Nmax+1):
-#		qp.start('QSimon(config)',
-#			'config={"bits":%d}'%i,
-#			title='N = %d'%i)
-#
-#	print("Profile of QSimon.run()")
-#	for i in range(Nmin, Nmax+1):
-#		setup = ('qs = QSimon({"bits":%d});'%i) + \
-#				'config = qs.random_config(%d)'%i
-#		qp.start('qs.run(config)', setup, title='N = %d'%i)
-#
-#	print("Profile of QMeasure()")
-#	for i in range(Nmin, Nmax+1):
-#		setup = ('qs = QSimon({"bits":%d});'%i) + \
-#				'config = qs.random_config(%d);'%i + \
-#				'st = qs.run(config)'
-#		qp.start('QMeasure(st, np.arange(%d, %d*2))'%(i,i), setup, title='N = %d'%i)
-#
-#	print("Profile of QMeasure.collapse()")
-#	for i in range(Nmin, Nmax+1):
-#		setup = ('qs = QSimon({"bits":%d});'%i) + \
-#				'config = qs.random_config(%d);'%i + \
-#				'st = qs.run(config);' + \
-#				'qm = QMeasure(st, np.arange(%d, %d*2))'%(i,i)
-#		qp.start('qm.collapse()', setup, title='N = %d'%i, fresh=False)
+	print("Profile of QSimon.init()")
+	for i in range(Nmin, Nmax+1):
+		qp.start('QSimon(config)',
+			'config={"bits":%d}'%i,
+			title='N = %d'%i)
+
+	print("Profile of QSimon.run()")
+	for i in range(Nmin, Nmax+1):
+		setup = ('qs = QSimon({"bits":%d});'%i) + \
+				'config = qs.random_config(%d)'%i
+		qp.start('qs.run(config)', setup, title='N = %d'%i)
+
+	print("Profile of QMeasure()")
+	for i in range(Nmin, Nmax+1):
+		setup = ('qs = QSimon({"bits":%d});'%i) + \
+				'config = qs.random_config(%d);'%i + \
+				'st = qs.run(config)'
+		qp.start('QMeasure(st, np.arange(%d, %d*2))'%(i,i), setup, title='N = %d'%i)
+
+	print("Profile of QMeasure.collapse()")
+	for i in range(Nmin, Nmax+1):
+		setup = ('qs = QSimon({"bits":%d});'%i) + \
+				'config = qs.random_config(%d);'%i + \
+				'st = qs.run(config);' + \
+				'qm = QMeasure(st, np.arange(%d, %d*2))'%(i,i)
+		qp.start('qm.collapse()', setup, title='N = %d'%i, fresh=False)
 
 	print("Profile of np.random.choice()")
 	for i in range(Nmin, 60):
 		qp.start('np.random.choice(2**(%d-1))'%i, '', title='N = %d'%i)
+
+def profile_mem():
+	Nmin = 2
+	Nmax = 10
+
+	print("Profile of memory QSimon.init()")
+
+	mems = list()
+
+	for i in range(Nmin, Nmax+1):
+		print("N = {}".format(i))
+		N = i
+		qs = QSimon({"bits":N})
+
+		config = qs.random_config(N)
+		#print(config)
+		st = qs.run(config)
+		sizes = qs.sz
+		sizes['N'] = N
+		mems.append(sizes)
+		#qm = QMeasure(st, np.arange(N, N*2))
+		#cp = CPostprocess(N, qm)
+		#cp.profile(10000, title='N = %d'%N)
+
+	return mems
 
 
 def main():
@@ -314,5 +372,6 @@ def main():
 	#rnd = np.random.choice(qm.vn, p=qm.vp, size=100)
 	##print(qm.collapse())
 
-main()
+m = profile_mem()
 #profile()
+#main()

@@ -1,0 +1,402 @@
+\input{preamble}
+
+\setcounter{part}{2}
+\usetikzlibrary{shapes,arrows,chains}
+\usetikzlibrary{decorations.markings}
+\usepackage{booktabs}
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+
+
+\begin{document}
+
+\part{Simulador cuántico}
+% Que es un simulador. Como se realiza la simulacion
+
+Un simulador de circuitos cuántico, es un programa ejecutado en una máquina 
+clásica que permite efectuar una simulación de un circuito, de forma que los 
+resultados obtenidos sean idénticos a los que se obtendrían en una máquina 
+cuántica que ejecute el mismo circuito.
+
+La principal desventaja en un simulador cuántico, es que la simulación es un 
+proceso muy costoso, que crece en complejidad de forma exponencial con el tamaño 
+de la entrada. Sin embargo, permite analizar el comportamiento de un algoritmo, 
+y comprobar que el comportamiento simulado es el predicho de forma teórica.
+
+El proceso de simulación se basa en dos partes. Primero se determinan todas las 
+puertas del circuito, y se aplican al estado inicial de forma secuencial. De 
+esta forma se obtiene el estado final. Esta es la parte de simulación cuántica.
+
+Por otra parte, es necesario un proceso de medida y cómputo empleando bits 
+clásicos. De modo que, partiendo del estado final, se determina el proceso de 
+medición calculando las probabilidades asociadas a cada estado clásico. Con la 
+distribución de probabilidad fijada, se efectúa la generación de una medida 
+aleatoria, y a continuación los cálculos necesarios con las mediciones 
+resultantes.
+
+\section{Diseño del simulador}
+% Comentar el software con todas las partes y estructuras de datos.
+El simulador consta de tres partes bien diferenciadas. Cada una se encarga de 
+realizar una tarea en concreto.
+%
+\begin{itemize}
+\item Simulación del circuito cuántico.
+\item Medición de estados.
+\item Procesado clásico.
+\end{itemize}
+
+Primero, el circuito cuántico es simulado, produciendo un estado final cuántico.  
+A continuación, un proceso de medición colapsa los registros cuánticos en bits 
+clásicos. Finalmente, un última etapa de cálculo clásico, toma dicha información 
+para ser procesada. La simulación se repite hasta que el problema se haya 
+completado.
+%
+\begin{center}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered]
+\tikzstyle{line} = [draw, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 3cm, auto]
+	% Place nodes
+	\node[block] (quantum) {Simulación cuántica};
+	\node[block, right of=quantum] (measure) {Medición};
+	\node[block, right of=measure] (classic) {Procesado clásico};
+	\node[decision, right of=classic] (end) {Fin?};
+	% Draw edges
+	\draw [line] (quantum.west)+(-1cm,0) -- (quantum.west);
+	\draw [line] (quantum) -> (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic) -- (end);
+	\draw [line] (end.south) |-+(0,-1em)-| node [near start, above] {No} 
+(quantum.south);
+	\draw [line] (end.east) -- node [near start] {Sí} +(1cm, 0);
+
+\end{tikzpicture}
+\end{center}
+%
+
+\subsection{Diseño optimizado}
+Realizar la simulación de un circuito cuántico es una operación muy costosa.  
+Además, partiendo de la misma entrada, el estado cuántico final es idéntico.  
+Debido a que al realizar la medición en el simulador, no se destruye el estado 
+cuántico, es posible almacenarlo.
+
+De este modo, tan sólo será necesario realizar la ejecución del circuito 
+cuántico para obtener el estado final; y posteriormente, emplear dicho estado en 
+las mediciones sucesivas. El esquema optimizado de la simulación, se puede 
+apreciar en el siguiente diagrama.
+
+\begin{center}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered]
+\tikzstyle{line} = [draw, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 3cm, auto]
+	% Place nodes
+	\node[block] (quantum) {Simulación cuántica};
+	\node[block, right of=quantum] (measure) {Medición};
+	\node[block, right of=measure] (classic) {Procesado clásico};
+	\node[decision, right of=classic] (end) {Fin?};
+	% Draw edges
+	\draw [line] (quantum.west)+(-1cm,0) -- (quantum.west);
+	\draw [line] (quantum) -> (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic) -- (end);
+	\draw [line] (end.south) |-+(0,-1em)-| node [near start, above] {No} 
+(measure.south);
+	\draw [line] (end.east) -- node [near start] {Sí} +(1cm, 0);
+
+\end{tikzpicture}
+\end{center}
+
+\section{Estructuras de datos}
+A medida que crece el número de qubits $n$, crece el espacio necesario para 
+almacenar los operadores y los estados.
+Un estado de $n$ qubits, emplea un vector de $2^{n}$ amplitudes, y cada amplitud 
+está representada por un número complejo.  Un operador que actúe sobre dicho 
+estado, requiere de $2^{n} \cdot 2^{n} = 2^{2n}$ elementos.  Sea $\ket{\psi}$ un 
+estado de $n$ qubits, $H$ un operador, y $m = 2^{n}-1$:
+%
+$$ \ket{\psi} = \mat{e_0 \\ e_1 \\ \vdots \\ e_m},\, H =
+	\mat{ u_{00} & u_{01} & \ldots & u_{0m} \\
+		u_{10} & u_{11} & \ldots & u_{1m}\\
+		\vdots & \vdots & \ddots & \vdots \\
+		u_{m0} & u_{m1} & \ldots & u_{mm}\\
+	}
+$$
+%
+De modo que aplicar el operador $H$ sobre el estado $\ket{\psi}$, equivale a una 
+multiplicación de una matriz por un vector:
+%
+$$ H \ket{\psi} = \mat{ u_{00} & u_{01} & \ldots & u_{0m} \\
+		u_{10} & u_{11} & \ldots & u_{1m}\\
+		\vdots & \vdots & \ddots & \vdots \\
+		u_{m0} & u_{m1} & \ldots & u_{mm}\\
+	}
+	\mat{e_0 \\ e_1 \\ \vdots \\ e_m}
+=
+	\mat{b_0 \\ b_1 \\ \vdots \\ b_m} = \ket{\psi'}
+$$
+%
+Sin embargo, generalmente $\ket{\psi}$ contiene muchos elementos que son cero, 
+$e_i = 0$ y no necesitan ser almacenados. Las matrices huecas aprovechan esta 
+propiedad para reducir el espacio de almacenamiento.
+
+\subsection{Matrices huecas}
+
+Si la matriz \textbf{A} contiene \textit{muchos} elementos nulos, se considera 
+una matriz \textit{hueca}. Aprovechar esta propiedad permite: por una parte 
+reducir el número de elementos que es necesario almacenar, y por otra, reducir 
+el número de sumas y multiplicaciones al operar con la matriz.
+$$ \textbf{A} = \mat{ a_{11} & \cdots & a_{1n} \\
+		\vdots &   & \vdots \\
+		a_{m1} & \cdots & a_{mn}\\
+	}
+$$
+
+Sea $N_z$ el número de elementos no nulos de \textbf{A}. Entonces la 
+\textit{densidad} de una matriz se define como dicho número entre el total, 
+$N_z/mn$.
+
+\subsubsection{Almacenamiento por coordenadas COO}
+
+La matriz $\textbf{A} \in \mathbb{M}^{m\times n}$ puede almacenarse en tres 
+vectores AA, JR y JC; de forma que AA contiene todos los elementos no nulos 
+junto con JR y JC que almacenan los índices de la fila y columna 
+respectivamente. Este esquema se conoce como almacenamiento por coordenadas 
+(COO).
+
+Sea $S_e$ y $S_i$ el tamaño de almacenamiento de un elemento de la matriz y de 
+un índice respectivamente, entonces el espacio necesario es
+$$ S_{COO} = S_eN_z + 2S_iN_z = O(N_z)$$
+En comparación con la representación íntegra de la matriz, se conseguiría una 
+reducción del espacio si
+$$ N_z/mn < \frac{S_e}{S_e + 2S_i} $$
+
+\begin{ejemplo}
+La matriz \textbf{A} de $5\times5$ elementos, contiene 10 no nulos, de un total 
+de 25, que se almacenan en el vector AA. A cada uno le corresponde un índice en 
+JR que indica la fila, y otro en JC con la columna. El elemento 8 se encuenta en 
+AA[7]. Entonce JR[7] indica la tercera fila en la matriz, y JC[7] la tercera 
+columna.
+$$ \textbf{A} = \mat{
+	1 & 0 & 0 & 2 & 0 \\
+	3 & 4 & 0 & 5 & 0 \\
+	9 & 0 & \textbf{8} & 0 & 0 \\
+	0 & 0 & 6 & 5 & 0 \\
+	0 & 0 & 0 & 0 & 4 }
+\quad
+\begin{aligned}
+	AA = \arr{ 1 & 2 & 3 & 4 & 5 & 9 & \textbf{8} & 6 & 5 & 4} \\
+	JR = \arr{ 1 & 1 & 2 & 2 & 2 & 3 & \textbf{3} & 4 & 4 & 5} \\
+	JC = \arr{ 1 & 4 & 1 & 2 & 4 & 1 & \textbf{3} & 3 & 4 & 5}
+\end{aligned}
+$$
+\end{ejemplo}
+
+\subsubsection{Almacenamiento por filas comprimidas (CSR)}
+
+El almacenamiento por coordenadas contiene información redundante. Los elementos 
+de la misma fila repiten el mismo índice en JR. Para reducir el espacio, se 
+puede emplear sólo el índice en AA del primer elemento de cada fila.
+
+De este modo, AA almacena los valores no nulos, ordenados por filas. El vector 
+JA mantendrá las posiciones de las columnas para cada elemento de AA, y 
+finalmente, IA, el índice en AA del primer elemento de la fila. Adicionalmente 
+IA termina con un elemento extra, que indica el final de la última fila, con 
+valor $N_z + 1$.
+
+El tamaño necesario para almacenar una matriz de $m$ filas en CSR es
+$$ S_{CSR} = S_e N_z + S_i (N_z + m + 1) $$
+El espacio necesario sería menor que en COO, si $m + 1 < N_z$.
+
+\begin{ejemplo} En la misma matriz:
+
+$$ \textbf{A} = \mat{
+	1 & 0 & 0 & 2 & 0 \\
+	3 & 4 & 0 & 5 & 0 \\
+	9 & 0 & \textbf{8} & 0 & 0 \\
+	0 & 0 & 6 & 5 & 0 \\
+	0 & 0 & 0 & 0 & 4 }
+\quad
+\begin{aligned}
+	AA = \arr{ 1 & 2 & 3 & 4 & 5  & 9 & \textbf{8} & 6 & 5 & 4} \\
+	JA = \arr{ 1 & 4 & 1 & 2 & 4  & 1 & \textbf{3} & 3 & 4 & 5}\\
+	IA = \arr{ 1 & 3 & \textbf{6} & 8 & 10 & 11}
+\end{aligned}
+$$
+
+Para acceder al elemento (3, 3), primero se calcula la posición en AA del 
+elemento que comienza la tercera fila, este índice es IA[3] = 6. La tercera fila 
+se sitúa en AA desde IA[3] = 6 hasta IA$[3+1]-1$ = 7.  Para determinar la 
+columna se recorren los índices de JA desde 6 hasta 7, buscando la columna 3, 
+que se encuentra en JA[7] = 3. De modo que el elemento buscado se encuentra en 
+AA[7] = 8.
+
+\subsection{Operadores secuenciales}
+Un circuito cuántico, que contiene varios operadores que se aplican de forma 
+secuencial, es equivalente a un único operador que realiza todo el proceso. Este 
+operador $C$ sería el resultado de multiplicar las matrices que conforman las 
+operaciones en cada etapa, en el mismo orden. En el caso del algoritmo de Simon:
+%
+$$ C = (H^{\otimes n} \otimes I^{\otimes n}) \cdot U_f \cdot (H^{\otimes n} 
+\otimes I^{\otimes n})$$
+%
+Calcular el producto de las matrices es computacionalmente muy costoso, incluso 
+prohibitivo para un $n$ grande. Adicionamente, los operadores que sólo actúan 
+sobre una línea, como $(H^{\otimes n} \otimes I^{\otimes n})$, y en general 
+cualquier operador del tipo $(A \otimes I^{\otimes n})$ permiten una 
+optimización en tiempo y espacio.
+
+\subsubsection{Semi-operadores}
+Un \textit{semi-operador} es un operador $A$ que sólo actúa en la mitad superior
+de un circuito. De modo que su correspondiente operador se calcula como $D = (A 
+\otimes I^{\otimes n})$. Sea $B = I^{\otimes n}$, y tanto $A$ como $B$ sean 
+matrices de $2^n\times 2^n$, los elementos de $D = A \otimes B$ se determinan 
+como
+\begin{equation}
+\begin{split}
+	B[i,j] &= A[i_H, j_H] \cdot B[i_L, j_L]\\
+	i_H &= \floor{i/2^n} \\
+	j_H &= \floor{j/2^n} \\
+	i_L &= i \mod 2^n \\
+	j_L &= j \mod 2^n \\
+\end{split}
+\end{equation}
+Debido a que $B[i, j]$ es la identidad, cuando $i \neq j, B[i,j] = 0$. Los 
+cálculos se simplifican.
+
+El estado $\ket{\psi}$ de $2n$ qubits, si $m = 2^{2n}-1$, se puede descomponer 
+en:
+$$ \ket{\psi} = \sum_{i = 0}^{m} a_i \ket{i} $$
+Sea $J$ el conjunto de posiciones $i$ para las cuales $a_i \neq 0$, $ J = \{ i 
+\mid a_i \neq 0\}$, entonces
+$$ \ket{\psi} = \sum_{i = 0}^{m} a_i \ket{i} = \sum_{i \in J} a_i \ket{i} $$
+Además, como $\ket{i}$ es un estado básico, se puede descomponer en $\ket{i} = 
+\ket{i_H} \otimes \ket{i_L}$, con $i_H=\floor{i/2^n}$ y $i_L = (i \mod 2^n)$, 
+obteniendo
+$$ \ket{\psi} = \sum_{i \in J} a_i \ket{i_H} \otimes \ket{i_L}$$
+De modo que aplicar el operador $D$ sobre $\ket{\psi}$ es
+\begin{equation}
+\begin{split}
+D \ket{\psi} &= (A \otimes B) \ket{\psi} = (A \otimes B) \sum_{i \in J} a_i 
+\ket{i_H} \otimes \ket{i_L} \\
+	&= \sum_{i \in J} a_i (A \otimes B) (\ket{i_H} \otimes \ket{i_L})\\
+	&= \sum_{i \in J} a_i (A \ket{i_H}) \otimes (B \ket{i_L})\\
+\end{split}
+\end{equation}
+Dado que $B$ es el operador identidad, $B\ket{i_L} = \ket{i_L}$.
+$$ D \ket{\psi} = \sum_{i \in J} a_i (A \ket{i_H}) \otimes (\ket{i_L}) $$
+Pero como $\ket{i_H}$, es un estado básico, tendrá un 1 en la posición $i_H$ 
+(comenzando en 0) y el resto de amplitudes serán 0. Quedando el producto $A 
+\ket{i_H}$:
+$$
+A \mat{0 \\ \vdots \\ 1  \\ \vdots\\ 0} =
+\mat{A[0,i_H] \\ \vdots \\ A[i_H,i_H] \\ \vdots \\ A[m, i_H]}
+$$
+Es decir, el producto será un vector con la columna $i_H$ de $A$. Representando 
+dicho vector como $A[:, i_H]$,
+$$
+D \ket{\psi} = \sum_{i \in J} a_i (A[:, i_H] \otimes \ket{i_L})
+$$
+Esta operación, no necesita calcular el producto tensorial $A\otimes B$, y 
+almacenarlo en la memoria, empleando una matrix de $2^{2n} \times 2^{2n}$. Sólo 
+requiere almacenar un estado cuántico de $2^{2n}$ elementos, y iterativamente 
+calcular el sumatorio. Lo cual reduce drásticamente el espacio requerido. El 
+pseudocódigo:
+
+Comenzar con $\ket{\psi'} := \mat{0 & 0 & \ldots & 0}^T$.
+
+Para cada $i \in J$, hacer: $\ket{\psi'} := \ket{\psi'} + a_i (A[:, i_H] \otimes 
+\ket{i_L})$
+\\
+\noindent
+Finalmente se obtiene $\ket{\psi'} = (A \otimes I^{\otimes n}) \ket{\psi}$
+
+% Comentar que sólo es necesario computar H^n y U_f. Y que U_f es muy pequeño
+
+\subsection{Operadores y estados}
+
+El circuito de Simon requiere dos líneas de $n$ qubits, por lo tanto, un estado 
+requiere $N=2n$ qubits, un total de $2^{2n}$ amplitudes.
+El entorno de simulación cuenta con una memoria limitada de 512 Mb = $2^{29}$ 
+bytes.
+
+Sea $S_e = 16 = 2^4$ bytes, el tamaño de un número complejo. Un estado 
+$\ket{\psi}$, empleará $2^{2n}\cdot S_e = 2^{2n+4}$ bytes. Limitando el espacio 
+de la simulación: $2^{2n+4} \leq 2^{29}$ entonces $2n+4 \leq 29 \implies n \leq 
+25/2 = 12.5$. Sólo sería posible almacenar estados de un tamaño de hasta $n=12$.
+Al emplear las matrices huecas, el tamaño se reduce
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{*{4}{r}}
+		\toprule
+		$n$ & $\log_2 \, S(\ket{\psi_1})$ & $\log_2 \, S(\ket{\psi_3})$ & $2n+4$ \\
+		\midrule
+		2 	& 6.64	& 6.64	& 8\\
+		3 	& 8.34	& 8.60	& 10\\
+		4 	& 10.17	& 10.59	& 12\\
+		5 	& 12.09	& 12.59	& 14\\
+		6 	& 14.04	& 14.59	& 16\\
+		7 	& 16.02	& 16.59	& 18\\
+		8 	& 18.01	& 18.58	& 20\\
+		9 	& 20.01	& 20.58	& 22\\
+		10 	& 22.00	& 22.58	& 24\\
+		\bottomrule
+	\end{tabular}
+	\caption{Tamaño de los estados en escala logarítmica.}
+\end{table}
+
+Sin embargo, un operador requiere mucha más memoria. En el caso de una matriz 
+densa de $2n \times 2n$ serán necesarios $2^{2n} \cdot 2^{2n} = 2^{4n}$ números 
+complejos. De esta forma, se limita el tamaño a:
+$$2^{4n+4} \leq 2^{29} \implies n \leq 25/4 = 6.25 $$
+Un máximo de $n = 6$. Sin embargo, empleando la propiedad de que tanto lo 
+operadores como los estado contienen un gran número de elementos nulos (son 
+matrices huecas), es posible reducir en gran medida su tamaño, y ampliar $n$ 
+hasta $11$.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{*{4}{r}}
+		\toprule
+		$n$ & $\log_2 \, S(H)$ & $\log_2 \, S(U_f)$ & $4n+4$ \\
+		\midrule
+		2 	& 7.21	& 7.61	& 12\\
+		3 	& 9.10	& 9.59	& 16\\
+		4 	& 11.05	& 11.59	& 20\\
+		5 	& 13.02	& 13.59	& 24\\
+		6 	& 15.01	& 15.59	& 28\\
+		7 	& 17.01	& 17.58	& 32\\
+		8 	& 19.00	& 19.58	& 36\\
+		9 	& 21.00	& 21.58	& 40\\
+		10 	& 23.00	& 23.58	& 44\\
+		\bottomrule
+	\end{tabular}
+	\caption{Tamaño de los operadores en escala logarítmica.}
+\end{table}
+
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{*{10}{r}}
+		\toprule
+$n$ & 2	& 3	& 4	& 5	& 6	& 7	& 8	& 9	& 10 \\
+$\log_2 \, S_T$ & 9.09	& 10.99	& 12.95	& 14.93	& 16.92	& 18.91	& 20.91	& 22.91	
+& 24.91 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Tamaño de los operadores en escala logarítmica.}
+\end{table}
+
+
+\end{ejemplo}
+
+
+\end{document}
