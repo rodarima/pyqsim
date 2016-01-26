@@ -4,8 +4,13 @@ FILE=$1
 TEX=${FILE}.tex
 PDF=${FILE}.pdf
 
+FILES=$(cat "$TEX" |\
+	grep -o '\\input{.*}' |\
+	sed -e 's/\\input{\(.*\)}/\1.tex/g' |\
+	paste -sd " ")
+
 while [ 1 ]; do
-	inotifywait -e modify $TEX
+	inotifywait -e modify $TEX $FILES
 	pdflatex -interaction=nonstopmode -halt-on-error $TEX
 	if [ "$?" != "0" ]; then
 		echo -e "\a"

@@ -77,7 +77,7 @@ class QSimon(QCircuit):
 		sz['phi1'] = self.size_qobj(self.phi1)
 		sz['qstate'] = self.size_qobj(self.qstate)
 		sz['all'] = np.sum(list(sz.values()))
-		print('Updated size: {}'.format(str(sz)))
+		#print('Updated size: {}'.format(str(sz)))
 
 	def HI(self, state):
 		bits = self.bits
@@ -195,7 +195,7 @@ class QProfiler:
 		steps = len(timing)
 		title_str = ''
 		if title: title_str = '%s: ' % title
-		print("{}Mean {:.3e}, var {:.3e}, steps {}"
+		print("{}Mean {:.4e}, var {:.4e}, steps {}"
 			.format(title_str, mean,var,steps))
 
 	def time_func(self, code, setup=''):
@@ -318,6 +318,7 @@ def profile():
 def profile_mem():
 	Nmin = 2
 	Nmax = 10
+	R = 10
 
 	print("Profile of memory QSimon.init()")
 
@@ -325,18 +326,28 @@ def profile_mem():
 
 	for i in range(Nmin, Nmax+1):
 		print("N = {}".format(i))
-		N = i
-		qs = QSimon({"bits":N})
+		mean_sizes = {}
+		for r in range(R):
+			N = i
+			qs = QSimon({"bits":N})
 
-		config = qs.random_config(N)
-		#print(config)
-		st = qs.run(config)
-		sizes = qs.sz
-		sizes['N'] = N
-		mems.append(sizes)
-		#qm = QMeasure(st, np.arange(N, N*2))
-		#cp = CPostprocess(N, qm)
-		#cp.profile(10000, title='N = %d'%N)
+			config = qs.random_config(N)
+			#print(config)
+			st = qs.run(config)
+			sizes = qs.sz
+			sizes['N'] = N
+			mems.append(sizes)
+			print(config)
+			#print(sizes)
+			#qm = QMeasure(st, np.arange(N, N*2))
+			#cp = CPostprocess(N, qm)
+			#cp.profile(10000, title='N = %d'%N)
+			for k in sizes.keys():
+				if not k in mean_sizes:
+					mean_sizes[k] = sizes[k]
+				else:
+					mean_sizes[k] += sizes[k]
+		print("N = {}, mean sizes: {}".format(i, mean_sizes))
 
 	return mems
 
@@ -372,6 +383,6 @@ def main():
 	#rnd = np.random.choice(qm.vn, p=qm.vp, size=100)
 	##print(qm.collapse())
 
-m = profile_mem()
+#m = profile_mem()
 #profile()
 #main()
