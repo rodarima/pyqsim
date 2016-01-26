@@ -8,6 +8,13 @@ import sys
 import qc
 import tabulate
 
+FILE_QC0 = 'table_qc0'
+FILE_QCF = 'table_qcf'
+PATH_TEX = '../doc/%s.tex'
+PATH_CSV = '../doc/csv/%s.csv'
+
+tabulate.LATEX_ESCAPE_RULES = {}
+
 class QMemProfiler:
 	def __init__(self):
 		table_sizes = []
@@ -27,25 +34,43 @@ class QMemProfiler:
 
 	def profile_mem(self):
 		Nmin = 2
-		Nmax = 6
+		Nmax = 10
 
 		table_qc0 = []
 		table_qcf = []
-		headers_qc0 = ['N', 'log2_H', 'log2_phi1', 'log2_all_qc0', 'log2_approx_qc0']
-		headers_qcf = ['N', 'log2_U', 'log2_qstate', 'log2_all_qcf' ,'log2_approx_qcf']
+		headers_qc0 = ['n', 'N', 'log2_H', 'log2_phi1', 'log2_all_qc0', 'log2_approx_qc0']
+		headers_qcf = ['n', 'N', 'log2_H', 'log2_U', 'log2_qstate', 'log2_all_qcf' ,'log2_approx_qcf']
+		tex_headers_qc0 = [
+			'$n$',
+			'$N$',
+			'$\log_2 S(H)$',
+			'$\log_2 S(\ket{\phi_1})$',
+			'$\log_2 S_T$',
+			'$\log_2 S_T\'$'
+		]
+		tex_headers_qcf = [
+			'$n$',
+			'$N$',
+			'$\log_2 S(H)$',
+			'$\log_2 S(U)$',
+			'$\log_2 S(\ket{\phi_3})$',
+			'$\log_2 S_T$'
+			,'$\log_2 S_T\'$'
+		]
 
 		for N in range(Nmin, Nmax+1):
 			entry = {}
 			row_qc0 = []
 			row_qcf = []
 
-			#print("N = {}".format(N))
+			print("N = {}".format(N))
 			qs, size_qc0 = self.mem_qc0(N)
 			config = qs.random_config(N)
 			st, size_qcf = self.mem_qcf(qs, config)
 			# Mostrar H y phi1 en qc0
 			# U y qstate en qcf
-			entry['N']				= N
+			entry['N']				= 2*N
+			entry['n']				= N
 			entry['H']				= size_qc0['H']
 			entry['phi1']			= size_qc0['phi1']
 			entry['all_qc0']		= size_qc0['all']
@@ -78,11 +103,30 @@ class QMemProfiler:
 			table_qc0.append(row_qc0)
 			table_qcf.append(row_qcf)
 
+		self.save_tex(table_qc0, tex_headers_qc0, FILE_QC0)
+		self.save_tex(table_qcf, tex_headers_qcf, FILE_QCF)
+
+		self.save_csv(table_qc0, headers_qc0, FILE_QC0)
+		self.save_csv(table_qcf, headers_qcf, FILE_QCF)
+
+	def save_csv(self, t, h, fn):
+		str_header = ','.join(h)
+		arrt = np.asarray(t)
+
+		np.savetxt(PATH_CSV % fn, arrt, header=str_header, delimiter=",",
+			comments='')
+
+	def save_tex(self, t, h, fn):
 		float_fmt = ".2f"
 		table_fmt = 'latex_booktabs'
-		print(tabulate.tabulate(table_qc0,
-			headers_qc0, floatfmt=float_fmt, tablefmt=table_fmt))
-		print(tabulate.tabulate(table_qcf,
-			headers_qcf, floatfmt=float_fmt, tablefmt=table_fmt))
+		str_table = tabulate.tabulate(t, h, floatfmt=float_fmt,
+			tablefmt=table_fmt)
+
+		self.save_file(str_table, PATH_TEX % fn)
+
+	def save_file(self, s, fn):
+		f = open(fn, 'w')
+		f.write(s)
+		f.close()
 
 QMemProfiler()
