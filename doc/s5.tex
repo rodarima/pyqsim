@@ -75,18 +75,182 @@ Cada etapa se mide de forma independiente, permitiendo una mayor precisión en l
 medida de la complejidad.
 
 El análisis de la simulación cuántica, se divide en dos procesos. La parte 
-inicial calcula el estado intermedio $\ket{psi_1}$ que es independiente de la 
+inicial calcula el estado intermedio $\ketp 1$ que es independiente de la 
 función $f$ del problema. Permitiendo la reutilización de los cálculo previos.
 
-La parte final del análisis, toma el estado $\ket{psi_1}$ previamente calculado, 
-y continúa la simulación del circuito hasta el estado final.
+La parte final del análisis, toma el estado $\ketp 1$ previamente calculado, y 
+continúa la simulación del circuito hasta el estado final.
 
 De esta forma, al determinar cómo se comporta el circuito con diferentes 
 funciones $f$, la parte inicial no requiere ser computada en cada simulación.
 
 
-\section{Análisis del tiempo de CPU}
-\subsection{Simulación cuántica inicial}
+\section{Análisis de espacio}
+Para observar el comportamiento de un algoritmo es importante tener en cuenta 
+además del tiempo que requiere su ejecución, el espacio que emplea. El simulador 
+será analizado paso a paso mostrando como varía la memoria empleada a medida que 
+crece el tamaño de la entrada.
 
+\subsection{Simulación cuántica}
+La simulación del circuito cuántico se divide en dos etapas, la parte inicial, 
+hasta el estado $\ketp 1$ denominada $QC_0$, y la parte final, hasta el estado 
+$\ketp 3$, denominada $QC_f$. El esquema del circuito cuántico muestra el orden 
+de los operadores, y la posición de los estados.
+%
+\input{circuit-simon}
+%
+Esquema de la simulación cuántica
+%
+\begin{center}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=2em, text centered, minimum 
+height=1cm]
+\tikzstyle{line} = [draw, thick, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 2.5cm, auto]
+	% Place nodes
+	\node[block] (qc0) {$QC_0$};
+	\node[block, right of=qc0] (qcf) {$QC_f$};
+	\node[block, right of=qcf] (measure) {$M$};
+	\node[block, right of=measure] (classic) {$CC$};
+	% Draw edges
+	\draw [line] (qc0.west)+(-1cm,0) -- (qc0.west);
+	\draw [line] (qc0) -> (qcf);
+	\draw [line] (qcf) -- (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic.east) -- +(+1cm,0);
+\end{tikzpicture}
+\end{center}
+%
+\subsubsection{Análisis de la primera parte $QC_0$}
+En $QC_0$, será necesario almacenar en la memoria el operador de Hadamard 
+$H^{\otimes n}$, además de un estado cuántico $\ket{\psi}$ de $N = 2n$ qubits.  
+Al analizar el comportamiento del circuito, se obtiene la tabla~\ref{tab:qc0}.
+%
+\begin{table}[!htb]
+\centering
+\input{table_qc0}
+\caption{Espacio empleado por $QC_0$ en escala logarítmica (bytes).}
+\label{tab:qc0}
+\end{table}
+%
+Sea $S(x)$ el tamaño del objeto $x$ en bytes, y $S_T$ el tamaño total requerido 
+por la simulación. Entonces el espacio $S_T'$ para $QC_0$ será una aproximación 
+al espacio real $S_T$ determinado como
+\begin{equation*}
+\begin{split}
+	&\log_2 S(H) \approx N + 3 \\
+	&\log_2 S(\ketp 1)  \approx N + 2 \\
+	&\log_2 S_T \approx N+\log_2 (2^2+2^3) = N+3.58 = \log_2 S_T' \\
+	& S_T' = 2^{N} \log_2 12
+\end{split}
+\end{equation*}
+Se observa como el espacio requerido aumenta de forma exponencial a medida que 
+aumenta el número de qubits del sistema y se encuentra en torno a $O(2^n)$.
+
+
+
+\subsubsection{Análisis de la parte final $QC_f$}
+En la etapa final de la simulación del circuito, se sobreescribe $\ketp 1$ con 
+el estado final $\ketp 3$, de modo que sólo será necesario un espacio 
+equivalente al del más grande.
+Además del estado, se necesita el operador $U_f$, que se calcula a partir de la 
+función dada $f$. Los tamaños se muestran en la tabla \ref{tab:qcf}.
+%
+\begin{table}[!htb]
+\centering
+\input{table_qcf}
+\caption{Espacio empleado por $QC_f$ en escala logarítmica (bytes).}
+\label{tab:qcf}
+\end{table}
+
+El tamaño requerido en esta etapa de la simulación será $S_T$, aproximado a 
+$S_T'$. Además el operador $H$ se reutiliza de la etapa inicial, de modo que ese 
+espacio debe tenerse en cuenta. El tamaño del estado $\ketp 3$ es siempre un 
+poco más grande que $\ketp 1$. Dado que $\ketp 1$ se reemplazará por $\ketp 3$, 
+será necesario el tamaño del más grande, siendo este $S(\ketp 3)$. El tamaño 
+total $S_T$ será
+$$ S_T = S(H) + S(U) + S(\ketp 3)$$
+Que de forma aproximada $S_T'$, se determina como
+%
+\begin{equation*}
+\begin{split}
+&\log_2 S(H) \approx N + \log_2 8 = N+3 \\
+&\log_2 S(U) \approx N + \log_2 12 \approx N+3.58\\
+&\log_2 S(\ketp 3) \approx N + \log_2 6 \approx N+2.58 \\
+&\log_2 S_T \approx \log_2 S_T' = N+\log_2 (8 + 12 + 6) \approx N+4.70 \\
+&S_T' = 2^N \log_226
+\end{split}
+\end{equation*}
+
+\subsubsection{Limitaciones de la simulación}
+
+El espacio de simulación tiene una memoria finita, fijada en 512MB, un total de 
+$2^{29}$ bytes. En la figura~\ref{fig:espacio-qc} se observa como crece el 
+espacio necesario a medida que aumentan los qubits.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+	name=qc0,
+	width=0.9\linewidth,
+	height=8cm,
+	no marks,
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(1.0,0.0)},anchor=south east},
+	xlabel={Número de qubits $N$},
+	ylabel={Espacio ocupado $\log_2 S$},
+]
+\addplot [red] coordinates {(0,29) (20.5,29)};
+\addplot [blue] table [x=N, y=log2_all_qcf, col sep=comma] {csv/table_qcf.csv};
+\addplot [black] table [x=N, y=log2_all_qc0, col sep=comma] {csv/table_qc0.csv};
+\addplot [blue, dashed] table [x=N, y=log2_approx_qcf, col sep=comma] 
+{csv/table_qcf.csv};
+\addplot [black, dashed] table [x=N, y=log2_approx_qc0, col sep=comma] 
+{csv/table_qc0.csv};
+\addplot[purple, dashed, domain=4:6.25]{(4*x+4)};
+\legend{
+	$S_{MAX}$,
+	$S_T (QC_0)$,
+	$S_T (QC_f)$,
+	$S_T' (QC_0)$,
+	$S_T' (QC_f)$,
+	$S_D$};
+\end{axis}
+\end{tikzpicture}
+\caption{Espacio necesario para la simulación. Se muestra en línea continua el 
+espacio real, y en discontinua el aproximado. El espacio requerido sin emplear 
+matrices huecas, usando matrices densas se muestra como $S_D$.}
+\label{fig:espacio-qc}
+\end{figure}
+%
+Dada la complejidad de carácter exponencial, la cantidad de qubits simulados por 
+el circuito se ve severamente limitada por $S_T \leq 2^{29}$. Que de forma 
+aproximada, se obtiene
+\begin{equation*}
+\begin{split}
+&S_T' = 2^N \log_226 \leq 2^{29} \\
+&N + \log_2 26 \leq 29 \\
+&N \leq 29 - \log_2 26 \approx 24.30 \\
+&N \leq 24 \\
+\end{split}
+\end{equation*}
+Por lo tanto, sólo es posible simular cicuitos de hasta un máximo de 24 qubits, 
+en el entorno de simulación actual. Dado que el problema requiere dos líneas de 
+$n$ bits, son necesarios $N = 2n$ qubits. Obteniendo la limitación $n \leq 12$.
+
+
+\subsection{Medición y computación clásica}
+% El tamaño necesario para el resto de etapas es insignificante
+Una vez obtenido el estado $\ketp 3$, tras la costosa simulación, el resto de 
+componentes del simulador apenas requieren espacio. Partiendo de que sólo es 
+posible simular circuitos de hasta $n = 12$.
 
 \end{document}
