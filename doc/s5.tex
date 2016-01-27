@@ -1,28 +1,28 @@
 \input{preamble}
 
-\setcounter{section}{4}
+\setcounter{part}{4}
 \usetikzlibrary{shapes,arrows,chains}
 \usetikzlibrary{decorations.markings}
 
 \begin{document}
 
-\section{Implementación}
-La simulación se realizará en el lenguaje de programación \texttt{python}, 
-empleando paquetes externos que aportarán las partes comunes del simulador. De 
-esta forma se realiza una reutilización del software ya existente.
+%\section{Implementación}
+%La simulación se realizará en el lenguaje de programación \texttt{python}, 
+%empleando paquetes externos que aportarán las partes comunes del simulador. De 
+%esta forma se realiza una reutilización del software ya existente.
+%
+%Para los cálculos numéricos se emplea \texttt{numpy} y \texttt{scipy}.
+%
+%\subsection{Estructuras de datos}
+%El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
+%los operadores. Esta representación, se realiza mediante matrices huecas. La 
+%clase \texttt{qutip.Qobj} permite emplear de forma implícita las matrices huecas 
+%de \texttt{scipy.sparse}.
+%
+%De esta forma, un estado $\ket{\phi_0} = \ket{000} $
 
-Para los cálculos numéricos se emplea \texttt{numpy} y \texttt{scipy}.
 
-\subsection{Estructuras de datos}
-El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
-los operadores. Esta representación, se realiza mediante matrices huecas. La 
-clase \texttt{qutip.Qobj} permite emplear de forma implícita las matrices huecas 
-de \texttt{scipy.sparse}.
-
-De esta forma, un estado $\ket{\phi_0} = \ket{000} $
-
-
-\section{Análisis de la simulación}
+\part{Análisis de la simulación}
 % Comentar que es lo que se va a medir. Como se realiza el proceso de medición, 
 % y finalmente cuales son los resultados.
 
@@ -31,65 +31,123 @@ parte la \textit{eficiencia} del simulador, midiendo el tiempo empleado y la
 memoria. Además también se observa el número de ejecuciones del algoritmo 
 cuántico, para calcular su \textit{complejidad}.
 
+%%
+%\begin{center}
+%% Define block styles
+%\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+%inner sep=0pt]
+%\tikzstyle{block} = [rectangle, draw, text width=5em, text centered, minimum 
+%height=2cm]
+%\tikzstyle{line} = [draw, thick, decoration={markings,mark=at position 
+%1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%%
+%\begin{tikzpicture}[node distance = 3cm, auto]
+%	% Place nodes
+%	\node[block] (qc0) {Simulación cuántica inicial};
+%	\node[block, right of=qc0] (qcf) {Finalizar simulación cuántica};
+%	\node[block, right of=qcf] (measure) {Medición};
+%	\node[block, right of=measure] (classic) {Procesado clásico};
+%	% Draw edges
+%	\draw [line] (qc0.west)+(-1cm,0) -- (qc0.west);
+%	\draw [line] (qc0) -> (qcf);
+%	\draw [line] (qcf) -- (measure);
+%	\draw [line] (measure) -- (classic);
+%	\draw [line] (qc0.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_1$} 
+%(qc0)+(-2em,-1em);
+%	\draw [line] (qcf.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+%(qcf)+(-2em,-1em);
+%	\draw [line] (measure.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+%(measure)+(-2em,-1em);
+%	\draw [line] (classic.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
+%(classic)+(-2em,-1em);
+%	\draw [line] (classic.east) -- +(+1cm,0);
+%
+%\end{tikzpicture}
+%\end{center}
+%%
+
+\section{Análisis del tiempo de CPU}
+\textsl{``En casi todo cómputo son posibles una gran variedad de configuraciones 
+para la sucesión de un proceso, y varias consideraciones pueden influir en la 
+selección de estas según el propósito de un motor de cálculos. Una objetivo 
+esencial es escoger la configuración que tienda a minimizar el tiempo necesario 
+para completar el cálculo.''}---Augusta Ada Lovelace.
+\footnote{Firmó las notas sobre la máquina analítica de Babbage en 1843 como 
+A.A.L. para evitar la censura por ser una mujer. Fue la primera persona de la 
+historia que creó un programa para ser ejecutado en una máquina (pese a que aún 
+no había sido construida).}
+%Augusta Ada Byron, Condesa de Lovelace.
+\newline
+
+La simulación debe ser realizada teniendo en cuenta el tiempo de procesamiento 
+requerido por la CPU. Es importante investigar como reducirlo para conseguir que 
+la simulación sea eficiente.
+
+Para calcular con precisión los datos medidos sobre cada simulación, se realizan 
+varias ejecuciones, y posteriormente se analiza la media y varianza de las 
+medidas obtenidas. El análisis divide la simulación en cuatro etapas. Las dos 
+primeras, $QC_0$ y $QC_f$, realizan la simulación del circuito cuántico.  
+Posteriermente se analiza en proceso de medición $M$ que provee un nexo entre la 
+parte cuántica y la etapa final de procesado clásico $CC$.
+
+Cada etapa se mide repetidamente y de forma independiente, permitiendo una mayor 
+precisión en la medida de la complejidad. El esquema se muestra a continuación.
 %
 \begin{center}
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
 inner sep=0pt]
-\tikzstyle{block} = [rectangle, draw, text width=5em, text centered, minimum 
-height=2cm]
+\tikzstyle{block} = [rectangle, draw, text width=2em, text centered, minimum 
+height=1cm]
 \tikzstyle{line} = [draw, thick, decoration={markings,mark=at position 
 1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
 %
-\begin{tikzpicture}[node distance = 3cm, auto]
+\begin{tikzpicture}[node distance = 2.5cm, auto]
 	% Place nodes
-	\node[block] (qc0) {Simulación cuántica inicial};
-	\node[block, right of=qc0] (qcf) {Finalizar simulación cuántica};
-	\node[block, right of=qcf] (measure) {Medición};
-	\node[block, right of=measure] (classic) {Procesado clásico};
+	\node[block] (qc0) {$QC_0$};
+	\node[block, right of=qc0] (qcf) {$QC_f$};
+	\node[block, right of=qcf] (measure) {$M$};
+	\node[block, right of=measure] (classic) {$CC$};
 	% Draw edges
 	\draw [line] (qc0.west)+(-1cm,0) -- (qc0.west);
 	\draw [line] (qc0) -> (qcf);
 	\draw [line] (qcf) -- (measure);
 	\draw [line] (measure) -- (classic);
-	\draw [line] (qc0.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_1$} 
-(qc0)+(-2em,-1em);
-	\draw [line] (qcf.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
-(qcf)+(-2em,-1em);
-	\draw [line] (measure.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
-(measure)+(-2em,-1em);
-	\draw [line] (classic.-30) -| +(+1em,-1cm) -| node [near start, above] {$M_2$} 
-(classic)+(-2em,-1em);
+	\draw [line] (qc0.-30) -| +(+1em,-1cm) -| node [near start, above] {} 
+	(qc0)+(-2em,-1em);
+	\draw [line] (qcf.-30) -| +(+1em,-1cm) -| node [near start, above] {} 
+	(qcf)+(-2em,-1em);
+	\draw [line] (measure.-30) -| +(+1em,-1cm) -| node [near start, above] 
+	{} (measure)+(-2em,-1em);
+	\draw [line] (classic.-30) -| +(+1em,-1cm) -| node [near start, above] 
+	{} (classic)+(-2em,-1em);
 	\draw [line] (classic.east) -- +(+1cm,0);
 
 \end{tikzpicture}
 \end{center}
 %
 
-\subsection{Detalles del análisis}
-Para calcular con precisión los datos medidos sobre cada simulación, se realizan 
-varias ejecuciones, y posteriormente se analiza la media y varianza de las 
-medidas obtenidas.
-
-Cada etapa se mide de forma independiente, permitiendo una mayor precisión en la 
-medida de la complejidad.
-
+\subsection{Simulación cuántica}
 El análisis de la simulación cuántica, se divide en dos procesos. La parte 
 inicial calcula el estado intermedio $\ketp 1$ que es independiente de la 
 función $f$ del problema. Permitiendo la reutilización de los cálculo previos.
 
 La parte final del análisis, toma el estado $\ketp 1$ previamente calculado, y 
-continúa la simulación del circuito hasta el estado final.
+continúa la simulación del circuito hasta el estado final $\ketp 3$. Para medir 
+el tiempo que toma una etapa se determinará como $T_\mu(x)$ el tiempo medio de 
+$R$ ejecuciones, y $T_{\sigma^2}(x)$ la varianza del proceso $x$. Por lo general 
+se realizarán $R = 100$ repeticiones, excepto si el proceso se demora demasiado, 
+entonces se reducirán las iteraciones para mantener un tiempo de simulación 
+razonable.
 
-De esta forma, al determinar cómo se comporta el circuito con diferentes 
-funciones $f$, la parte inicial no requiere ser computada en cada simulación.
+\subsubsection{Análisis de tiempo en $QC_0$}
 
 
 \section{Análisis de espacio}
 Para observar el comportamiento de un algoritmo es importante tener en cuenta 
 además del tiempo que requiere su ejecución, el espacio que emplea. El simulador 
 será analizado paso a paso mostrando como varía la memoria empleada a medida que 
-crece el tamaño de la entrada.
+crece el número de qubits del circuito.
 
 \subsection{Simulación cuántica}
 La simulación del circuito cuántico se divide en dos etapas, la parte inicial, 
@@ -99,7 +157,7 @@ de los operadores, y la posición de los estados.
 %
 \input{circuit-simon}
 %
-Esquema de la simulación cuántica
+Esquema de análisis de memoria de la simulación completa.
 %
 \begin{center}
 % Define block styles
@@ -126,6 +184,8 @@ height=1cm]
 \end{center}
 %
 \subsubsection{Análisis de la primera parte $QC_0$}
+% TODO mencionar la optimización de semi-operador.
+
 En $QC_0$, será necesario almacenar en la memoria el operador de Hadamard 
 $H^{\otimes n}$, además de un estado cuántico $\ket{\psi}$ de $N = 2n$ qubits.  
 Al analizar el comportamiento del circuito, se obtiene la tabla~\ref{tab:qc0}.
@@ -140,6 +200,8 @@ Al analizar el comportamiento del circuito, se obtiene la tabla~\ref{tab:qc0}.
 Sea $S(x)$ el tamaño del objeto $x$ en bytes, y $S_T$ el tamaño total requerido 
 por la simulación. Entonces el espacio $S_T'$ para $QC_0$ será una aproximación 
 al espacio real $S_T$ determinado como
+$$ S_T = S(H) + S(\ketp 1) $$
+Y aproximado mediante
 \begin{equation*}
 \begin{split}
 	&\log_2 S(H) \approx N + 3 \\
@@ -149,7 +211,7 @@ al espacio real $S_T$ determinado como
 \end{split}
 \end{equation*}
 Se observa como el espacio requerido aumenta de forma exponencial a medida que 
-aumenta el número de qubits del sistema y se encuentra en torno a $O(2^n)$.
+aumenta el número de qubits del sistema y se encuentra en torno a $O(2^N)$.
 
 
 
@@ -185,13 +247,18 @@ Que de forma aproximada $S_T'$, se determina como
 &S_T' = 2^N \log_226
 \end{split}
 \end{equation*}
+%
+Mostrando de nuevo el carácter exponencial del espacio requerido, en torno a 
+$O(2^N)$. Dado que el espacio empleado para $QC_f$ es superior a $QC_0$, se 
+usará $S_T' = 2^N \log_226$ como aproximación a la memoria requerida por la 
+simulación de todo el circuito.
 
 \subsubsection{Limitaciones de la simulación}
 
 El espacio de simulación tiene una memoria finita, fijada en 512MB, un total de 
 $2^{29}$ bytes. En la figura~\ref{fig:espacio-qc} se observa como crece el 
 espacio necesario a medida que aumentan los qubits.
-
+%
 \begin{figure}[!htb]
 \centering
 \begin{tikzpicture}
@@ -227,7 +294,8 @@ espacio necesario a medida que aumentan los qubits.
 \end{tikzpicture}
 \caption{Espacio necesario para la simulación. Se muestra en línea continua el 
 espacio real, y en discontinua el aproximado. El espacio requerido sin emplear 
-matrices huecas, usando matrices densas se muestra como $S_D$.}
+matrices huecas, usando matrices densas se muestra como $S_D$. La memoria 
+disponible para la simulación es $S_{MAX} = 2^{29}$.}
 \label{fig:espacio-qc}
 \end{figure}
 %
@@ -250,7 +318,35 @@ $n$ bits, son necesarios $N = 2n$ qubits. Obteniendo la limitación $n \leq 12$.
 \subsection{Medición y computación clásica}
 % El tamaño necesario para el resto de etapas es insignificante
 Una vez obtenido el estado $\ketp 3$, tras la costosa simulación, el resto de 
-componentes del simulador apenas requieren espacio. Partiendo de que sólo es 
-posible simular circuitos de hasta $n = 12$.
+componentes del simulador apenas requieren memoria.
+El proceso de medición, denominado $M$, toma el vector $\ketp 3$ y calcula la 
+distribución de probabilidad resultante de medir la línea superior. Esta 
+distribución tiene $2^n$ posibles resultados, que se almacenan en un vector de 
+probabilidades $v_p$ junto con otro vector del resultado correspondiente $v_n$.  
+Con un tamaño
+$$ S(v_p) = S(v_n) = 2^{n} \cdot 4 = 2^{N/2} \cdot 4 $$
+Obteniéndose un espacio requerido para la medición
+$$ S_T(M) = S(v_p) + S(v_n) = 2^{N/2} \cdot 8 $$
+Debido a que tras el proceso de simulación, al finalizar la etapa $QC_f$, ya no 
+es necesario mantener los operadores $U_f$ y $H$ almacenados, se libera un 
+espacio
+$$ S(U_f) + S(H) = 2^N \log_2 20 \approx 2^N \cdot 4.32$$
+Más que suficiente para los vectores $v_p$ y $v_n$ con $N \geq 2$.
+
+El proceso de cómputo clásico posterior, denotado $CC$, requiere que $M$ 
+mantenga las distribuciones de probabilidad en memoria. Además, calcula para 
+cada medición, el conjunto de combinaciones lineales de vectores acumulados.  
+Como se requieren $n-1$ vectores, será necesario un espacio para los vectores 
+acumulados $v_a$ dado por
+$$ S_T(CC) = S(v_a) = (2^{n-1} - 1) \cdot 4 = 2^{N/2} \cdot 2 - 4$$
+Conjuntamente con el requerido por $M$
+$$ S_T(M) + S_T(CC) = 2^{N/2} \cdot 10 - 4 $$
+Que continúa siendo inferior al liberado por los operadores tras terminar $QC_f$ 
+para $N \geq 2$. Por tanto, la etapa final de la simulación cuántica $QC_f$ es 
+el cuello de botella que limita el espacio que empleará toda la simulación.
+
+%Partiendo de que sólo es posible simular circuitos de hasta $n = 12$.
+
+
 
 \end{document}

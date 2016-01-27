@@ -144,6 +144,7 @@ class QSimon(QCircuit):
 class QMeasure:
 	def __init__(self, qst, lines):
 		self.qst = qst
+		self.sizes = {}
 		self.prepare(qst, lines)
 
 	def prepare(self, state, lines):
@@ -162,9 +163,15 @@ class QMeasure:
 
 		self.vp = vp[vp!=0]
 		self.vn = np.arange(len(vp))[vp!=0]
+		self.update_size()
 
 	def collapse(self):
 		return int(np.random.choice(self.vn, p=self.vp))
+
+	def update_size(self):
+		self.sizes['vp'] = self.vp.nbytes
+		self.sizes['vn'] = self.vn.nbytes
+		#print(self.sizes)
 
 class QProfiler:
 	def __init__(self, steps=100, timeout=60*5):
@@ -365,14 +372,14 @@ def main():
 	#cp.run()
 
 	#N = 9
-	for N in range(2, 11):
+	for N in range(2, 8):
 		qs = QSimon({"bits":N})
 		config = qs.random_config(N)
 		#print(config)
 		st = qs.run(config)
 		qm = QMeasure(st, np.arange(N, N*2))
-		cp = CPostprocess(N, qm)
-		cp.profile(10000, title='N = %d'%N)
+		#cp = CPostprocess(N, qm)
+		#cp.profile(10000, title='N = %d'%N)
 
 	#st = qs.run({'f':np.array([1, 0, 1, 0])})
 	##config = qs.random_config(N)
