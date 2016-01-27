@@ -8,8 +8,7 @@ import sys
 from qc import *
 import tabulate
 
-FILE_QC0 = 'cpu_qc0'
-FILE_QCF = 'cpu_qcf'
+FILE_CPU = 'table_cpu'
 PATH_TEX = '../doc/%s.tex'
 PATH_CSV = '../doc/csv/%s.csv'
 
@@ -55,76 +54,116 @@ class QProfiler:
 		toc = time.clock()
 		return toc-tic
 
-def tic(d):
-	d['tic'] = time.clock()
+class QProfilerCPU:
+	def __init__(self):
+		self.profile_cpu()
 
-def toc(d, e):
-	d[e] = time.clock() - d['tic']
-	d['tic'] = time.clock()
+	def tic(self, d):
+		d['tic'] = time.clock()
+
+	def toc(self, d, e):
+		d[e] = time.clock() - d['tic']
+		d['tic'] = time.clock()
 
 
-def profile_cpu():
-	Nmin = 2
-	Nmax = 6
-	Tmax = 60 #seconds
-	Rmax = 10
-	d = {}
-	s = {}
-	m = {}
-	m2 = {}
-	v = {}
+	def profile_cpu(self):
+		Nmin = 2
+		Nmax = 10
+		Tmax = 60 #seconds
+		Rmax = 100
+		d = {}
+		s = {}
+		m = {}
+		m2 = {}
+		v = {}
 
-	measures = ['qc0', 'qcf', 'm', 'cc', 'all']
-	headers = ['N'] + measures
+		measures = ['qc0', 'qcf', 'm', 'cc', 'all']
 
-	table = []
-	for N in range(Nmin, Nmax+1):
-		row = [N]
-		for k in measures:
-			s[k] = np.zeros(Rmax)
+		table = []
+		for n in range(Nmin, Nmax+1):
+			timming = time.clock()
+			print(n)
+			N = 2*n
+			row = [n, N]
+			for k in measures:
+				s[k] = np.zeros(Rmax)
 
-		for R in range(Rmax):
-			config={"bits":N}
+			for R in range(Rmax):
+				config={"bits":n}
 
-			tic(d)
-			qs = QSimon(config)
-			toc(d, measures[0])
-			func = qs.random_config(N)
-			st = qs.run(func)
-			toc(d, measures[1])
-			qm = QMeasure(st, np.arange(N, N*2))
-			toc(d, measures[2])
-			cp = CPostprocess(N, qm)
-			cp.run()
-			toc(d, measures[3])
+				self.tic(d)
+				qs = QSimon(config)
+				self.toc(d, measures[0])
+				func = qs.random_config(n)
+				st = qs.run(func)
+				self.toc(d, measures[1])
+				qm = QMeasure(st, np.arange(n, n*2))
+				self.toc(d, measures[2])
+				cp = CPostprocess(n, qm)
+				cp.run()
+				self.toc(d, measures[3])
 
+				
+				d['all'] = d['qc0'] + d['qcf'] + d['m'] + d['cc']
+
+				for k in measures:
+					s[k][R] = d[k]
+
+				s['R'] = R+1
+				if(timming + 60*5 < time.clock()): break
+
+				#print(d)
 			
-			d['all'] = d['qc0'] + d['qcf'] + d['m'] + d['cc']
+			row.append(s['R'])
 
 			for k in measures:
-				s[k][R] = d[k]
+				array = s[k][0:R-1]
+				m[k] = np.mean(array)
+				m2[k] = np.log2(1+np.mean(array))/(2**N)
+				v[k] = np.var(array)
 
-			s['R'] = R
+			for h in measures:
+				row.append(m[h])
+				row.append(v[h])
 
-			#print(d)
+			headers = ['n', 'N', 'R']
+			for h in measures:
+				headers.append(h + '-mean')
+				headers.append(h + '-var')
 
-		for k in measures:
-			m[k] = np.mean(s[k])
-			m2[k] = np.log2(1+np.mean(s[k]))/(2**N)
-			v[k] = np.var(s[k])
+			#print(m)
+			#print(m2['all'])
+		
+			table.append(row)
 
-		for h in measures:
-			row.append(m[h])
+		float_fmt = ".3e"
+		table_fmt = 'simple'
+		print(tabulate.tabulate(table, headers, floatfmt=float_fmt,
+			tablefmt=table_fmt))
 
-		#print(m)
-		#print(m2['all'])
-	
-		table.append(row)
+		#print(table)
+		self.save_csv(table, headers, FILE_CPU)
 
-	float_fmt = ".3e"
-	table_fmt = 'simple'
-	print(tabulate.tabulate(table, headers, floatfmt=float_fmt,
-		tablefmt=table_fmt))
+	def save_csv(self, t, h, fn):
+		str_header = ','.join(h)
+		arrt = np.asarray(t)
+
+		np.savetxt(PATH_CSV % fn, arrt, header=str_header, delimiter=",",
+			comments='')
+
+	def save_tex(self, t, h, fn):
+		float_fmt = ".2f"
+		table_fmt = 'latex_booktabs'
+		str_table = tabulate.tabulate(t, h, floatfmt=float_fmt,
+			tablefmt=table_fmt)
+
+		self.save_file(str_table, PATH_TEX % fn)
+
+	def save_file(self, s, fn):
+		f = open(fn, 'w')
+		f.write(s)
+		f.close()
+
 
 def profile():
 	Nmin = 2
@@ -164,4 +203,4 @@ def profile():
 	for i in range(Nmin, 60):
 		qp.start('np.random.choice(2**(%d-1))'%i, '', title='N = %d'%i)
 
-profile_cpu()
+QProfilerCPU()

@@ -135,13 +135,132 @@ función $f$ del problema. Permitiendo la reutilización de los cálculo previos
 La parte final del análisis, toma el estado $\ketp 1$ previamente calculado, y 
 continúa la simulación del circuito hasta el estado final $\ketp 3$. Para medir 
 el tiempo que toma una etapa se determinará como $T_\mu(x)$ el tiempo medio de 
-$R$ ejecuciones, y $T_{\sigma^2}(x)$ la varianza del proceso $x$. Por lo general 
-se realizarán $R = 100$ repeticiones, excepto si el proceso se demora demasiado, 
+$r$ ejecuciones, y $T_{\sigma^2}(x)$ la varianza del proceso $x$. Por lo general 
+se realizarán $r = 100$ repeticiones, excepto si el proceso se demora demasiado, 
 entonces se reducirán las iteraciones para mantener un tiempo de simulación 
 razonable.
 
-\subsubsection{Análisis de tiempo en $QC_0$}
+\begin{table}[!htb]
+\centering
+\pgfplotstabletypeset[
+	col sep=comma,
+	columns={n, N, R, qc0-mean, qc0-var,qcf-mean, qcf-var},
+	columns/n/.style={column name=$n$, column type={r}},
+	columns/N/.style={column name=$N$, column type={r}},
+	columns/R/.style={column name=$r$, column type={r}},
+	columns/qc0-mean/.style={
+		column name=$T_\mu(QC_0)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/qc0-var/.style={
+		column name=$T_{\sigma^2}(QC_0)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/qcf-mean/.style={
+		column name=$T_\mu(QC_f)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/qcf-var/.style={
+		column name=$T_{\sigma^2}(QC_f)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	every head row/.style={before row=\toprule,after row=\midrule},
+	every last row/.style={after row=\bottomrule},
+]{csv/table_cpu.csv}
+\caption{Tiempo empleado por $QC_0$ y $QC_f$ en segundos.}
+\label{tab:cpu-qc}
+\end{table}
 
+Se observa en la tabla~\ref{tab:cpu-qc} como se incrementa el tiempo a medida 
+que crece en número de qubits. La parte final $QC_f$ requiere un orden de 
+magnitud superior que $QC_0$. Ambas requieren un tiempo superior a $O(2^N)$.
+
+\subsection{Tiempo empleado en $M$ y $CC$}
+Tras calcular el estado final del circuito, se analiza el proceso de medición 
+$M$. Debe calcularse la distribución de probabilidad que asocia a cada posible 
+valor tras medir una línea, la probabilidad de que ocurra. Dado que cada línea 
+tiene $n$ qubits, serán necesarias $O(2^n)$ operaciones. El proceso de cálculo 
+clásico, resuelve el sistema de ecuaciones, una vez se han obtenido $n-1$ 
+vectores.
+El tiempo obtenido en estas dos últimas etapas, pese a ser exponencial, es mucho 
+menor que en la simulación del circuito cuántico, como se observa en la 
+tabla~\ref{tab:cpu-m-cc}.
+
+\begin{table}[!htb]
+\centering
+\pgfplotstabletypeset[
+	col sep=comma,
+	columns={n, N, R,m-mean, m-var, cc-mean, cc-var},
+	columns/n/.style={column name=$n$, column type={r}},
+	columns/N/.style={column name=$N$, column type={r}},
+	columns/R/.style={column name=$r$, column type={r}},
+	columns/m-mean/.style={
+		column name=$T_\mu(M)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/m-var/.style={
+		column name=$T_{\sigma^2}(M)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/cc-mean/.style={
+		column name=$T_\mu(CC)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	columns/cc-var/.style={
+		column name=$T_{\sigma^2}(CC)$,
+		sci,sci zerofill,precision=2,dec sep align
+	},
+	every head row/.style={before row=\toprule,after row=\midrule},
+	every last row/.style={after row=\bottomrule},
+]{csv/table_cpu.csv}
+\caption{Tiempo empleado por $M$ y $CC$ en segundos.}
+\label{tab:cpu-m-cc}
+\end{table}
+
+\subsection{Tiempo total de la simulación}
+Debido al carácter exponencial que presenta la simulación, es conveniente 
+emplear una representación con escala logarítmica. En la 
+figura~\ref{fig:tiempo-qc} se observa como crecen los tiempos de ejecución con 
+el número de qubits. Para $N = 20$ es necesario un tiempo de simulación 
+aproximado de un minuto. La simulación, pese a ser extremadamente costosa, se 
+puede esbozar para $N \leq 20$.
+
+%
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+	name=cpu,
+	width=0.9\linewidth,
+	height=8cm,
+%	no marks,
+	mark options={mark size=1},
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(1.0,0.0)},anchor=south west},
+	xlabel={Número de qubits $N$},
+	ylabel={Tiempo empleado (segundos)},
+]
+\addplot table [x=N, y=qc0-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=qcf-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=m-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=cc-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot [dashed] table [x=N, y=all-mean, col sep=comma] {csv/table_cpu.csv};
+\legend{
+	$T_\mu(QC_0)$,
+	$T_\mu(QC_f)$,
+	$T_\mu(M)$,
+	$T_\mu(CC)$,
+	$T_\mu(SIM)$
+};
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Tiempo de simulación en escala logarítmica.}
+\label{fig:tiempo-qc}
+\end{figure}
+%
 
 \section{Análisis de espacio}
 Para observar el comportamiento de un algoritmo es importante tener en cuenta 
@@ -266,7 +385,8 @@ espacio necesario a medida que aumentan los qubits.
 	name=qc0,
 	width=0.9\linewidth,
 	height=8cm,
-	no marks,
+%	no marks,
+	mark options={mark size=1},
 	thick,
 	grid=both,
 	xtick={4,...,20},
@@ -276,13 +396,15 @@ espacio necesario a medida que aumentan los qubits.
 	ylabel={Espacio ocupado $\log_2 S$},
 ]
 \addplot [red] coordinates {(0,29) (20.5,29)};
-\addplot [blue] table [x=N, y=log2_all_qcf, col sep=comma] {csv/table_qcf.csv};
-\addplot [black] table [x=N, y=log2_all_qc0, col sep=comma] {csv/table_qc0.csv};
+\addplot [blue,mark=*] table [x=N, y=log2_all_qcf, col sep=comma] 
+{csv/table_qcf.csv};
+\addplot [black,mark=*] table [x=N, y=log2_all_qc0, col sep=comma] 
+{csv/table_qc0.csv};
 \addplot [blue, dashed] table [x=N, y=log2_approx_qcf, col sep=comma] 
 {csv/table_qcf.csv};
 \addplot [black, dashed] table [x=N, y=log2_approx_qc0, col sep=comma] 
 {csv/table_qc0.csv};
-\addplot[purple, dashed, domain=4:6.25]{(4*x+4)};
+\addplot [purple, dashed, domain=4:6.25]{(4*x+4)};
 \legend{
 	$S_{MAX}$,
 	$S_T (QC_0)$,
@@ -347,6 +469,116 @@ el cuello de botella que limita el espacio que empleará toda la simulación.
 
 %Partiendo de que sólo es posible simular circuitos de hasta $n = 12$.
 
+\section{Complejidad del circuito cuántico}
+Tras analizar la eficiencia midiendo el tiempo y la memoria de la simulación, el 
+último paso consiste en examinar la complejidad del circuito cuántico. Esta 
+complejidad debe ser la observada en un ordenador cuántico real, y debe 
+coincidir también con los cálculos teóricos.
 
+El escenario de análisis consistirá en una serie de simulaciones completas, 
+observando el número de ejecuciones necesarias del circuito cuántico para 
+completar el problema.
 
+Para evitar la costosa simulación sucesiva de la parte cuántica, se empleará el 
+diseño optimizado que permite reutilizar los cálculos, almacenando el estado 
+final. De esta forma se consigue que la simulación cuántica sólo sea necesaria 
+realizarla una única vez. El esquema de la simulación se presenta a 
+continuación.
+
+\begin{center}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=2em, text centered, minimum 
+height=1cm]
+\tikzstyle{line} = [draw, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 2.5cm, auto, thick]
+	% Place nodes
+	\node[block] (quantum) {$QC$};
+	\node[block, right of=quantum] (measure) {$M$};
+	\node[block, right of=measure] (classic) {$CC$};
+	\node[decision, right of=classic] (end) {Fin?};
+	% Draw edges
+	\draw [line] (quantum.west)+(-1cm,0) -- (quantum.west);
+	\draw [line] (quantum) -> (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic) -- (end);
+	\draw [line] (end.south) |-+(0,-1em)-| node [near start, above] {No} 
+(measure.south);
+	\draw [line] (end.east) -- node [near start] {Sí} +(1cm, 0);
+
+\end{tikzpicture}
+\end{center}
+
+Tras repetir la simulación una cantidad $r = 10000$ veces, se analiza la media y 
+varianza, y se comparan con las calculadas previamente de forma teórica. En la 
+tabla~\ref{tab:comp-qc} se puede observar como ambos resultados se acercan 
+mucho. En la figura~\ref{fig:comp-qc} se observa como el crecimiento es lineal, 
+de modo que la complejidad se aproxima a $O(n)$.
+
+\begin{table}[!htb]
+\centering
+\pgfplotstabletypeset[
+	col sep=comma,
+	columns={n, N, R-mean, R-var, RT-mean, RT-var},
+	columns/n/.style={column name=$n$, column type={r}},
+	columns/N/.style={column name=$N$, column type={r}},
+	%columns/r/.style={column name=$r$, column type={r}},
+	columns/R-mean/.style={
+		column name=$R_\mu$,
+		fixed zerofill,precision=3,dec sep align
+	},
+	columns/R-var/.style={
+		column name=$R_{\sigma^2}$,
+		fixed zerofill,precision=3,dec sep align
+	},
+	columns/RT-mean/.style={
+		column name=$R_\mu'$,
+		fixed zerofill,precision=3,dec sep align
+	},
+	columns/RT-var/.style={
+		column name=$R_{\sigma^2}'$,
+		fixed zerofill,precision=3,dec sep align
+	},
+	every head row/.style={before row=\toprule,after row=\midrule},
+	every last row/.style={after row=\bottomrule},
+]{csv/com_qc.csv}
+\caption{Ejecuciones del algoritmo cuántico $R$ experimentales, $R'$ teóricas.}
+\label{tab:comp-qc}
+\end{table}
+
+%
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+	name=qc0,
+	width=0.9\linewidth,
+	height=8cm,
+%	no marks,
+	mark options={mark size=1},
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	ytick={2,3,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(1.0,0.0)},anchor=south east},
+	xlabel={Número de qubits $N$},
+	ylabel={Número esperado de ejecuciones R},
+]
+\addplot [blue,mark=*] table [x=N, y=R-mean, col sep=comma] {csv/com_qc.csv};
+\addplot [red, dashed, mark=none] table [x=N, y=RT-mean, col sep=comma] 
+{csv/com_qc.csv};
+\legend{
+	$R_\mu$,
+	$R_\mu'$};
+\end{axis}
+\end{tikzpicture}
+\caption{Número esperado de iteraciones a medida que aumentan los qubits. Se 
+observa el valor experimental $R_\mu$ comparado con el teórico $R_\mu'$.}
+\label{fig:comp-qc}
+\end{figure}
+%
 \end{document}

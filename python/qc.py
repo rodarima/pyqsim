@@ -148,6 +148,7 @@ class QMeasure:
 		self.prepare(qst, lines)
 
 	def prepare(self, state, lines):
+		n = len(lines)
 		nz = state.data.nonzero()[0]
 		ai = state.data[nz,0].T.toarray()[0]
 		pi = np.array(np.real(np.power(ai, 2)))
@@ -157,13 +158,19 @@ class QMeasure:
 			l = lines[i]
 			v |= (nz & (1<<l)) >> (l-i)
 
-		vp = np.zeros(len(pi))
-		for i in range(len(pi)):
-			vp[i] = pi[v==i].sum()
+		#print(v)
+		#vp = np.zeros(len(pi))
+		#for i in range(len(pi)):
+		#	vp[i] = pi[v==i].sum()
+
+		# O(2^(2^N)) -> O(2^N) !!!
+		vp = np.array([pi[v==i].sum() for i in range(len(pi))])
+		#vp = np.array([pi[v==i].sum() for i in range(2**n)])
 
 		self.vp = vp[vp!=0]
 		self.vn = np.arange(len(vp))[vp!=0]
-		self.update_size()
+		#print(self.vp)
+		#self.update_size()
 
 	def collapse(self):
 		return int(np.random.choice(self.vn, p=self.vp))
@@ -204,6 +211,7 @@ class QProfiler:
 		if title: title_str = '%s: ' % title
 		print("{}Mean {:.4e}, var {:.4e}, steps {}"
 			.format(title_str, mean,var,steps))
+		return (mean,var,steps)
 
 	def time_func(self, code, setup=''):
 		exec(setup)
@@ -281,6 +289,7 @@ class CPostprocess():
 		if title: title_str = '%s: ' % title
 		print("{}Mean {:.3e}, var {:.3e}, steps {}"
 			.format(title_str, mean,var,steps))
+		return (mean, var, steps)
 
 
 
@@ -378,7 +387,8 @@ def main():
 		#print(config)
 		st = qs.run(config)
 		qm = QMeasure(st, np.arange(N, N*2))
-		#cp = CPostprocess(N, qm)
+		cp = CPostprocess(N, qm)
+		cp.run()
 		#cp.profile(10000, title='N = %d'%N)
 
 	#st = qs.run({'f':np.array([1, 0, 1, 0])})
@@ -392,4 +402,4 @@ def main():
 
 #m = profile_mem()
 #profile()
-#main()
+main()
