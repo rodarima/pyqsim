@@ -164,8 +164,8 @@ class QMeasure:
 		#	vp[i] = pi[v==i].sum()
 
 		# O(2^(2^N)) -> O(2^N) !!!
-		vp = np.array([pi[v==i].sum() for i in range(len(pi))])
-		#vp = np.array([pi[v==i].sum() for i in range(2**n)])
+		#vp = np.array([pi[v==i].sum() for i in range(len(pi))])
+		vp = np.array([pi[v==i].sum() for i in range(2**n)])
 
 		self.vp = vp[vp!=0]
 		self.vn = np.arange(len(vp))[vp!=0]
