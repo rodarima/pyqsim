@@ -1,11 +1,3 @@
-\input{preamble}
-
-\setcounter{part}{4}
-\usetikzlibrary{shapes,arrows,chains}
-\usetikzlibrary{decorations.markings}
-
-\begin{document}
-
 %\section{Implementación}
 %La simulación se realizará en el lenguaje de programación \texttt{python}, 
 %empleando paquetes externos que aportarán las partes comunes del simulador. De 
@@ -22,7 +14,7 @@
 %De esta forma, un estado $\ket{\phi_0} = \ket{000} $
 
 
-\part{Análisis de la simulación}
+\chapter{Análisis de la simulación}
 % Comentar que es lo que se va a medir. Como se realiza el proceso de medición, 
 % y finalmente cuales son los resultados.
 
@@ -86,8 +78,8 @@ la simulación sea eficiente.
 Para calcular con precisión los datos medidos sobre cada simulación, se realizan 
 varias ejecuciones, y posteriormente se analiza la media y varianza de las 
 medidas obtenidas. El análisis divide la simulación en cuatro etapas. Las dos 
-primeras, $QC_0$ y $QC_f$, realizan la simulación del circuito cuántico.  
-Posteriermente se analiza en proceso de medición $M$ que provee un nexo entre la 
+primeras, $QC_0$ y $QC_f$, realizan la simulación del circuito cuántico. A 
+continuación se analiza el proceso de medición $M$ que provee un nexo entre la 
 parte cuántica y la etapa final de procesado clásico $CC$.
 
 Cada etapa se mide repetidamente y de forma independiente, permitiendo una mayor 
@@ -129,16 +121,17 @@ height=1cm]
 
 \subsection{Simulación cuántica}
 El análisis de la simulación cuántica, se divide en dos procesos. La parte 
-inicial calcula el estado intermedio $\ketp 1$ que es independiente de la 
-función $f$ del problema. Permitiendo la reutilización de los cálculo previos.
+inicial $QC_0$, calcula el estado intermedio $\ketp 1$ que es independiente de 
+la función $f$ del problema. Permitiendo la reutilización de los cálculos en las 
+etapas posteriores.
 
-La parte final del análisis, toma el estado $\ketp 1$ previamente calculado, y 
-continúa la simulación del circuito hasta el estado final $\ketp 3$. Para medir 
-el tiempo que toma una etapa se determinará como $T_\mu(x)$ el tiempo medio de 
-$r$ ejecuciones, y $T_{\sigma^2}(x)$ la varianza del proceso $x$. Por lo general 
-se realizarán $r = 100$ repeticiones, excepto si el proceso se demora demasiado, 
-entonces se reducirán las iteraciones para mantener un tiempo de simulación 
-razonable.
+La parte final del análisis $QC_f$, toma el estado $\ketp 1$ previamente 
+calculado, y continúa la simulación del circuito hasta el estado final $\ketp 
+3$. Para medir el tiempo que toma una etapa se denotará como $T_\mu(x)$ el 
+tiempo medio en segundos de $r$ ejecuciones, y $T_{\sigma^2}(x)$ la varianza del 
+proceso $x$. Por lo general se realizarán $r = 100$ repeticiones, excepto si el 
+proceso se demora demasiado, entonces se reducirán las iteraciones para mantener 
+un tiempo de simulación razonable.
 
 \begin{table}[!htb]
 \centering
@@ -518,6 +511,8 @@ tabla~\ref{tab:comp-qc} se puede observar como ambos resultados se acercan
 mucho. En la figura~\ref{fig:comp-qc} se observa como el crecimiento es lineal, 
 de modo que la complejidad se aproxima a $O(n)$.
 
+%TODO Mencionar la ecuación de ejecuciones medias E[R].
+
 \begin{table}[!htb]
 \centering
 \pgfplotstabletypeset[
@@ -581,4 +576,8 @@ observa el valor experimental $R_\mu$ comparado con el teórico $R_\mu'$.}
 \label{fig:comp-qc}
 \end{figure}
 %
-\end{document}
+
+%\cite{nielsen00}
+
+%\bibliography{bibliography}{}
+%\bibliographystyle{plain}

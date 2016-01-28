@@ -19,5 +19,10 @@ while [ 1 ]; do
 		echo -e "\a"
 		continue
 	fi
+	pdflatex -interaction=nonstopmode -halt-on-error $TEX
+	if [ "$?" != "0" ]; then
+		echo -e "\a"
+		continue
+	fi
 	kill -HUP $(pidof mupdf) $(pidof mu)
 done

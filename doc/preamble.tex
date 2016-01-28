@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper]{report}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -21,17 +21,24 @@
 % Cargar tablas de csv
 \usepackage{pgfplotstable}
 
+% Citas bibliograficas
+\usepackage{cite}
 
 % Dimensiones de los márgenes.
 %\usepackage[margin=2.5cm]{geometry}
 
+% Macros para ayudar a la redacción
 % Vector
 \newcommand*\mat[1]{ \begin{pmatrix} #1 \end{pmatrix}}
 \newcommand*\arr[1]{ \begin{bmatrix} #1 \end{bmatrix}}
-
 \newcommand*\V[1]{ \boldsymbol{#1}}
-
+% Ket psi
 \newcommand*\ketp[1]{\ket{\psi_{#1}}}
+% Floor
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+% Probabilidad I y ¬I
+\newcommand*\NO[1]{ \overline{#1}}
+\newcommand*\NI[1]{ \overline{I^{#1}}\,}
 
 % Apartado de un ejemplo
 \theoremstyle{definition}
@@ -42,6 +49,11 @@
 
 \usetikzlibrary{calc,fadings,decorations.pathreplacing}
 \usetikzlibrary{backgrounds,fit}
+
+\usetikzlibrary{shapes,arrows,chains}
+\usetikzlibrary{decorations.markings}
+
+
 \newcommand\pgfmathsinandcos[3]{%
   \pgfmathsetmacro#1{sin(#3)}%
   \pgfmathsetmacro#2{cos(#3)}%
