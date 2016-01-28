@@ -24,8 +24,24 @@
 % Citas bibliograficas
 \usepackage{cite}
 
+% Urls
+\usepackage{url}
+
+% Dedicatoria
+\newenvironment{dedication}{
+\clearpage           % we want a new page
+\thispagestyle{empty}% no header and footer
+\vspace*{\stretch{1}}% some space at the top 
+\itshape             % the text is in italics
+\raggedleft          % flush to the right margin
+}
+{\par % end the paragraph
+\vspace{\stretch{3}} % space at bottom is three times that at the top
+\clearpage           % finish off the page
+}
+
 % Dimensiones de los márgenes.
-%\usepackage[margin=2.5cm]{geometry}
+%\usepackage[margin=3cm]{geometry}
 
 % Macros para ayudar a la redacción
 % Vector
@@ -36,6 +52,9 @@
 \newcommand*\ketp[1]{\ket{\psi_{#1}}}
 % Floor
 \newcommand{\floor}[1]{\lfloor #1 \rfloor}
+% Absolute value
+\newcommand\abs[1]{\left|#1\right|}
+
 % Probabilidad I y ¬I
 \newcommand*\NO[1]{ \overline{#1}}
 \newcommand*\NI[1]{ \overline{I^{#1}}\,}
