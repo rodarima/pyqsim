@@ -1,4 +1,4 @@
-\chapter{Preámbulo}
+\chapter{Introducción}
 \section{Introducción a la computación cuántica}
 % Introducir suavemente el tema de la computación cuántica. Como surge, por que, 
 % y para que sirve
@@ -57,12 +57,12 @@ Nuestra intuición y formas actuales para diseñar algoritmos, fallan al tratar 
 comprender el proceso. Este es quizás uno de los motivos por los cuales no se 
 han descubierto muchos algoritmos cuánticos \cite{shor03}.
 
-\subsection{El bit y el qubit}
+\section{El bit y el qubit}
 La forma de almacenar la información en un ordenador cuántico difiere en algunos 
 aspectos a la forma en la que se almacena actualmente en los ordenadores 
 convencionales.
 
-\subsubsection{Bit clásico}
+\subsection{Bit clásico}
 %Explicar lo que es un bit, y diferenciar entre el estado interno y lo que 
 %representa
 En los ordenadores actuales, la unidad básica de representación de información 
@@ -87,7 +87,7 @@ representa un 0; en caso contrario, un 1. Para representar un bit, se empleará
 un estado $x \in \{0, 1\}$.
 
 
-\subsubsection{Bit probabilístico}
+\subsection{Bit probabilístico}
 %Introducir la analogía de una moneda para diferenciar entre el estado de la 
 %moneda que es 0.5/0.5 mientras no se mide, y una vez "colapsa". Expresar la 
 %probabilidad en forma de vector
@@ -114,7 +114,7 @@ Una vez que la moneda cae, su estado deja de ser un bit probabilístico $y$, y s
 convierte en un bit clásico $x$. Esta operación es la \textit{medición} de un 
 sistema probabilístico.
 
-\subsubsection{Bit cuántico o qubit}
+\subsection{Bit cuántico o qubit}
 %Extender el ejemplo de la moneda con la amplitud en vez de la probabilidad, y 
 %explicar la notación en forma de vector
 
@@ -145,36 +145,36 @@ $$ |\alpha|^2 + |\beta|^2 = 1 $$
 Los números $\alpha$ y $\beta$ se denominan \textit{amplitudes}, y tienen 
 asociada una probabilidad que es $|\alpha|^2$ y $|\beta|^2$ respectivamente.
 
-\subsection{Múltiples qubits}
+\section{Múltiples qubits}
 % Combinar dos bits para representar 4 estados, dos monedas para 4 estados
 % probabilísticos, y 2 qubits para un 2-qubit.
-Un sistema de dos monedas perfectas $m_1$ y $m_2$ tiene exactamente cuatro 
-posibles resultados tras lanzarlas al aire $\{00, 01, 10, 11\}$. Siendo cara el 
-0, cruz el 1, y la cadena 01 que $m_1$ sale cara y $m_2$ sale cruz.
+Un sistema de dos monedas perfectas $A$ y $B$ tiene exactamente cuatro posibles 
+resultados tras lanzarlas al aire $\{00, 01, 10, 11\}$. Siendo cara el 0, cruz 
+el 1, y la cadena 01 que $A$ sale cara y $B$ sale cruz.
 
 El número de resultados posibles aumenta con el número de monedas $n$ de la 
 forma $2^n$. Si ambas monedas se describen como un bit probabilístico, se 
 obtiene
-$$ y_1 = \mat{0.5 \\ 0.5} \quad y_2 = \mat{0.5 \\ 0.5} $$
-Siendo $y_i$ la descripción del estado de la moneda $m_i$. Entonces, la 
+$$ y_A = \mat{0.5 \\ 0.5} \quad y_B = \mat{0.5 \\ 0.5} $$
+Siendo $y_m$ la descripción del estado de la moneda $m$. Entonces, la 
 probabilidad de obtener cada uno de los cuatro diferentes estados al lanzar 
 ambas, se puede describir en forma de vector.
-Sea $y_i[k]$ la probabilidad de que la moneda $m_i$ salga $k$, entonces la 
-probabilidad de que salga $k_1$ y luego $k_2$ será:
-$$ y_1[k_1] \cdot y_2[k_2] $$
+Sea $y_m[k]$ la probabilidad de que la moneda $m$ salga $k$, entonces la 
+probabilidad de que salga $k_A$ y luego $k_B$ será:
+$$ y_A[k_A] \cdot y_B[k_B] $$
 De modo que se puede construir un vector que describa todas las posibilidades:
 $$ y = \mat{
-	y_1[0] \cdot y_2[0] \\ y_1[0] \cdot y_2[1] \\
-	y_1[1] \cdot y_2[0] \\ y_1[1] \cdot y_2[1]
+	y_A[0] \cdot y_B[0] \\ y_A[0] \cdot y_B[1] \\
+	y_A[1] \cdot y_B[0] \\ y_A[1] \cdot y_B[1]
 }
 = \mat{
-	y_1[0] \cdot y_2 \\
-	y_1[1] \cdot y_2
+	y_A[0] \cdot y_B \\
+	y_A[1] \cdot y_B
 } $$
 Esta operación se conoce como el producto tensorial y conocer sus propiedades
 será fundamental.
 
-\subsubsection{Producto tensorial}
+\subsection{Producto tensorial}
 \label{sss:producto-tensorial}
 
 La operación $\otimes$ se define como el producto tensorial o producto de 
@@ -216,32 +216,36 @@ El producto tensorial cumple varias propiedades interesantes.
 \item Es distributivo respecto a la suma $A \otimes (B + C) = (A \otimes B) + (A
 \otimes C) $ y $(A + B) \otimes C = (A \otimes C) + (B \otimes C)$
 
+\item Es distributivo respecto a la multiplicación de matrices $A \otimes (B 
+\cdot C) = (A \otimes B) \cdot (A \otimes C) $ y $(A \cdot B) \otimes C = (A 
+\otimes C) \cdot (B \otimes C)$
+
 \item Para un escalar $k$, cumple $(kA) \otimes B = A \otimes (kB) = k (A 
 \otimes B)$
 \end{itemize}
 %
 Pero en general, no es conmutativo: $A \otimes B \neq B \otimes A$.
 
-\subsubsection{Monedas y qubits}
+\subsection{Monedas y qubits}
 
 Empleando la notación de producto tensorial, ahora calcular el estado global de 
 un sistema de dos monedas, se simplifica a
 %
-$$ y = y_1 \otimes y_2 $$
+$$ y = y_A \otimes y_B $$
 %
-Este mismo procedimiento se emplea en la descripción de qubits. Un sistemai $z$ 
-de dos qubits $z_1$ y $z_2$ se puede describir como:
+Este mismo procedimiento se emplea en la descripción de qubits. Un sistema $z$ 
+de dos qubits $z_A$ y $z_B$ se puede describir como:
 %
 $$
-z_1 = \mat{\alpha_1 \\ \beta_1}, \quad
-z_2 = \mat{\alpha_2 \\ \beta_2}, \quad
-z = z_1 \otimes z_2 $$
+z_A = \mat{\alpha_1 \\ \beta_1}, \quad
+z_B = \mat{\alpha_2 \\ \beta_2}, \quad
+z = z_A \otimes z_B $$
 %
 De forma que se obtiene:
 %
 $$
 z = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
-	& \alpha_2 \beta_1 & \alpha_2 \beta_2}^T $$
+	& \beta_1 \alpha_2 & \beta_1 \beta_2}^T $$
 %
 Por ahora no hay ninguna diferencia apreciable en la forma en la que comporta un 
 sistema cuántico frente a uno probabilístico. Pero no será durante mucho tiempo.
@@ -249,7 +253,7 @@ El sistema de dos monedas $y$ está sujeto a la restricción de que al lanzar un
 moneda la suma de las probabilidades de los posibles resultados debe ser la 
 unidad, esto es
 %
-$$ y_1[0] + y_1[1] = 1, \quad y_2[0] + y_2[1] = 1$$
+$$ y_A[0] + y_A[1] = 1, \quad y_B[0] + y_B[1] = 1$$
 %
 Cuando dos qubits se tratan por separado, esta restricción es análoga:
 %
@@ -262,93 +266,399 @@ Pero cuando se combinan en un sólo sistema cuántico, pasa a denominarse
 \sum_{\alpha \in z} |\alpha|^2 = 1
 \end{equation}
 %
-Permitiendo el caso en el que puede existir un registro con el estado:
+Permitiendo el caso en el que puede existir un registro de dos qubits con el 
+estado:
 $$ z = \mat{\frac{1}{\sqrt{2}} & 0 & 0 & \frac{1}{\sqrt{2}}}^T $$
 Que cumple la restricción \eqref{eq:qbits-unidad} puesto que:
 $$ \abs{\frac{1}{\sqrt{2}}}^2 + \abs{\frac{1}{\sqrt{2}}}^2 = \frac{1}{2} + 
 \frac{1}{2} = 
 1 $$
 Y sin embargo, $z$ no puede ser expresado como el producto tensorial de dos 
-qubits $z_1$ y $z_2$:
-$$ z = z_1 \otimes z_2 = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
-	& \alpha_2 \beta_1 & \alpha_2 \beta_2}^T = \mat{\frac{1}{\sqrt{2}} & 0 & 
-	0 & \frac{1}{\sqrt{2}}}^T
+qubits $z_A$ y $z_B$:
+$$ z = z_A \otimes z_B = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
+	& \beta_1 \alpha_2 & \beta_1 \beta_2}^T = \mat{\frac{1}{\sqrt{2}} & 0 & 0 & 
+\frac{1}{\sqrt{2}}}^T
 $$
 Se obtiene que $\alpha_1 \alpha_2 = \frac{1}{\sqrt{2}}$, por lo que $\alpha_1 
-\neq 0$, y $\alpha_2 \beta_2 = \frac{1}{\sqrt{2}}$ entonces $\beta_2 \neq 0$ 
+\neq 0$, y $\beta_1 \beta_2 = \frac{1}{\sqrt{2}}$ entonces $\beta_2 \neq 0$ 
 pero sin embargo $\alpha_1 \beta_2 = 0$, lo cual es imposible.
 
 Este extraño suceso no existe en el mundo clásico, y no se puede realizar con 
-las monedas. Es único en el mundo cuántico. Se denomina \textit{entrelazamiento 
-cuántico} cuando un sistema cuántico compuesto no puede ser descrito mediante el 
-producto de sus constituyentes. Se dice que se encuentra entrelazado.
+las monedas. Es único del comportamiento cuántico. Se denomina 
+\textit{entrelazamiento cuántico} cuando un sistema cuántico compuesto no puede 
+ser descrito mediante el producto de sus constituyentes. Se dice que se 
+encuentra entrelazado.
 
+\section{Notación de Dirac o bra-ket}
+A medida que aumenta el número de qubits de un registro cuántico, se hace cada 
+vez más difícil describir los $2^n$ componentes que requiere dicho vector.
 
-\subsection{Operador}
+El matemático Hermann Grassmann empleó la notación $[u|v]$ en 1862 para indicar 
+el producto interno de dos vectores \cite{cajori-grassmann}. Posteriormente, en 
+1939 el físico Paul Dirac empleó $\braket{u|v}$ para describir estados 
+cuánticos, y dicha notación se ha extendido debido a su utilidad. Se denomina 
+braket a $\braket{u|v}$, formado por el bra $\bra{u}$ y el ket $\ket{v}$.
+%
+De esta forma, se definen los kets
+$$ \ket{0} = \mat{1 \\ 0}, \quad \ket{1} = \mat{0 \\ 1} $$
+%
+Y entonces un qubit $z$ puede describirse como una combinación lineal de kets 
+$\ket{0}$ y $\ket{1}$
+$$ z = \mat{\alpha \\ \beta} = \alpha \ket{0} + \beta \ket{1}$$
+Dado que cualquier qubit puede escribirse partiendo de los kets $\ket{0}$ y 
+$\ket{1}$, forman una base vectorial y se les denomina vectores base, 
+\textit{kets base} o también \textit{estados puros}.
+%
+De forma general, se define un estado cuántico o registro de $n$ qubits como el 
+ket $\ket{\psi}$ con $X = \{0,1\}^n$:
+$$ \ket{\psi} = \sum_{x \in X} \alpha_x \ket{x} $$
+Por ejemplo para $n = 2$, se tiene $X = \{00, 01, 10, 11\}$, y el ket 
+$\ket{\psi}$:
+$$ \ket{\psi} = \alpha_{00} \ket{00} + \alpha_{01} \ket{01}
++ \alpha_{10} \ket{10} + \alpha_{11} \ket{11} =
+\mat{\alpha_{00} & \alpha_{01} & \alpha_{10} & \alpha_{11}}^T $$
+El conjunto de kets $\ket{x}$ para todo $x \in X$ forma de nuevo una base de 
+vectores, para el registro $\ket{\psi}$.
 
-Un sistema clásico puede contener varios bits, de forma que el número de 
-posibles estados en los que se puede encontrar es $2^n$ para $n$ bits. Por 
-ejemplo, en una tarjeta perforada del telar de Jacquard de $8$ filas por 26 
-columnas, con un total de 208 celdas, existen $2^{208} \approx 
-4.11 \cdot 10^{62}$ posibles combinaciones.
+\subsection{Superposición}
+% Que es y que utilidad tiene
 
-Si se emplean 108 monedas, el número de posibles combinaciones de cara y cruz 
-sería el mismo. Sin embargo, justo antes de caer, el sistema se encuentra en un 
-estado en el que cada posible combinación tiene la misma probabilidad de 
-ocurrir. Del mismo modo que para un bit probabilístico, para $n$ se puede 
-emplear un vector $y$ que describa la probabilidad para cada estado posible
+Cuando un qubit o un registro se encuentra en un estado diferente a un estado 
+puro, por ejemplo el ket
+$$\ket{\psi} = \frac{1}{\sqrt{2}} \ket{0} + \frac{1}{\sqrt{2}} \ket{1} $$
+se dice que se encuentra en \textit{superposición}. El qubit se comporta como si 
+se encontrase en ambos estados $\ket{0}$ y $\ket{1}$ a la vez, y cuando se 
+observa, colapsa en un estado puro. A diferencia de una moneda que se lanza, 
+existe la forma de determinar el estado de la moneda a medida que se mueve por 
+el aire. Con una cámara que grabe a una alta velocidad, se puede observar como 
+la moneda da vueltas oscilando entre cara y cruz. Sin embargo no existe ninguna 
+forma actual para determinar el estado interno de un qubit o registro.
+
+Adicionalmente, uno de los puntos clave de la computación cuántica, se basa en 
+que es posible operar con ambos estados a la vez, obteniendo un paralelismo que 
+crece de forma exponencial con el número de qubits. Un sistema de $n$ qubits 
+puede realizar cálculos operando directamente con las $2^n$ amplitudes asociadas 
+a cada estado puro. En un sistema clásico, se requieren $2^n$ registros de bits 
+para alcanzar un cálculo similar.
+
+\section{Operaciones}
+
+Las operaciones que se pueden realizar sobre un qubit se representan como una 
+matriz $A$ de $2 \times 2$ elementos complejos y se denominan 
+\textit{operadores}.
+
+Además, todos los operadores cuánticos deben ser \textit{reversibles}, es decir 
+que la matriz $A$ debe ser \textit{unitaria}, cumpliendo que $A$ por su 
+transpuesta conjugada $A^\dagger$ sea la identidad:
+$$ A A^\dagger = A^\dagger A = I$$
+%
+Cuando se aplica un operador $A$ sobre un qbit $\ket{\psi}$, se obtiene un 
+estado resultante $\ket{\psi'}$ obtenido por el producto matricial
+$$ \ket{\psi'} = A\ket{\psi} $$
+%
+A los operadores cuánticos también se les denomina \textit{puertas cuánticas}, 
+por su parecido con las puertas lógicas. Por ejemplo la puerta lógica NOT, 
+invierte el estado de un bit, y su correspondiente cuántica es
+%
+$$ NOT = \mat{0 & 1\\1 & 0} $$
+%
+Que aplicada sobre los estados puros los invierte.
+%
+$$ NOT\ket{0} = \mat{0 & 1\\1 & 0} \mat{1\\0} = \mat{0\\1} = \ket{1} $$
+$$ NOT\ket{1} = \mat{0 & 1\\1 & 0} \mat{0\\1} = \mat{1\\0} = \ket{0} $$
+%
+Y sobre un estado en superposición $\ket{\psi}$, invierte sus amplitudes
+%
+$$ NOT\ket{\psi} = \mat{0 & 1\\1 & 0} \mat{\alpha \\ \beta} =
+\mat{\beta\\\alpha} $$
+%
+
+\subsection{Operadores de varios qubits}
+
+Además de poder aplicar un operador sobre un qubit, es posible hacerlo sobre un 
+registro de varios qubits. En concreto, para $n$ qubits, la matriz $A$ que 
+describe al operador contiene $2^n \times 2^n$ filas y columnas.
+
+Una forma de construir operadores grandes es aplicando el producto tensorial de 
+varios operadores simples. Por ejemplo, el operador que invierte de igual forma 
+que el $NOT$ un registro de dos qubits, se calcula como
+%
+$$ NOT \otimes NOT = \mat{0&0&0&1\\ 0&0&1&0 \\ 0&1&0&0 \\ 1&0&0&0}$$
+%
+Que al aplicarse sobre el estado $\ket{01}$ se convierte en:
+%
+\begin{equation*}
+\begin{split}
+(NOT \otimes NOT) \ket{01} &= (NOT \otimes NOT) (\ket{0} \otimes \ket{1}) =\\
+& = NOT \ket{0} \otimes NOT \ket{1} = \ket{1} \otimes \ket{0} = \ket{10}
+\end{split}
+\end{equation*}
+%
+Obteniéndose el estado invertido $\ket{10}$. La operación $NOT \otimes NOT$ que 
+consiste en multiplicar tensorialmente un operador por si mismo, es equivalente 
+a la potencia tensorial de operadores, y se indica como
+%
+$$ NOT \otimes NOT = NOT^{\otimes 2} $$
+%
+De forma que se puede extender para cualquier exponente.
+%
+$$ NOT^{\otimes n} = \underbrace{NOT\otimes NOT\otimes \ldots \otimes NOT}_{n 
+\text{ veces}}$$
+%
+
+\subsubsection{Operadores comunes}
+
+Existen una serie de operadores que se emplean con mucha frecuencia en la 
+computación cuántica. Uno de los más importantes es el operador de 
+\textit{Hadamard}, representado por la letra $H$.
+$$ H = \frac{1}{\sqrt 2} \mat{1 & 1 \\ 1 & -1} $$
+
+Tiene la peliculiaridad de descomponer el estado puro $\ket{0}$ en un estado 
+superpuesto:
+$$ H \ket{0} = \frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt 2}\ket{1} $$
+
+El operador identidad $I$ deja un estado tal y como estaba, no realiza ninguna 
+acción, y se define
+$$ I = \mat{1&0 \\ 0&1}$$
+
+Otros son el desplazamiento de fase $R_\theta$, la puerta SWAP que intercambia 
+dos qubits, la puerta not controlada CNOT que realiza la negación del segundo 
+qubit cuando el primero es $\ket{1}$.
+$$ R_\theta = \mat{1 & 0 \\ 0 & e^{i\theta}}, \quad
+SWAP = \mat{1&0&0&0 \\ 0&0&1&0 \\ 0&1&0&0 \\ 0&0&0&1}, \quad
+CNOT = \mat{1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0}
 $$
-	y = \mat{y_0 & \cdots & y_{2^n-1}}^T
-$$
 
-\subsection{Registros cuánticos}
-Para almacenar más de un qbit se emplean los registros cuánticos, que son 
-análogos a los registros clásicos de $n$ bits.
+%Medición
 
-Sin embargo difieren de los registros clásicos de bits. En uno clásico, el 
-registro se encuentra siempre en un estado determinado. Para $n$ bits, existen 
-$2^n$ estados posibles, y el registro se encuentra en uno de ellos. Sin embargo 
-en uno cuántico, no sólo puede encontrarse en todos esos estados, si no también 
-en superposición. Esto es, que se encuentra en una mezcla de varios estados. O 
-incluso de todos ellos.
+\subsection{Varias operaciones}
 
-\subsubsection{Superposición}
-
-
-
-
-
-
-Para representar $N$ bits, es suficiente con un vector $\boldsymbol{b} = 
-\mat{b_0 & b_1 & \cdots & b_{N-1} }^T$. De forma que $b_i \in \{0,1\}$. Por 
-ejemplo un byte, que está formado de 8 bits, es:
-$$\mat{b_0 & b_1 & b_2 & b_3 & b_4 & b_5 & b_6 & b_7}^T$$
-Simplificando la notación, representando solo los bits:
-$$\boldsymbol{b} = b_0 \, b_1 \, b_2 \, b_3 \, b_4 \, b_5 \, b_6 \, b_7$$
-Por lo que $\boldsymbol{b} \in \{0,1\}^N$, y numerando cada vector con:
-$$d = \sum_i 2^i b_i$$
-Por ejemplo $d=14$ es $\boldsymbol{b} = 1110$ con $N=4$. $1110_b = 14_d$
-Por ejemplo $11000001_b = 193_d$
-
-
-\subsection{Operaciones}
-
-
-
-Para realizar una operación sobre un estado cuántico, se emplea un operador 
-expresado por una matriz.
-
-Por ejemplo, la puerta NOT que invierte el estado de un bit, tiene una operación 
-análoga en la computación cuántica.
+Cuando se realizan varias operaciones seguidas sobre un estado $\ket{\psi}$, el 
+resultado es el producto de las matrices de los operadores por el estado.  
+Siguiendo el orden en el que fueron aplicados. Por ejemplo, aplicar el operador 
+de Hadamard sobre el estado $\ket{0}$ y posteriormente el NOT, se representa
 %
-$$ NOT = \mat{0 & 1 \\ 1 & 0} $$
+$$ NOT(H\ket{0}) = NOT\; H \ket{0} $$
 %
-De modo que al aplicarla sobre un estado $\ket{\psi} = \mat{\alpha & \beta}^T$, 
-se obtiene:
+El orden viene dado por el producto de matrices, de derecha a izquierda. Y se 
+calcula:
 %
-$$ NOT \ket{\psi} = \mat{0 & 1 \\ 1 & 0} \mat{\alpha \\ \beta} = \mat{\beta \\ 
-\alpha} $$
+$$ NOT\; H \ket{0} = NOT\left(\frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt 
+2}\ket{1}\right) =
+\frac{1}{\sqrt 2}\ket{1} + \frac{1}{\sqrt 2}\ket{0} = \frac{1}{\sqrt 2}(\ket{0} 
++ \ket{1}) $$
+
+\subsubsection{Circuitos cuánticos}
+
+Los \textit{circuitos cuánticos} son agrupaciones de operadores aplicados en un 
+orden determinado, que tienen un propósito. Se pueden describir como una matriz 
+resultante de multiplicar todas las matrices que operan de forma sucesiva.
+
+A medida que se combinan los operadores, es posible crear complejas estructuras 
+que son difíciles de comprender empleando la notación de producto de matrices.  
+Los circuitos cuánticos se describen habitualmente con diagramas que incluyen 
+varios elementos.
+
+Las líneas horizontales representan qubits o registros de qubits. Las puertas 
+cuánticas se colocan intersecando las líneas que representan los qubits en los 
+que actúan.
+
+Por ejemplo el operador de Hadamard, aplicado sobre el qubit $\ket{0}$, se 
+representa con el siguiente circuito.
 %
-Las amplitudes se han invertido, de forma análoga a un estado clásico. Si 
-$\ket{\psi} = \ket{0}$, entonces $NOT\ket{0} = NOT \mat{1 & 0}^T = \mat{0 & 
-1}^T = \ket{1}$. Y de igual forma para $NOT \ket{1} = \ket{0}$.
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0}$}; &
+		\node[operator] (H11) {$H$}; &
+		\coordinate (end1); \\
+		% Second row.
+	};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (end1);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+Si se aplica primero el operador de Hadamard y luego la puerta NOT, se obtiene
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0}$}; &
+		\node[operator] (H11) {$H$}; &
+		\node[operator] (H11) {$NOT$}; &
+		\coordinate (end1); \\
+		% Second row.
+	};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (end1);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+También se pueden realizar operaciones en \textit{paralelo}. En un sistema de 
+dos qubits, en el que el que se aplica un operador de forma simultánea en dos 
+líneas, corresponde con el producto tensorial.
+
+En el caso de aplicar el operador de Hadamard sobre los dos qubits del registro 
+$\ket{00}$ se representa
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0}$}; &
+		\node[operator] (H11) {$H$}; &
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{0}$}; &
+		\node[operator] (H21) {$H$}; &
+		\coordinate (end2); \\
+	};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (end1);
+		\draw[thick] (q2) -- (end2);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+Y corresponde con el resultado de calcular $(H \otimes H) \ket{00}$. De la misma 
+forma, combinando operaciones secuenciales y en paralelo, se pueden construir 
+circuitos complejos, que se representan de forma sencilla.
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0}$}; &
+		\node[operator] (H11) {$H$}; &
+		\node[operator] (NOT) {$NOT$}; &
+		\node[operator] (H13) {$H$}; &
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{0}$}; &
+		\node[operator] (H21) {$H$}; &
+		&
+		&
+		\coordinate (end2); \\
+	};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (end1);
+		\draw[thick] (q2) -- (end2);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+Que es equivalente a $(H \otimes H)(NOT\otimes I)(H \otimes I) \ket{00} $. Se 
+observa como las líneas son equivalentes a aplicar el operador identidad $I$.
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{0}$}; &
+		\node[operator] (H11) {$H$}; &
+		\node[operator] (NOT) {$NOT$}; &
+		\node[operator] (H13) {$H$}; &
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{0}$}; &
+		\node[operator] (H21) {$H$}; &
+		\node[operator] (I22) {$I$}; &
+		\node[operator] (I23) {$I$}; &
+		\coordinate (end2); \\
+	};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (end1);
+		\draw[thick] (q2) -- (end2);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+
+\subsubsection{Operadores de medición}
+
+Existe una operación que es diferente de todas las demás puertas cuánticas. Se 
+trata de los operadores de medición, representados por la letra $M$, o otras 
+veces por el dibujo de un aparato de medida analógico.
+%
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {}; &
+		\node[operator] (M11) {$M$}; &
+		\coordinate (end1); \\
+		% Second row.
+	};
+	\node[fill=white, fit=(end1)] (cover) {};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (M11);
+		\draw[thick, double, double distance=2pt] (M11) -- (end1);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}
+%
+Este operador realiza la medición de una línea, y produce un resultado binario.  
+Destruyendo el estado cuántico en el proceso de medida. El resultado de medir un 
+qubit será un bit. En el caso de medir un registro, será un resultado binario 
+correspondiente a sus estados puros. Las dos líneas paralelas que salen del 
+circuito tras el operador $M$ representan una línea de información clásica.
+
+No puede ser representado por una matriz unitaria, ya que el resultado no es 
+reversible.  Una vez realizada una medición, el estado cuántico se colapsa. Una 
+de las interesantes cuestiones de los estados entrelazados como el estado de 
+Bell denominado por $\ket{\beta_{00}}$:
+%
+$$ \ket{\beta_{00}} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) $$
+%
+Es que es posible realizar una medida sobre uno de sus qubits. El resultado será 
+0 o 1 con una probabilidad del 50\%. Inmediatamente al conocer el estado de uno 
+de los qubits, el otro también se conoce. Este hecho, que intrigó a Einstein, 
+Podolsky y Rosen \cite{EPR}, produjo la formulación de la paradoja EPR, en la 
+que se discutía como era posible que al realizar la medición de un qubit, el 
+otro inmediatamente se alterase aunque ambos qubits estuvieran separados.
+
+Este hecho, ha sido comprobado de forma experimental con resultados positivos, 
+contradiciendo totalmente la intuición. Además es posible aprovechar sus 
+consecuencias para ``teletransportar'' información cuántica a través de un canal 
+clásico de bits.
