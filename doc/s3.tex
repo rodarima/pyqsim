@@ -343,11 +343,16 @@ conseguido exactamente $n-1$ vectores, la probabilidad de acabar es total:
 %
 $$ T^{n-1}_0 = 1 $$
 %
-En cualquier otro caso, cuando $i \neq n-1$, será nula, debido a que o bien se 
-ha resuelto el problema antes de lo previsto, o no se han conseguido los 
-vectores necesarios.
+En cualquier otro caso, cuando $p = 0$ y $i \neq n-1$, será nula, debido a que 
+no se han conseguido los vectores necesarios.
 %
 $$ T^i_0 = 0 $$
+%
+Además si en algún momento se obtienen los $n-1$ vectores linealmente 
+independientes, y el número de pasos $p \neq 0$, se ha resuelto el problema 
+antes de lo previsto, y por lo tanto no es válido:
+%
+$$ T^{n-1}_p = 0$$
 %
 Finalmente, las probabilidades de obtener y no obtener un vector linealmente 
 independiente, partiendo de $i$ previamente, en un problema de $n$ bits son, 
