@@ -1,0 +1,164 @@
+\chapter{Circuitos cuánticos}
+El objetivo de los circuitos cuánticos es el de aprovechar las propiedades que 
+otorga la computación cuántica, para resolver problemas de forma más rápida y 
+eficiente que los algoritmos convencionales. El estudio de sus propiedades 
+permite determinar como aprovecharlas.
+
+\section{Paralelismo}
+Una de las técnicas en las que se basan los algoritmos cuánticos para acelerar 
+su ejecución, consiste en la posibilidad de ejecutar muchas acciones a la vez.  
+Esta característica se debe a la propiedad que posee un estado cuántico de 
+encontrarse en superposición. Por ejemplo el estado
+%
+$$ \ket{\psi} = \frac{1}{\sqrt 2}(\ket{0} + \ket{1}) $$
+%
+Para observar como se puede hacer uso de esta propiedad, se diseñará un problema 
+de ejemplo \cite{nielsen00}. Sea $f(x): \{0,1\} \rightarrow \{0,1\}$ una función 
+binaria como la puerta clásica NOT. Entonces, una forma de implementarla en un 
+operador cuántico $U_f$ es
+%
+$$ U_f \ket{x}\ket{y} = \ket{x}\ket{y \oplus f(x)} $$
+%
+Al aplicar el operador a un registro de dos qubits, al segundo registro se le 
+suma (módulo 2) el resultado de $f$ sobre el primero. Por ejemplo, partiendo de 
+un estado $\ket{1}\ket{0}$, y aplicando el operador $U_f$, se obtiene
+%
+$$ U_f \ket{1}\ket{0} = \ket{1}\ket{f(1)} $$
+%
+Esta extraña forma de computar $f$, está causada por la restricción de que los 
+operadores cuánticos (como $U_f$) deben ser unitarios, para permitir una 
+computación reversible.
+
+Una vez obtenido el operador $U_f$, que dependerá de la función en cuentión, 
+(pero será una matriz de $4 \times 4$ igualmente) es posible emplear un estado 
+superpuesto como $\ket{\psi}$ como entrada de la función, colocándolo en 
+$\ket{x}$. El otro qubit $\ket{y}$ queda como ket cero $\ket{0}$.
+El operador $U_f$ actuará sobre el estado $\ket{\psi}\ket{0}$, produciendo:
+$$ \ketp 1 = U_f\ket{\psi}\ket{0} = U_f\frac{1}{\sqrt 2}(\ket{0}\ket{0} + 
+\ket{1}\ket{0}) =
+\frac{1}{\sqrt 2}(U_f\ket{0}\ket{0} + U_f\ket{1}\ket{0})$$
+%
+Lo que está ocurriendo es que el operador $U_f$ está siendo aplicado 
+simultáneamente sobre dos estados, $\ket{0}\ket{0}$ y $\ket{1}\ket{0}$, 
+obteniendo finalmente:
+%
+$$ \ketp 1 = \frac{1}{\sqrt 2}(\ket{0}\ket{f(0)} + \ket{1}\ket{f(1)}) $$
+%
+En este estado, se observa como la función $f$ se evalúa simultáneamente en 0 y 
+en 1. De forma que en un sólo paso, se realizan dos evaluaciones de $f$. Esta 
+propiedad se conoce con el nombre de \textit{paralelismo cuántico}.
+Sin embargo, no es posible observar los estados entrelazados, ya que el proceso 
+de medición hace que se colapsen a uno de ellos. Es necesario realizar más 
+operaciones para poder extraer la información deseada.
+
+\section{Interferencia}
+
+Partiendo de un estado inicial de dos qubits $\ketp 0 = \ket{01}$, y del mismo 
+operador $U_f$ anteriormente descrito, el objetivo ahora será determinar que 
+ocurre cuando se ejecuta la operación:
+$$ (H \otimes I)(U_f)(H \otimes H)\ketp 0 $$
+Primero, el operador de Hadamard actúa sobre ambos qubits
+$$ \ketp1 = (H \otimes H)(\ket{0} \otimes \ket{1}) =
+(H \ket{0} \otimes H \ket{1})$$
+Transformándolos a un estado superpuesto
+$$H \ket 0 = \frac{1}{\sqrt 2}(\ket 0 + \ket 1), \quad
+H \ket 1 = \frac{1}{\sqrt 2}(\ket 0 - \ket 1)$$
+Expresado conjuntamente como
+$$ \ketp1 = \left( \frac{1}{\sqrt 2}(\ket 0 + \ket 1) \right)
+\otimes \left( \frac{1}{\sqrt 2}(\ket 0 - \ket 1) \right) $$
+Que se puede simplificar a
+$$ \ketp1 = \frac{1}{2} \, \Big( \ket{00} - \ket{01} + \ket{10} - \ket{11} \Big) 
+$$
+Finalmente el operador $U_f$, definido como $ U_f \ket{x}\ket{y} = \ket{x}\ket{y 
+\oplus f(x)}$, se aplica sobre $\ketp1$, transformándolo en
+\begin{equation*}
+\begin{split}
+\ketp2 = \frac{1}{2} \, \Big(
+&\ket{0}\otimes\ket{0 \oplus f(0)} - \ket{0}\otimes\ket{1 \oplus f(0)} + \\
+&\ket{1}\otimes\ket{1 \oplus f(1)} - \ket{1}\otimes\ket{1 \oplus f(1)} \Big)
+\end{split}
+\end{equation*}
+Que se puede expresar como
+\begin{equation*}
+\begin{split}
+\ketp2 = \frac{1}{2} \, \Big(
+& \ket{0} \otimes ( \ket{0 \oplus f(0)} - \ket{1 \oplus f(0)}) + \\
+& \ket{1} \otimes ( \ket{1 \oplus f(1)} - \ket{1 \oplus f(1)}) \Big)
+\end{split}
+\end{equation*}
+Y observando el hecho de que
+$$ \ket{0 \oplus a} - \ket{1 \oplus a} = (-1)^a (\ket 0 - \ket 1) $$
+Para $a = f(0)$ y $a = f(1)$, se simplifica en
+\begin{equation*}
+\begin{split}
+\ketp2 = \frac{1}{2} \, \Big(
+& (-1)^{f(0)} \ket{0} \otimes (\ket 0 - \ket 1) + \\
+& (-1)^{f(1)} \ket{1} \otimes (\ket 0 - \ket 1) \Big)
+\end{split}
+\end{equation*}
+Y finalmente, en
+$$
+\ketp2 = \frac{1}{2} \, \Big((-1)^{f(0)} \ket{0} + (-1)^{f(1)}\ket 1 \Big) 
+\otimes \Big(\ket 0 - \ket 1) \Big)
+$$
+Si $f(0) = f(1)$, entonces $(-1)^{f(0)} = (-1)^{f(1)}$, y $\ketp 2$ sería
+\begin{equation*}
+\begin{split}
+\ket{\psi_2^=} & = \pm \frac{1}{2} \, \Big(\ket 0 + \ket 1 \Big) \otimes 
+\Big(\ket 0 - \ket 1 \Big) \\
+& = \pm\left(\frac{\ket 0 + \ket 1}{\sqrt 2 } \right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+\end{split}
+\end{equation*}
+Ahora, un operador de Hadamard se aplica sobre el primer qubit, obteniendo
+\begin{equation*}
+\begin{split}
+\ket{\psi_3^=}& = \pm (H\otimes I) \left(\frac{\ket 0 + \ket 1}{\sqrt 2 } 
+\right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right) \\
+&= \pm \ket 0 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+\end{split}
+\end{equation*}
+Si por el contrario $f(0) \neq f(1)$, entonces $(-1)^{f(0)} = - (-1)^{f(1)}$, y
+\begin{equation*}
+\begin{split}
+\ket{\psi_2^{\neq}} & = \pm \frac{1}{2} \, \Big(\ket 0 - \ket 1 \Big) \otimes 
+\Big(\ket 0 - \ket 1 \Big) \\
+& = \pm\left(\frac{\ket 0 - \ket 1}{\sqrt 2 } \right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+\end{split}
+\end{equation*}
+Y tras el operador de Hadamard sobre el primer qubit
+\begin{equation*}
+\begin{split}
+\ket{\psi_3^{\neq}}& = \pm (H\otimes I) \left(\frac{\ket 0 - \ket 1}{\sqrt 2 } 
+\right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right) \\
+&= \pm \ket 1 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+\end{split}
+\end{equation*}
+Obteniendo para $\ketp2$ de forma esquematizada
+$$
+\ket{\psi_2} = 
+\begin{cases}
+\pm\left(\frac{\ket 0 + \ket 1}{\sqrt 2 } \right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+, & \text{si}\ f(0) = f(1) \\
+\pm\left(\frac{\ket 0 - \ket 1}{\sqrt 2 } \right)
+\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+, & \text{si}\ f(0) \neq f(1)
+\end{cases}
+$$
+Y para $\ketp3$ los estados
+$$
+\ketp 3 =
+\begin{cases}
+\pm \ket 0 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+, & \text{si}\ f(0) = f(1) \\
+\pm \ket 1 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
+, & \text{si}\ f(0) \neq f(1)
+\end{cases}
+$$
+
+% TODO: Observar el efecto de la interferencia mirando los signos
+

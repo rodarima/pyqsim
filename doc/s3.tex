@@ -98,7 +98,7 @@ de $n$ qubits.
 		\node (q41) {}; & \node (q42) {}; & \node (q43) {}; &
 		\node (q44) {}; & \node (q45) {}; & \node (q46) {}; \\
 	};
-	\node[operator] (Us) [fit = (P13) (P23), minimum width=1cm] {$U_s$};
+	\node[operator] (Uf) [fit = (P13) (P23), minimum width=1cm] {$U_f$};
 
 	\node (arr0) [fit = (q31) (q32)] {$\uparrow$};
 	\node (arr1) [fit = (q32) (q33)] {$\uparrow$};
@@ -124,7 +124,7 @@ de $n$ qubits.
 %
 Primero el sistema se inicia con ambas líneas a $\ket{0^n}$. Luego se aplica un 
 operador de Hadamard sobre la primera, que creará una superposición de estados.  
-Posteriormente, el operador $U_s$ computa los resultados de la función $f$ de 
+Posteriormente, el operador $U_f$ computa los resultados de la función $f$ de 
 forma simultánea. Para terminar, se revierte el operador de Hadamard sobre la 
 primera línea, que finalmente se mide.
 
@@ -175,7 +175,7 @@ Produciendo el estado entrelazado
 \ket{11,00})
 \end{equation}
 %
-Posteriormente, la puerta $U_s$ actúa sobre $\ket{\psi_1}$ transformándolo en
+Posteriormente, la puerta $U_f$ actúa sobre $\ket{\psi_1}$ transformándolo en
 %
 \begin{equation}
 \ket{\psi_2} = \frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, f(x) \oplus 00} = 
