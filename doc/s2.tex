@@ -4,7 +4,11 @@ otorga la computación cuántica, para resolver problemas de forma más rápida 
 eficiente que los algoritmos convencionales. El estudio de sus propiedades 
 permite determinar como aprovecharlas.
 
-\section{Paralelismo}
+\section{Técnicas fundamentales}
+La mayoría de los circuitos emplean alguna de estas técnicas básicas, en las que 
+se apoya la aceleración de la computación cuántica.
+
+\subsection{Paralelismo}
 Una de las técnicas en las que se basan los algoritmos cuánticos para acelerar 
 su ejecución, consiste en la posibilidad de ejecutar muchas acciones a la vez.  
 Esta característica se debe a la propiedad que posee un estado cuántico de 
@@ -51,12 +55,24 @@ Sin embargo, no es posible observar los estados entrelazados, ya que el proceso
 de medición hace que se colapsen a uno de ellos. Es necesario realizar más 
 operaciones para poder extraer la información deseada.
 
-\section{Interferencia}
+\subsection{Interferencia}
 
+El efecto de interferencia proviene de las ondas, pues dos ondas con la misma 
+frecuencia con la misma fase se suman, pero con fases opuestas se destruyen.  
+Esta propiedad, presente en el comportamiento cuántico, permite aprovechar los 
+estados superpuestos computados en paralelo, y transformarlos para poder obtener 
+información útil de todos ellos.
+Un ejemplo, consiste en una función binaria $f:\{0,1\} \rightarrow \{0,1\}$, a 
+la que se desea determinar si $f(0) = f(1)$ o si por el contrario son 
+diferentes. Una solución clásica es determinar $f(0)$, luego $f(1)$, y luego 
+comparar los valores. Pero requiere evaluar \textit{secuencialmente} la función 
+dos veces. Una alternativa es emplear un circuito cuántico.
 Partiendo de un estado inicial de dos qubits $\ketp 0 = \ket{01}$, y del mismo 
 operador $U_f$ anteriormente descrito, el objetivo ahora será determinar que 
 ocurre cuando se ejecuta la operación:
 $$ (H \otimes I)(U_f)(H \otimes H)\ketp 0 $$
+Este circuito se llama algoritmo de Deutsch, y fue diseñado para mostrar las 
+capacidades de la computación cuántica \cite{deutsch85}.
 Primero, el operador de Hadamard actúa sobre ambos qubits
 $$ \ketp1 = (H \otimes H)(\ket{0} \otimes \ket{1}) =
 (H \ket{0} \otimes H \ket{1})$$
@@ -67,28 +83,27 @@ Expresado conjuntamente como
 $$ \ketp1 = \left( \frac{1}{\sqrt 2}(\ket 0 + \ket 1) \right)
 \otimes \left( \frac{1}{\sqrt 2}(\ket 0 - \ket 1) \right) $$
 Que se puede simplificar a
-$$ \ketp1 = \frac{1}{2} \, \Big( \ket{00} - \ket{01} + \ket{10} - \ket{11} \Big) 
-$$
+$$ \ketp1 = \frac{1}{2} \, \Big( \ox 0 0 - \ox 0 1 + \ox 1 0 - \ox 1 1 \Big) $$
 Finalmente el operador $U_f$, definido como $ U_f \ket{x}\ket{y} = \ket{x}\ket{y 
 \oplus f(x)}$, se aplica sobre $\ketp1$, transformándolo en
 \begin{equation*}
 \begin{split}
 \ketp2 = \frac{1}{2} \, \Big(
-&\ket{0}\otimes\ket{0 \oplus f(0)} - \ket{0}\otimes\ket{1 \oplus f(0)} + \\
-&\ket{1}\otimes\ket{1 \oplus f(1)} - \ket{1}\otimes\ket{1 \oplus f(1)} \Big)
+&\ox 0 {0 \oplus f(0)} - \ox 0 {1 \oplus f(0)} + \\
+&\ox 1 {1 \oplus f(1)} - \ox 1 {1 \oplus f(1)} \Big)
 \end{split}
 \end{equation*}
 Que se puede expresar como
 \begin{equation*}
 \begin{split}
 \ketp2 = \frac{1}{2} \, \Big(
-& \ket{0} \otimes ( \ket{0 \oplus f(0)} - \ket{1 \oplus f(0)}) + \\
-& \ket{1} \otimes ( \ket{1 \oplus f(1)} - \ket{1 \oplus f(1)}) \Big)
+& \ket{0} \otimes ( \ket{0 \oplus f(0)} - \ket{1 \oplus f(0)} + \\
+& \ket{1} \otimes ( \ket{1 \oplus f(1)} - \ket{1 \oplus f(1)} \Big)
 \end{split}
 \end{equation*}
 Y observando el hecho de que
-$$ \ket{0 \oplus a} - \ket{1 \oplus a} = (-1)^a (\ket 0 - \ket 1) $$
-Para $a = f(0)$ y $a = f(1)$, se simplifica en
+$$ \ket{0 \oplus k} - \ket{1 \oplus k} = (-1)^k (\ket 0 - \ket 1) $$
+Para $k = f(0)$ y $k = f(1)$, se simplifica en
 \begin{equation*}
 \begin{split}
 \ketp2 = \frac{1}{2} \, \Big(
@@ -101,64 +116,67 @@ $$
 \ketp2 = \frac{1}{2} \, \Big((-1)^{f(0)} \ket{0} + (-1)^{f(1)}\ket 1 \Big) 
 \otimes \Big(\ket 0 - \ket 1) \Big)
 $$
-Si $f(0) = f(1)$, entonces $(-1)^{f(0)} = (-1)^{f(1)}$, y $\ketp 2$ sería
-\begin{equation*}
-\begin{split}
-\ket{\psi_2^=} & = \pm \frac{1}{2} \, \Big(\ket 0 + \ket 1 \Big) \otimes 
-\Big(\ket 0 - \ket 1 \Big) \\
-& = \pm\left(\frac{\ket 0 + \ket 1}{\sqrt 2 } \right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-\end{split}
-\end{equation*}
-Ahora, un operador de Hadamard se aplica sobre el primer qubit, obteniendo
-\begin{equation*}
-\begin{split}
-\ket{\psi_3^=}& = \pm (H\otimes I) \left(\frac{\ket 0 + \ket 1}{\sqrt 2 } 
-\right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right) \\
-&= \pm \ket 0 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-\end{split}
-\end{equation*}
-Si por el contrario $f(0) \neq f(1)$, entonces $(-1)^{f(0)} = - (-1)^{f(1)}$, y
-\begin{equation*}
-\begin{split}
-\ket{\psi_2^{\neq}} & = \pm \frac{1}{2} \, \Big(\ket 0 - \ket 1 \Big) \otimes 
-\Big(\ket 0 - \ket 1 \Big) \\
-& = \pm\left(\frac{\ket 0 - \ket 1}{\sqrt 2 } \right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-\end{split}
-\end{equation*}
-Y tras el operador de Hadamard sobre el primer qubit
-\begin{equation*}
-\begin{split}
-\ket{\psi_3^{\neq}}& = \pm (H\otimes I) \left(\frac{\ket 0 - \ket 1}{\sqrt 2 } 
-\right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right) \\
-&= \pm \ket 1 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-\end{split}
-\end{equation*}
-Obteniendo para $\ketp2$ de forma esquematizada
+Este es un estado muy interesante. Para identificar lo que ocurre, es necesario 
+realizar una observación. Sea $a = (-1)^{f(0)}$ y $b = (-1)^{f(1)}$, se 
+reescribe
 $$
-\ket{\psi_2} = 
-\begin{cases}
-\pm\left(\frac{\ket 0 + \ket 1}{\sqrt 2 } \right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-, & \text{si}\ f(0) = f(1) \\
-\pm\left(\frac{\ket 0 - \ket 1}{\sqrt 2 } \right)
-\otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-, & \text{si}\ f(0) \neq f(1)
-\end{cases}
+\ketp2 = \frac{1}{2} \, \Big(a \ket{0} + b \ket 1 \Big) \otimes \Big(\ket 0 - 
+\ket 1) \Big)
 $$
-Y para $\ketp3$ los estados
+A partir de aquí, solo se empleará el primer qubit, de modo que se divide el 
+estado $\ketp2$ en sus dos qubits $\ket{\psi_2^1} \otimes \ket{\psi_2^2}$, que 
+son
 $$
-\ketp 3 =
-\begin{cases}
-\pm \ket 0 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-, & \text{si}\ f(0) = f(1) \\
-\pm \ket 1 \otimes \left( \frac{\ket 0 -\ket 1}{\sqrt 2 } \right)
-, & \text{si}\ f(0) \neq f(1)
-\end{cases}
+\ket{\psi_2^1} = \frac {a \ket{0} + b \ket 1}{\sqrt 2}\, \quad
+\ket{\psi_2^2} = \frac {\ket 0 - \ket 1}{\sqrt 2}
 $$
+%
+Ahora el operador de Hadamard se aplica sobre el primer qubit, $\ket{\psi_3^1} = 
+H \ket{\psi_2^1}$, obteniendo
+$$ \ket{\psi_3^1} = \frac{a \ket 0 + a \ket 1 + b \ket 0 - b \ket 1}{2}
+= \frac{a+b}{2} \ket 0 + \frac{a-b}{2} \ket 1$$
+%
+Si $a = b = \pm 1$, el coeficiente del ket $\ket 0$ se sumará, quedando $\pm 1$.  
+Es el denominado efecto de inferferencia constructiva. El ket $\ket 1$ por el 
+contrario sufrirá el efecto opuesto, llamado interferencia destructiva, pues 
+$(a-b) = 0$. De forma que el estado se transformará en $\pm \ket 0$.
 
-% TODO: Observar el efecto de la interferencia mirando los signos
+Por el otro lado, si $a = -b = \pm 1$, sucederá el proceso inverso. El 
+coeficiente del ket $\ket 0$ se destruirá, $(a+b) = (a-a) = 0$, y el del ket 
+$\ket 1$ se sumará constructivamente $(a-b) = (a+a) = \pm 1$, obteniéndose $\pm
+\ket 1$. Resultando los dos casos:
+$$
+\ket{\psi_3^1} = \begin{cases}
+\pm \ket 0, & \text{si}\ a = b \\
+\pm \ket 1, & \text{si}\ a = -b \\
+\end{cases}
+$$
+Ahora si se mide este qubit, y se obtiene un 0, se deduce que $a = b$. Si se 
+obtiene un 1, que $a=-b$. Esta información permite determinar si $f(0) = f(1)$, 
+cuando $a = b$, o si $f(0) \neq f(1)$ cuando $a=-b$. El paralelismo cuántico 
+permite evaluar la función $f$ de forma simultánea, y el efecto de la 
+interferencia, transformar ese estado superpuesto, de forma que se obtenga un 0 
+o un 1 correspondiente a la información que se desea obtener de la función.
+
+\section{Otras técnicas}
+
+La resolución de problemas complejos, requiere de técnicas más sofisticadas, que 
+permitan transformar el problema en otro más simple. Un ejemplo es el caso de la 
+transformada de Fourier para la cual se tiene una versión cuántica, empleada en 
+el algoritmo de factorización numérica de Shor. La complejidad de la 
+transformada de Fourier rápida clásica, se sitúa en $O(n2^n)$ para números de 
+$n$ bits.  Sin embargo, para la versión cuántica, la complejidad se reduce a 
+$O(n^2)$.
+
+Por otra parte, otros algoritmos como el de búsqueda de Grover, emplean una 
+técnica de aproximación al resultado. De forma que, iterativamente se acercan a 
+la solución. La probabilidad de encontrar la solución correcta al final del 
+algoritmo se reduce a medida que se realizan más iteraciones.
+
+El algoritmo de Simon, que se analizará de forma minuciosa posteriormente, 
+emplea la técnica de iteración, para obtener en cada ejecución nueva información 
+que permite acercarse a la solución.
+
+%\section{Implementación}
+% Comentar las técnicas de implementación de qubits. Aqui?
 

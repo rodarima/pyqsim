@@ -3,6 +3,7 @@
 FILE=$1
 TEX=${FILE}.tex
 PDF=${FILE}.pdf
+TEX_FLAGS="-shell-escape -interaction=nonstopmode -halt-on-error"
 
 
 while [ 1 ]; do
@@ -14,22 +15,18 @@ while [ 1 ]; do
 
 	inotifywait -e modify $TEX $FILES
 
-	pdflatex -interaction=nonstopmode -halt-on-error $TEX
+	pdflatex $TEX_FLAGS $TEX
 	if [ "$?" != "0" ]; then
 		echo -e "\a"
 		continue
 	fi
 	bibtex $FILE
+	pdflatex $TEX_FLAGS $TEX
 	if [ "$?" != "0" ]; then
 		echo -e "\a"
 		continue
 	fi
-	pdflatex -interaction=nonstopmode -halt-on-error $TEX
-	if [ "$?" != "0" ]; then
-		echo -e "\a"
-		continue
-	fi
-	pdflatex -interaction=nonstopmode -halt-on-error $TEX
+	pdflatex $TEX_FLAGS $TEX
 	if [ "$?" != "0" ]; then
 		echo -e "\a"
 		continue

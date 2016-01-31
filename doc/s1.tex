@@ -416,18 +416,31 @@ $$ NOT^{\otimes n} = \underbrace{NOT\otimes NOT\otimes \ldots \otimes NOT}_{n
 Existen una serie de operadores que se emplean con mucha frecuencia en la 
 computación cuántica. Uno de los más importantes es el operador de 
 \textit{Hadamard}, representado por la letra $H$.
+%
 $$ H = \frac{1}{\sqrt 2} \mat{1 & 1 \\ 1 & -1} $$
-
+%
 Tiene la peliculiaridad de descomponer el estado puro $\ket{0}$ en un estado 
 superpuesto:
+%
 $$ H \ket{0} = \frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt 2}\ket{1} $$
-
+%
 % TODO Explicar la fórmula general del operador de Hadamard
-
+El operador de Hadamard para $n$ qubits $H^{\otimes n}$, aplicado sobre un 
+estado $\ket{x}$, se puede generalizar de la forma
+%
+$$ H^{\otimes n} \ket{x} = \frac 1 {\sqrt {2^n}} \sum_z (-1)^{\braket{x|z}} 
+\ket{z}$$
+%
+Donde $\braket{x|z}$ representa el producto interno de $x$ y $z$, bit a bit 
+módulo dos:
+%
+$$ \braket{x|z} = x_1 z_1 + x_2 z_2 + \ldots + x_n z_n \mod 2$$
+%
 El operador identidad $I$ deja un estado tal y como estaba, no realiza ninguna 
 acción, y se define
+%
 $$ I = \mat{1&0 \\ 0&1}$$
-
+%
 Otros son el desplazamiento de fase $R_\theta$, la puerta SWAP que intercambia 
 dos qubits, la puerta not controlada CNOT que realiza la negación del segundo 
 qubit cuando el primero es $\ket{1}$.

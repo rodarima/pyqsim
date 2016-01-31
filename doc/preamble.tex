@@ -5,6 +5,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{braket}
 
+% Código fuente
+%\usepackage{fontspec}
+\usepackage{minted}
+\newminted{py}{%
+		fontsize=\small,
+		tabsize=4
+}
+
+
 % Emplear "tabla" y no "cuadro" para las tablas.
 % Romper líneas por sílabas en español
 \usepackage[spanish,es-nosectiondot,es-tabla]{babel}
@@ -62,6 +71,9 @@
 \newcommand*\NO[1]{ \overline{#1}}
 \newcommand*\NI[1]{ \overline{I^{#1}}\,}
 
+% Producto pensorial
+\newcommand\ox[2]{\ket{#1} \otimes \ket{#2}}
+
 % Apartado de un ejemplo
 \theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[section]
@@ -74,7 +86,6 @@
 
 \usetikzlibrary{shapes,arrows,chains}
 \usetikzlibrary{decorations.markings}
-
 
 \newcommand\pgfmathsinandcos[3]{%
   \pgfmathsetmacro#1{sin(#3)}%

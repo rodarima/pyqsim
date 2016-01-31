@@ -286,18 +286,28 @@ $s = 01$.
 
 \subsection{Análisis de complejidad}
 
-El algoritmo de Simon produce en la salida tras la medición, un vector $z$ que 
-pertenece a un conjunto $W$, de forma que $W = \{z / \braket{z|s} = 0\}$ para 
-todo $z \in V$.
+Para una función de $n$ bits, la salida del algoritmo tras medir, corresponderá 
+a un vector $z$ de $n$ bits, con $W = \{z / \braket{z|s} = 0\}$ y $z \in W$. Los 
+diferentes vectores de $W$, son exactamente $2^{n-1}$
 
 En cuanto se obtienen $n-1$ vectores independientes, el proceso concluye, ya que 
 es posible averiguar $s$. Sin embargo, todos los vectores de $W$ pueden salir 
 con igual probabilidad.
 
+Si se disponen de $i$ vectores independientes de los $2^{n-1}$ posibles, hay 
+$2^i$ vectores que se pueden formar realizando combinaciones lineales de los $i$ 
+vectores independientes, y que no sirven. De modo que quedan $2^{n-1} - 2^i$ 
+vectores independientes. La probabilidad de obtener un nuevo vector en la 
+siguiente medición será:
+$$ p(\text{Nuevo vector independiente}) = \frac{2^{n-1} - 2^i}{2^{n-1}} = 1 - 
+2^{i-n+1} $$
+Y por lo tanto, la de no obtenerlo:
+$$ p(\text{Nuevo vector dependiente}) = 2^{i-n+1} $$
+
 Sea $R$ una variable aleatoria discreta que mide el número de ejecuciones 
 necesarias para completar los $n-1$ vectores independientes. El valor medio de 
 ejecuciones $E[R]$, puede medir cual es la media de ejecuciones que son 
-necesarias a la larga. Para calcularlo:
+necesarias a la larga \cite{ross99}. Para calcularlo:
 %
 $$ E[R] = \sum^{\infty}_{x=1} x \cdot p(R=x) $$
 %
@@ -357,7 +367,6 @@ $$ T^{n-1}_p = 0$$
 Finalmente, las probabilidades de obtener y no obtener un vector linealmente 
 independiente, partiendo de $i$ previamente, en un problema de $n$ bits son, 
 respectivamente:
-% TODO: Esxplicar de donde sale esto
 \begin{equation}
 \begin{split}
 	I^i & = 1 - 2^{i-n+1}
@@ -383,8 +392,8 @@ de $R$. Si $p(R=r) = T^0_r$, entonces se define el valor esperado de $R$ como
 %
 \subsubsection{Resolución de la recurrencia $T^0_p$}
 Para resolver la recurrencia \eqref{eq:rec_T} se empleará un método de prueba y 
-simplificación hasta dar con un patrón. Se comprobarán los primeros casos para 
-$3 \leq n \leq 5$, ya que crecen muy rápidamente.
+simplificación hasta dar con un patrón \cite{mcs}. Se comprobarán los primeros 
+casos para $3 \leq n \leq 5$, ya que crecen muy rápidamente.
 %
 Caso para $n=3$
 %

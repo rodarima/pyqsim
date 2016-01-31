@@ -388,3 +388,59 @@ $\log_2 \, S_T$ & 9.09	& 10.99	& 12.95	& 14.93	& 16.92	& 18.91	& 20.91	& 22.91
 
 
 \end{ejemplo}
+
+\section{Implementación}
+
+La simulación se realiza con el lenguaje de programación \texttt{python}, 
+empleando paquetes externos que aportarán las partes comunes del simulador. De 
+esta forma se reutiliza el software ya existente.
+
+Para los cálculos numéricos se emplea \texttt{numpy} y \texttt{scipy}, tales 
+como multiplicación y suma de matrices, producto tensorial y funciones 
+matemáticas vectorizadas.
+
+\subsection{Almacenamiento}
+El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
+los operadores. Esta representación, se realiza mediante matrices huecas. La 
+clase \texttt{qutip.Qobj} permite emplear de forma implícita las matrices huecas 
+de \texttt{scipy.sparse} con el formato de almacenamiento CSR o COO.
+
+De esta forma, un estado $\ket{\psi} = \ket{0000} $ se representa como una 
+matriz hueca, de $2^4 \times 1$. Un operador como Hadamard, se calcula 
+realizando las potencias tensoriales del operador de Hadamard para un qubit.  
+Almacenándose en una matriz hueca.
+
+\subsection{Circuito cuántico}
+Un circuito cuántico se describe como la aplicación sucesiva de operadores.  
+Realizar la aplicación de un operador consiste en realizar la multiplicación de 
+la matriz que lo representa por el estado cuántico.
+
+El algoritmo de Simon, partiendo de los operadores $H$, $I$, y $U_f$, se 
+simplifica en el código
+%
+\begin{minted}[fontsize=\small]{python}
+psi0 = basis(0, 16) # ket |0000>
+psi1 = tensor(H, I) * psi0
+psi2 = U_f * psi1
+psi3 = tensor(H, I) * psi1
+\end{minted}
+%
+% TODO Explicar con detalle la construccion de U_f
+El algoritmo de construcción del operador $U_f$ se detalla a continuación
+%
+\begin{pycode}
+def build_U(self, f):
+	bits = self.bits
+	n = 2**(2*bits)
+	if(bits>32):
+		print("bits = {}, exiting".format(bits))
+		exit(1)
+	b = np.arange(n)
+	bH = b >> bits
+	bL = b % 2**bits
+	aL = f[bH] ^ bL
+	a = bH << bits | aL
+	data = [1]*n
+	U = coo.coo_matrix((data, (a, b)), shape=[n,n])
+	return qutip.Qobj(U)
+\end{pycode}
