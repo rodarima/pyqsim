@@ -418,12 +418,12 @@ la matriz que lo representa por el estado cuántico.
 El algoritmo de Simon, partiendo de los operadores $H$, $I$, y $U_f$, se 
 simplifica en el código
 %
-\begin{minted}[fontsize=\small]{python}
+\begin{pycode}
 psi0 = basis(0, 16) # ket |0000>
 psi1 = tensor(H, I) * psi0
 psi2 = U_f * psi1
 psi3 = tensor(H, I) * psi1
-\end{minted}
+\end{pycode}
 %
 % TODO Explicar con detalle la construccion de U_f
 El algoritmo de construcción del operador $U_f$ se detalla a continuación
@@ -431,10 +431,7 @@ El algoritmo de construcción del operador $U_f$ se detalla a continuación
 \begin{pycode}
 def build_U(self, f):
 	bits = self.bits
-	n = 2**(2*bits)
-	if(bits>32):
-		print("bits = {}, exiting".format(bits))
-		exit(1)
+	n = 2**(2 * bits)
 	b = np.arange(n)
 	bH = b >> bits
 	bL = b % 2**bits
@@ -444,3 +441,5 @@ def build_U(self, f):
 	U = coo.coo_matrix((data, (a, b)), shape=[n,n])
 	return qutip.Qobj(U)
 \end{pycode}
+%
+El vector $b$ contiene los números de $0 < n < 2^n$.

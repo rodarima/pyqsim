@@ -3,9 +3,9 @@
 \subsection{Descripción del problema}
 
 Daniel R. Simon encontró un problema que presentaba una complejidad exponencial 
-al tratar de resolverse mediante métodos de computación tradicionales. Sin 
-embargo, al abordarlo mediante una solución cuántica, dicha complejidad 
-disminuía de orden, a una lineal.
+al tratar de resolverse mediante métodos de computación tradicionales 
+\cite{simon94}. Sin embargo, al abordarlo mediante una solución cuántica, dicha 
+complejidad disminuía de orden, a una lineal.
 
 El problema consiste en encontrar una cadena binaria desconocida, denominada 
 $s$, que contiene $n$ bits, relacionada con una función $f$. Sea $V$ el conjunto 
@@ -538,8 +538,14 @@ Que es exactamente la misma expresión obtenida por la recurrencia
 \eqref{eq:rec_T3} con $T^0_4$ para $n=3$:
 %
 $$
-	T^0_4 = \underbrace{I^0I^1}_J
-	(\underbrace{\NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1 }_{S_p}) $$
+	T^0_4 = \underbrace{
+\vphantom{\big(}
+I^0I^1
+}_J
+	(\underbrace{
+\vphantom{\big(}
+\NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1
+}_{S_p}) $$
 %
 
 El siguiente paso, será determinar como se forman las secuencias $S_p$.
