@@ -11,7 +11,8 @@
 \newminted{py}{%
 		linenos,
 		fontsize=\small,
-		tabsize=4
+		tabsize=4,
+		mathescape,
 }
 
 % Tamaño de los números de la las líneas en el código fuente
@@ -41,6 +42,9 @@
 
 % Urls
 \usepackage{url}
+
+% Algoritmos
+\usepackage[spanish, ruled, algochapter]{algorithm2e}
 
 % Dedicatoria
 \newenvironment{dedication}{
@@ -73,6 +77,9 @@
 % Probabilidad I y ¬I
 \newcommand*\NO[1]{ \overline{#1}}
 \newcommand*\NI[1]{ \overline{I^{#1}}\,}
+
+% Operador identidad I^{\otimes n}
+\newcommand*\opn[2]{{#1}^{\otimes #2}}
 
 % Producto pensorial
 \newcommand\ox[2]{\ket{#1} \otimes \ket{#2}}

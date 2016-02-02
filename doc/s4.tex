@@ -297,15 +297,33 @@ Esta operación, no necesita calcular el producto tensorial $A\otimes B$, y
 almacenarlo en la memoria, empleando una matrix de $2^{2n} \times 2^{2n}$. Sólo 
 requiere almacenar un estado cuántico de $2^{2n}$ elementos, y iterativamente 
 calcular el sumatorio. Lo cual reduce drásticamente el espacio requerido. El 
-pseudocódigo:
-
-Comenzar con $\ket{\psi'} := \mat{0 & 0 & \ldots & 0}^T$.
-
-Para cada $i \in J$, hacer: $\ket{\psi'} := \ket{\psi'} + a_i (A[:, i_H] \otimes 
-\ket{i_L})$
+algoritmo se detalla a continuación.
 \\
-\noindent
-Finalmente se obtiene $\ket{\psi'} = (A \otimes I^{\otimes n}) \ket{\psi}$
+\\
+\begin{algorithm}[H]
+\SetKw{In}{Entrada}
+\SetKw{Out}{Salida}
+\In{Operador $A$ y estado $\ket{\psi}$}\;
+\Out{Estado $\ket{\psi'} = (A\otimes I^{\otimes n}) \ket{\psi}$}\;
+$\ket{\psi'} \longleftarrow \mat{0 & 0 & \ldots & 0}^T$\;
+\For{$i \in J$}
+{
+	$i_H \longleftarrow \floor{i/2^n}$\;
+	$i_L \longleftarrow i \mod 2^n$\;
+	$\ket{\psi'} \longleftarrow \ket{\psi'} + a_i (A[:, i_H] \otimes 	
+	\ket{i_L}) $\;
+}
+\caption{Aplicar semi-operador $A\otimes I^{\otimes n}$ al estado $\ket{\psi}$.}
+\label{alg:semiop}
+\end{algorithm}
+
+%Comenzar con $\ket{\psi'} := \mat{0 & 0 & \ldots & 0}^T$.
+%
+%Para cada $i \in J$, hacer: $\ket{\psi'} := \ket{\psi'} + a_i (A[:, i_H] 
+%\otimes \ket{i_L})$
+%\\
+%\noindent
+%Finalmente se obtiene $\ket{\psi'} = (A \otimes I^{\otimes n}) \ket{\psi}$
 
 % Comentar que sólo es necesario computar H^n y U_f. Y que U_f es muy pequeño
 
@@ -389,7 +407,7 @@ $\log_2 \, S_T$ & 9.09	& 10.99	& 12.95	& 14.93	& 16.92	& 18.91	& 20.91	& 22.91
 
 \end{ejemplo}
 
-\section{Implementación}
+\section{Implementación del simulador}
 
 La simulación se realiza con el lenguaje de programación \texttt{python}, 
 empleando paquetes externos que aportarán las partes comunes del simulador. De 
@@ -397,35 +415,80 @@ esta forma se reutiliza el software ya existente.
 
 Para los cálculos numéricos se emplea \texttt{numpy} y \texttt{scipy}, tales 
 como multiplicación y suma de matrices, producto tensorial y funciones 
-matemáticas vectorizadas.
+matemáticas vectorizadas. Para el almacenamiento de operadores y estados 
+cuánticos, se emplea el paquete \texttt{qutip}. La clase \texttt{qutip.Qobj} 
+permite emplear de forma implícita las matrices huecas de \texttt{scipy.sparse} 
+con el formato de almacenamiento CSR o COO.
 
-\subsection{Almacenamiento}
-El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
-los operadores. Esta representación, se realiza mediante matrices huecas. La 
-clase \texttt{qutip.Qobj} permite emplear de forma implícita las matrices huecas 
-de \texttt{scipy.sparse} con el formato de almacenamiento CSR o COO.
-
-De esta forma, un estado $\ket{\psi} = \ket{0000} $ se representa como una 
-matriz hueca, de $2^4 \times 1$. Un operador como Hadamard, se calcula 
-realizando las potencias tensoriales del operador de Hadamard para un qubit.  
-Almacenándose en una matriz hueca.
+%\section{Almacenamiento}
+%El paquete \texttt{qutip} permite representar los estados cuánticos, así como 
+%los operadores. Esta representación, se realiza mediante matrices huecas.
+%
+%De esta forma, un estado $\ket{\psi} = \ket{0000} $ se representa como una 
+%matriz hueca, de $2^4 \times 1$. Un operador como Hadamard, se calcula 
+%realizando las potencias tensoriales del operador de Hadamard para un qubit.  
+%Almacenándose en una matriz hueca.
 
 \subsection{Circuito cuántico}
 Un circuito cuántico se describe como la aplicación sucesiva de operadores.  
 Realizar la aplicación de un operador consiste en realizar la multiplicación de 
 la matriz que lo representa por el estado cuántico.
 
-El algoritmo de Simon, partiendo de los operadores $H$, $I$, y $U_f$, se 
-simplifica en el código
+El algoritmo de Simon, partiendo de los operadores $\opn H n \otimes \opn I n$, 
+y $U_f$, se simplifica en el código
 %
 \begin{pycode}
-psi0 = basis(0, 16) # ket |0000>
-psi1 = tensor(H, I) * psi0
+psi0 = basis(0, 2*n) # Estado inicial $\ketp0 = \ket{0^n}\ket{0^n}$
+psi1 = H_I * psi0
 psi2 = U_f * psi1
-psi3 = tensor(H, I) * psi1
+psi3 = H_I * psi2
 \end{pycode}
+\subsection{Construcción de operadores}
+Para la simulación del circuito cuántico, serán necesarios varios operadores.
+Por una parte el semi-operador $\opn H n \otimes \opn I n$ que se empleará en 
+dos ocasiones, y por otra el operador $U_f$.
 
-\subsubsection{Construcción de $U_f$}
+\subsubsection{Operador $\opn H n \otimes \opn I n $}
+El operador $\opn H n \otimes \opn I n$ es un semi-operador, debido a que no 
+modifica la línea inferior. No es necesario construir íntegramente el operador 
+completo, el algoritmo~\ref{alg:semiop} permite calcular el resultado partiendo 
+de $\opn H n$.
+%
+Para obtener $\opn H n$ el paquete \texttt{qutip} incluye la operación 
+\texttt{hadamard\_transform} que computa las potencias tensoriales de $H$. La 
+implementación del operador $\opn H n \otimes \opn I n $ empleando el 
+algoritmo~\ref{alg:semiop} se muestra a continuación.
+%
+%\begin{samepage}
+\begin{pycode}
+def HI(self, state):
+	bits = self.bits
+
+	nz = state.data.nonzero()[0]
+	ai = state.data[nz,0].T.toarray()[0]
+	iH = nz >> bits
+	iL = nz % 2**bits
+
+	tmp = qutip.zero_ket(2**(2*bits))
+	for i in range(len(nz)):
+		a = ai[i]
+		ketH = self.H * ket(iH[i], bits)
+		ketL = ket(iL[i], bits)
+		tmp += a * tensor(ketH, ketL)
+
+	return tmp
+\end{pycode}
+%
+En la línea 4, se obtienen los índices \texttt{nz} de los elementos no nulos del 
+estado \texttt{state} al que se aplicará el operador. Para cada índice, en la 
+línea 5, se almacena en \texttt{ai} la amplitud correspondiende. A continuación, 
+se calcula $i_H$ e $i_L$ para cada índice, y se inicializa el estado resultante 
+a un vector de ceros con \texttt{qutip.zero\_ket}. Finalmente en las líneas de 9 
+a 14 se realiza el bucle que iterativamente calcula el estado resultante  en 
+\texttt{tmp}, tal y como se describe en el algoritmo~\ref{alg:semiop}.
+%\end{samepage}
+
+\subsubsection{Operador $U_f$}
 %%
 %% TODO Explicar con detalle la construccion de U_f
 %El algoritmo de construcción del operador $U_f$ se detalla a continuación
@@ -494,8 +557,12 @@ U_f[i,j] =
 \end{equation*}
 Para $0 \leq i,j \leq m$ con $k = j$ y $k' = k_H \cdot 2^n + k_L \otimes 
 f(k_H)$.
+
+%
+%\begin{samepage}
 %
 % TODO: Revisar condiciones del tipo 0 < i < n, ya que deben ser 0 <= i < n
+\noindent
 El algoritmo de construcción del operador $U_f$ se detalla a continuación
 %
 \begin{pycode}
@@ -523,3 +590,4 @@ la línea 11 se construye la matriz $U_f$ indicando sólo las posiciones en las
 que se encuentran los unos, las filas $k'$ y columnas $k$. El resto de la matriz 
 contiene elementos nulos, que no es necesario almacenar, ahorrando un espacio 
 considerable.
+%\end{samepage}
