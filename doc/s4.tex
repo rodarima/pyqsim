@@ -424,22 +424,102 @@ psi1 = tensor(H, I) * psi0
 psi2 = U_f * psi1
 psi3 = tensor(H, I) * psi1
 \end{pycode}
+
+\subsubsection{Construcción de $U_f$}
+%%
+%% TODO Explicar con detalle la construccion de U_f
+%El algoritmo de construcción del operador $U_f$ se detalla a continuación
+%%
+%\begin{pycode}
+%def build_U(self, f):
+%	bits = self.bits
+%	n = 2**(2 * bits)
+%	b = np.arange(n)
+%	bH = b >> bits
+%	bL = b % 2**bits
+%	aL = f[bH] ^ bL
+%	a = bH << bits | aL
+%	data = [1]*n
+%	U = coo.coo_matrix((data, (a, b)), shape=[n,n])
+%	return qutip.Qobj(U)
+%\end{pycode}
+%%
+%%El vector $b$ contiene los números de $0 < n < 2^n$.
+%%
+\noindent
+La operación $U_f$ se define, a partir de una función $f$, como
+$$ U_f \ket{x} \ket{y} = \ket{x} \ket{y \oplus f(x)} $$
+Esta operación, puede describirse como una matriz de $2^{2n} \times 2^{2n}$,
+aplicada sobre el estado $\ket{x} \ket{y}$, que es un vector de $2^{2n}$ 
+componentes, siendo $n$ el número de qubits de $\ket x$ y también de $\ket y$.  
+Sea $m = 2^{2n} -1$, se tiene
+$$ U_f \ket x \ket y = \mat{
+	u_{00} & \ldots & u_{0m} \\
+	\vdots &        & \vdots \\
+	u_{m0} & \ldots & u_{mm} \\
+}
+\mat{
+	a_{0} \\ \vdots \\ a_{m} \\
+}
+=
+\mat{
+	b_{0} \\ \vdots \\ b_{m} \\
+}
+$$
+El estado $\ket{x} \ket{y}$ se puede escribir también como
 %
-% TODO Explicar con detalle la construccion de U_f
+$$ \ket{x} \ket{y} = \sum_{k=0}^m a_k \ket{k_H}\ket{k_L} $$
+%
+% TODO Indicar que \ket{110} se puede escrbir como \ket{k} con k = 6
+%
+Siendo $k_H = \floor{k/2^n}$ y $k_L = k \mod 2^n$. De modo que al aplicar $U_f$,
+%
+$$ U_f \ket x \ket y = \sum_{k=0}^m a_k\ U_f \ket{k_H}\ket{k_L} =
+\sum_{k=0}^m a_k \ket{k_H}\ket{k_L \oplus f(k_H)} $$
+%
+El estado $\ket{k_H} \ket{k_L}$ es un vector de $2^{2n}$ componentes, con un 1 
+en $k = k_H \cdot 2^n + k_L$ y con el resto 0; el estado $\ket{k_H}\ket{k_L 
+\oplus f(k_H)}$ en $k' = k_H \cdot 2^n + k_L \oplus f(k_H)$.  Se observa que la 
+operación $U_f$ toma la componente $a_k$ en la posición $k$ y la translada a la 
+posición $k'$.  Es decir, se trata de una matriz de permutación. Para realizar 
+esta transformación, basta con colocar un 1 en la columna $k$ y en la fila $k'$.  
+De esta forma se define $U_f$ como:
+%
+\begin{equation*}
+U_f[i,j] =
+\begin{cases}
+1, & \text{si}\ i = k',\ j = k \\
+0, & \text{en otro caso}
+\end{cases}
+\end{equation*}
+Para $0 \leq i,j \leq m$ con $k = j$ y $k' = k_H \cdot 2^n + k_L \otimes 
+f(k_H)$.
+%
+% TODO: Revisar condiciones del tipo 0 < i < n, ya que deben ser 0 <= i < n
 El algoritmo de construcción del operador $U_f$ se detalla a continuación
 %
 \begin{pycode}
 def build_U(self, f):
-	bits = self.bits
-	n = 2**(2 * bits)
-	b = np.arange(n)
-	bH = b >> bits
-	bL = b % 2**bits
-	aL = f[bH] ^ bL
-	a = bH << bits | aL
+	n = self.bits
+	m = 2 ** (2 * n) - 1
+	k = np.arange(0, m + 1)
+	kH = k >> n
+	kL = k % 2 ** n
+	_kH = kH
+	_kL = f[kH] ^ kL
+	_k = _kH << n | _kL
 	data = [1]*n
-	U = coo.coo_matrix((data, (a, b)), shape=[n,n])
+	U = coo.coo_matrix((data, (_k, k)), shape=[n, n])
 	return qutip.Qobj(U)
 \end{pycode}
 %
-El vector $b$ contiene los números de $0 < n < 2^n$.
+La operación de desplazamiento de bits $k_H = k \gg n$ de la línea 5, equivale a 
+una división entera $k_H = \floor{k/2^n}$.
+
+El funcionamiento del algoritmo, consiste en calcular las posiciones $k$ y $k'$, 
+para $0 \leq k \leq m$, como se observa en la línea 4. Luego se calcula $k'$ 
+aplicando la función $f$ y la suma $\oplus$, en las líneas 8 y 9. Finalmente en 
+la línea 11 se construye la matriz $U_f$ indicando sólo las posiciones en las 
+que se encuentran los unos, las filas $k'$ y columnas $k$. El resto de la matriz 
+contiene elementos nulos, que no es necesario almacenar, ahorrando un espacio 
+considerable.
