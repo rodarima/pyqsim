@@ -84,7 +84,9 @@ De esta forma es importante distinguir entre la \textit{representación física}
 el \textit{significado lógico}. En el caso de la tarjeta perforada, esta 
 relación puede darse de la siguiente forma: Si hay un agujero, entonces 
 representa un 0; en caso contrario, un 1. Para representar un bit, se empleará 
-un estado $x \in \{0, 1\}$.
+un estado $\V x$, de forma que los bits 0 y 1 se definen respectivamente como
+$$ \V x^0 = \mat{1 \\ 0}, \quad \V x^1 = \mat{0 \\ 1}, \quad
+\V x \in \{\V x^0, \V x^1\} $$
 
 
 \subsection{Bit probabilístico}
@@ -92,27 +94,28 @@ un estado $x \in \{0, 1\}$.
 %moneda que es 0.5/0.5 mientras no se mide, y una vez "colapsa". Expresar la 
 %probabilidad en forma de vector
 
-Una moneda perfecta que se lanza al aire, y que cae sobre una superficie lisa, 
+Una moneda A perfecta que se lanza al aire, y que cae sobre una superficie lisa, 
 saca cara con igual probabilidad que cruz. Mientras se encuentra en el aire 
 dando vueltas, su estado no es ni cara ni cruz. Es un estado diferente. Este 
 estado puede representarse mediante un bit probabilístico, de forma que la cara 
-es el 0, la cruz es el 1, y ambos tienen una probabilidad de 0.5 de ocurrir.  
+es el 0, la cruz es el 1, y ambos tienen una probabilidad de 1/2 de ocurrir.  
 Escribiendo las probabilidades en un vector, se define
 %
-$$ y = \mat{0.5 \\ 0.5} $$
+$$ \V y = \mat{a \\ b} = \mat{1/2 \\ 1/2} $$
 %
-Comenzando la numeración en 0, el primer elemento $y[0]$ representa la 
-probabilidad de que el sistema saque un 0. Y $y[1]$ de que saque un 1. El hecho 
-de que el índice coincida con el estado que representa, será útil en el futuro.
-
+Comenzando la numeración en 0, el primer elemento $\V y [0]$ representa la 
+probabilidad de que el sistema saque un 0 (de que salga cara). Y $\V y [1]$ de 
+que saque un 1 (que salga cruz). El hecho de que el índice coincida con el 
+estado que representa, será útil en el futuro.
+%
 Además, debido a que se trata de un sistema probabilístico, ambas probabilidades 
 han de sumar la unidad.
 %
-$$ y[0] + y[1] = 1 $$
+$$ \V y [0] + \V y [1] = a + b = 1 $$
 %
-Una vez que la moneda cae, su estado deja de ser un bit probabilístico $y$, y se 
-convierte en un bit clásico $x$. Esta operación es la \textit{medición} de un 
-sistema probabilístico.
+Una vez que la moneda cae, su estado deja de ser un bit probabilístico $\V y$, y 
+se convierte en un bit clásico $\V x$. Esta operación es la \textit{medición} de 
+un sistema probabilístico.
 
 \subsection{Bit cuántico o qubit}
 %Extender el ejemplo de la moneda con la amplitud en vez de la probabilidad, y 
@@ -123,24 +126,24 @@ experiencias en la vida cotidiana o profesional, y sirven de analogías. Sin
 embargo, el funcionamiento del sistema que se describirá a continuación no tiene 
 un ejemplo conocido, tan sólo la imaginación será capaz de construir dicho 
 sistema.
-
-Un sistema cuántico puede encontrarse en un estado $z$, definido como
 %
-$$ z = \mat{\alpha \\ \beta}$$
+Un sistema cuántico puede encontrarse en un estado $\V z$, definido como
+%
+$$ \V z = \mat{\alpha \\ \beta}$$
 %
 Además, tanto $\alpha$ como $\beta$ son números complejos. Este estado se 
 denomina bit cuántico o qubit.
 %
-Tras medir un qubit, el sistema se convertirá en un bit clásico $x$, con una 
+Tras medir un qubit, el sistema se convertirá en un bit clásico $\V x$, con una 
 probabilidad de que salga 0 de $|\alpha|^2$ y de que salga 1 de $|\beta|^2$.
 Es decir, que se comportará como un bit probabilístico con las probabilidades
 %
-$$ y = \mat{|\alpha|^2 \\ |\beta|^2}$$
+$$ \V y = \mat{a \\ b} = \mat{|\alpha|^2 \\ |\beta|^2}$$
 %
 Y de igual modo, cumple la restricción de que ambas probabilidades suman la 
 unidad:
 %
-$$ |\alpha|^2 + |\beta|^2 = 1 $$
+$$ a + b = |\alpha|^2 + |\beta|^2 = 1 $$
 %
 Los números $\alpha$ y $\beta$ se denominan \textit{amplitudes}, y tienen 
 asociada una probabilidad que es $|\alpha|^2$ y $|\beta|^2$ respectivamente.
@@ -155,21 +158,22 @@ el 1, y la cadena 01 que $A$ sale cara y $B$ sale cruz.
 El número de resultados posibles aumenta con el número de monedas $n$ de la 
 forma $2^n$. Si ambas monedas se describen como un bit probabilístico, se 
 obtiene
-$$ y_A = \mat{0.5 \\ 0.5} \quad y_B = \mat{0.5 \\ 0.5} $$
-Siendo $y_m$ la descripción del estado de la moneda $m$. Entonces, la 
+$$ \V y_A = \mat{1/2 \\ 1/2} \quad \V y_B = \mat{1/2 \\ 1/2} $$
+Siendo $\V y_m$ la descripción del estado de la moneda $m$. Entonces, la 
 probabilidad de obtener cada uno de los cuatro diferentes estados al lanzar 
 ambas, se puede describir en forma de vector.
-Sea $y_m[k]$ la probabilidad de que la moneda $m$ salga $k$, entonces la 
+Sea $\V y_m[k]$ la probabilidad de que la moneda $m$ salga $k$, entonces la 
 probabilidad de que salga $k_A$ y luego $k_B$ será:
-$$ y_A[k_A] \cdot y_B[k_B] $$
-De modo que se puede construir un vector que describa todas las posibilidades:
-$$ y = \mat{
-	y_A[0] \cdot y_B[0] \\ y_A[0] \cdot y_B[1] \\
-	y_A[1] \cdot y_B[0] \\ y_A[1] \cdot y_B[1]
+$$ \V y_A[k_A] \cdot \V y_B[k_B] $$
+De modo que se puede construir un vector $\V y$ que describa todas las 
+posibilidades:
+$$ \V y = \mat{
+	\V y_A[0] \cdot \V y_B[0] \\ \V y_A[0] \cdot \V y_B[1] \\
+	\V y_A[1] \cdot \V y_B[0] \\ \V y_A[1] \cdot \V y_B[1]
 }
 = \mat{
-	y_A[0] \cdot y_B \\
-	y_A[1] \cdot y_B
+	\V y_A[0] \cdot \V y_B \\
+	\V y_A[1] \cdot \V y_B
 } $$
 Esta operación se conoce como el producto tensorial y conocer sus propiedades
 será fundamental.
@@ -177,9 +181,8 @@ será fundamental.
 \subsection{Producto tensorial}
 \label{sss:producto-tensorial}
 
-La operación $\otimes$ se define como el producto tensorial o producto de 
-Kronecker. Si A y B son dos matrices de $n \times m$ y $k \times l$ 
-respectivamente:
+La operación $\otimes$ se define como el producto tensorial.  Si $A$ y $B$ 
+son dos matrices de $n \times m$ y $k \times l$ respectivamente:
 %
 $$
 \begin{array}{c c}
@@ -198,17 +201,18 @@ $$
 \end{array}
 $$
 %
-Entonces $C = A \otimes B$ es la matriz $C$ de $nk \times ml$, definida como
+Entonces $C = A \otimes B$ es la matriz $C$ de $nk \times ml$, 
+definida como
 %
 $$
-C = A \otimes B=\mat{
+C = A \otimes B = \mat{
 	a_{11} B & \cdots & a_{1m} B \\
 	\vdots   &        & \vdots   \\
 	a_{n1} B & \cdots & a_{nm} B
 }
 $$
 %
-El producto tensorial cumple varias propiedades interesantes.
+El producto tensorial cumple varias propiedades importantes.
 %
 \begin{itemize}
 \item Es asociativo $(A \otimes B) \otimes C = A \otimes (B \otimes C)$
@@ -231,29 +235,29 @@ Pero en general, no es conmutativo: $A \otimes B \neq B \otimes A$.
 Empleando la notación de producto tensorial, ahora calcular el estado global de 
 un sistema de dos monedas, se simplifica a
 %
-$$ y = y_A \otimes y_B $$
+$$ \V y = \V y_A \otimes \V y_B $$
 %
-Este mismo procedimiento se emplea en la descripción de qubits. Un sistema $z$ 
-de dos qubits $z_A$ y $z_B$ se puede describir como:
+Este mismo procedimiento se emplea en la descripción de qubits. Un sistema $\V 
+z$ de dos qubits $\V z_A$ y $\V z_B$ se puede describir como:
 %
 $$
-z_A = \mat{\alpha_1 \\ \beta_1}, \quad
-z_B = \mat{\alpha_2 \\ \beta_2}, \quad
-z = z_A \otimes z_B $$
+\V z_A = \mat{\alpha_1 \\ \beta_1}, \quad
+\V z_B = \mat{\alpha_2 \\ \beta_2}, \quad
+\V z = z_A \otimes z_B $$
 %
 De forma que se obtiene:
 %
 $$
-z = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
+\V z = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
 	& \beta_1 \alpha_2 & \beta_1 \beta_2}^T $$
 %
 Por ahora no hay ninguna diferencia apreciable en la forma en la que comporta un 
 sistema cuántico frente a uno probabilístico. Pero no será durante mucho tiempo.
-El sistema de dos monedas $y$ está sujeto a la restricción de que al lanzar una 
-moneda la suma de las probabilidades de los posibles resultados debe ser la 
+El sistema de dos monedas $\V y$ está sujeto a la restricción de que al lanzar 
+una moneda la suma de las probabilidades de los posibles resultados debe ser la 
 unidad, esto es
 %
-$$ y_A[0] + y_A[1] = 1, \quad y_B[0] + y_B[1] = 1$$
+$$ \V y_A[0] + \V y_A[1] = 1, \quad \V y_B[0] + \V y_B[1] = 1$$
 %
 Cuando dos qubits se tratan por separado, esta restricción es análoga:
 %
@@ -263,19 +267,19 @@ Pero cuando se combinan en un sólo sistema cuántico, pasa a denominarse
 \textit{registro cuántico}, y la restricción se convierte en:
 \begin{equation}
 \label{eq:qbits-unidad}
-\sum_{\alpha \in z} |\alpha|^2 = 1
+\sum_{\alpha \in \V z} |\alpha|^2 = 1
 \end{equation}
 %
 Permitiendo el caso en el que puede existir un registro de dos qubits con el 
 estado:
-$$ z = \mat{\frac{1}{\sqrt{2}} & 0 & 0 & \frac{1}{\sqrt{2}}}^T $$
+$$ \V z = \mat{\frac{1}{\sqrt{2}} & 0 & 0 & \frac{1}{\sqrt{2}}}^T $$
 Que cumple la restricción \eqref{eq:qbits-unidad} puesto que:
 $$ \abs{\frac{1}{\sqrt{2}}}^2 + \abs{\frac{1}{\sqrt{2}}}^2 = \frac{1}{2} + 
 \frac{1}{2} = 
 1 $$
-Y sin embargo, $z$ no puede ser expresado como el producto tensorial de dos 
-qubits $z_A$ y $z_B$:
-$$ z = z_A \otimes z_B = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
+Y sin embargo, $\V z$ no puede ser expresado como el producto tensorial de dos 
+qubits $\V z_A$ y $\V z_B$:
+$$ \V z = \V z_A \otimes \V z_B = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
 	& \beta_1 \alpha_2 & \beta_1 \beta_2}^T = \mat{\frac{1}{\sqrt{2}} & 0 & 0 & 
 \frac{1}{\sqrt{2}}}^T
 $$
@@ -302,9 +306,13 @@ braket a $\braket{u|v}$, formado por el bra $\bra{u}$ y el ket $\ket{v}$.
 De esta forma, se definen los kets
 $$ \ket{0} = \mat{1 \\ 0}, \quad \ket{1} = \mat{0 \\ 1} $$
 %
-Y entonces un qubit $z$ puede describirse como una combinación lineal de kets 
+Y de forma correspondiente, los bras, como duales de los kets
+$$ \bra{0} = \ket{0}^\dagger = \mat{1 & 0}, \quad
+\bra 1 = \ket{1}^\dagger = \mat{0 & 1} $$
+%
+Entonces un qubit $\V z$ puede describirse como una combinación lineal de kets 
 $\ket{0}$ y $\ket{1}$
-$$ z = \mat{\alpha \\ \beta} = \alpha \ket{0} + \beta \ket{1}$$
+$$ \V z = \mat{\alpha \\ \beta} = \alpha \ket{0} + \beta \ket{1}$$
 Dado que cualquier qubit puede escribirse partiendo de los kets $\ket{0}$ y 
 $\ket{1}$, forman una base vectorial y se les denomina vectores base, 
 \textit{kets base} o también \textit{estados puros}.

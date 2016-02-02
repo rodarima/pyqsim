@@ -243,11 +243,11 @@ cualquier operador del tipo $(A \otimes I^{\otimes n})$ permiten una
 optimización en tiempo y espacio.
 
 \subsubsection{Semi-operadores}
-Un \textit{semi-operador} es un operador $A$ que sólo actúa en la mitad superior
-de un circuito. De modo que su correspondiente operador se calcula como $D = (A 
-\otimes I^{\otimes n})$. Sea $B = I^{\otimes n}$, y tanto $A$ como $B$ sean 
-matrices de $2^n\times 2^n$, los elementos de $D = A \otimes B$ se determinan 
-como
+Un \textit{semi-operador} es un operador $D$ que sólo actúa en la mitad superior
+de un circuito. De modo que se puede expresar como $D = (A \otimes I^{\otimes 
+n})$.
+Sea $B = I^{\otimes n}$, y tanto $A$ como $B$ sean matrices de $2^n\times 2^n$, 
+los elementos de $D = A \otimes B$ se determinan como
 \begin{equation}
 \begin{split}
 	B[i,j] &= A[i_H, j_H] \cdot B[i_L, j_L]\\
@@ -259,9 +259,9 @@ como
 \end{equation}
 Debido a que $B[i, j]$ es la identidad, cuando $i \neq j, B[i,j] = 0$. Los 
 cálculos se simplifican.
-
-El estado $\ket{\psi}$ de $2n$ qubits, si $m = 2^{2n}-1$, se puede descomponer 
-en:
+%
+El estado $\ket{\psi}$ de $2n$ qubits, con $m = 2^{2n}-1$, se puede descomponer 
+en
 $$ \ket{\psi} = \sum_{i = 0}^{m} a_i \ket{i} $$
 Sea $J$ el conjunto de posiciones $i$ para las cuales $a_i \neq 0$, $ J = \{ i 
 \mid a_i \neq 0\}$, entonces
