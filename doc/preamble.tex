@@ -1,4 +1,5 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper]{book}
+%\documentclass[12pt,a4paper]{report}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -25,6 +26,9 @@
 % Usar estilo de libro para las tablas
 \usepackage{booktabs}
 
+% Loren ipsum
+\usepackage{lipsum}
+
 % Gráficas
 \usepackage{pgfplots}
 
@@ -46,9 +50,13 @@
 % Algoritmos
 \usepackage[spanish, ruled, algochapter]{algorithm2e}
 
+% Imágenes vectoriales en SVG
+\usepackage{svg}
+
 % Dedicatoria
 \newenvironment{dedication}{
-\clearpage           % we want a new page
+\thispagestyle{empty}% no header and footer
+\cleardoublepage           % we want a new page
 \thispagestyle{empty}% no header and footer
 \vspace*{\stretch{1}}% some space at the top 
 \itshape             % the text is in italics
@@ -57,10 +65,12 @@
 {\par % end the paragraph
 \vspace{\stretch{3}} % space at bottom is three times that at the top
 \clearpage           % finish off the page
+%\cleardoublepage
 }
 
 % Dimensiones de los márgenes.
 %\usepackage[margin=3cm]{geometry}
+\usepackage[top=3cm, bottom=3cm, left=3.5cm, right=2.5cm]{geometry}
 
 % Macros para ayudar a la redacción
 % Vector
