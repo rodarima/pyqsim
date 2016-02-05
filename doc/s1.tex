@@ -479,16 +479,17 @@ superpuesto:
 $$ H \ket{0} = \frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt 2}\ket{1} $$
 %
 % TODO Explicar la fórmula general del operador de Hadamard
-El operador de Hadamard para $n$ qubits $H^{\otimes n}$, aplicado sobre un 
-estado $\ket{x}$, se puede generalizar de la forma
+Sea $V =  \{0,1\}^n$, el operador de Hadamard para $n$ qubits $H^{\otimes n}$, 
+aplicado sobre un estado $\ket{\V x}$, con $\V x \in V$, se puede generalizar de 
+la forma
 %
-$$ H^{\otimes n} \ket{x} = \frac 1 {\sqrt {2^n}} \sum_z (-1)^{\braket{x|z}} 
-\ket{z}$$
+$$ H^{\otimes n} \ket{\V x} = \frac 1 {\sqrt {2^n}} \sum_{\V z \in V} (-1)^{\V x 
+\cdot \V z} \ket{\V z}$$
 %
-Donde $\braket{x|z}$ representa el producto interno de $x$ y $z$, bit a bit 
-módulo dos:
+Donde $\V x \cdot \V z$ representa el producto interno de $\V x$ y $\V z$, bit a 
+bit módulo dos:
 %
-$$ \braket{x|z} = x_1 z_1 + x_2 z_2 + \ldots + x_n z_n \mod 2$$
+$$ \V x \cdot \V z = x_1 z_1 + x_2 z_2 + \ldots + x_n z_n \mod 2$$
 %
 El operador identidad $I$ deja un estado tal y como estaba, no realiza ninguna 
 acción, y se define
