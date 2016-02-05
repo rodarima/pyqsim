@@ -15,9 +15,29 @@ de la misma forma que realizaría un ordenador cuántico.
 
 Entre los objetivos que se buscan con un simulador de circuitos, se encuentra la 
 capacidad para ejecutar un circuito cuántico, con el objetivo de contrastar los 
-resultados experimentales con los valores teóricos.
+resultados experimentales con los valores teóricos. Debe permitir conseguir los 
+mismos resultados que el sistema real, y en un tiempo de simulación razonable.
+
+%
 
 \section{Organización}
+
+En el capítulo 2 se realiza una introducción a la computación cuántica, para 
+adquirir los conceptos previos en los que se basan los circuitos cuánticos, así 
+como la notación empleada. En el capítulo 3, se examinan las técnicas 
+fundamentales que usan los circuitos cuánticos para explotar las nuevas 
+posibilidades de cómputo. El capítulo 4, introduce un ejemplo concreto, el 
+algoritmo de Simon, que es analizado de forma teórica. El capítulo 5 presenta el 
+diseño del simulador, así como la implementación con el circuito del algoritmo 
+de Simon. Finalmente en el capítulo 6 se analizan los resultados de la 
+simulación y se contrastan con los teóricos.
+
+\section{Estado del arte}
+% Comentar que otros simuladores hay, y que resultados obtienen
+Actualmente existe una larga lista de simuladores y herramientas para la 
+simulación, que son recopilados en la web \cite{quantiki}.
+
+
 
 
 
@@ -25,7 +45,11 @@ resultados experimentales con los valores teóricos.
 % Introducir suavemente el tema de la computación cuántica. Como surge, por que, 
 % y para que sirve
 
-\subsection{Mecánica cuántica}
+%\section{Introducción}
+
+
+
+%\subsection{Mecánica cuántica}
 La naturaleza se comporta de una forma sorprendentemente inesperada a medida que 
 la escala a la que se observan los detalles se hace cada vez más pequeña.  
 Resulta muy extraño describir dicho comportamiento en comparación con las cosas 
@@ -48,7 +72,7 @@ sistemas cuánticos dando lugar al término ordenador cuántico. La idea de
 construir tal dispositivo ha sido propuesta por primera vez por Richard Feynman 
 en 1982 \cite{feynman-sim}, con el objetivo de simular sistemas cuánticos.
 
-\subsection{Computación cuántica}
+%\subsection{Computación cuántica}
 La computación cuántica es un nuevo paradigma de computación, que busca la
 resolución de problemas empleando las propiedades de la mecánica cuántica.
 Fundamenta su utilidad en el hecho de que algunos problemas que tienen una alta
@@ -116,12 +140,12 @@ $$ \V x^0 = \mat{1 \\ 0}, \quad \V x^1 = \mat{0 \\ 1}, \quad
 %moneda que es 0.5/0.5 mientras no se mide, y una vez "colapsa". Expresar la 
 %probabilidad en forma de vector
 
-Una moneda A perfecta que se lanza al aire, y que cae sobre una superficie lisa, 
-saca cara con igual probabilidad que cruz. Mientras se encuentra en el aire 
-dando vueltas, su estado no es ni cara ni cruz. Es un estado diferente. Este 
-estado puede representarse mediante un bit probabilístico, de forma que la cara 
-es el 0, la cruz es el 1, y ambos tienen una probabilidad de 1/2 de ocurrir.  
-Escribiendo las probabilidades en un vector, se define
+Una moneda $A$ perfecta que se lanza al aire, y que cae sobre una superficie 
+lisa, saca cara con igual probabilidad que cruz. Mientras se encuentra en el 
+aire dando vueltas, su estado no es ni cara ni cruz. Es un estado diferente.  
+Este estado puede representarse mediante un bit probabilístico \cite{watrous}, 
+de forma que la cara es el 0, la cruz es el 1, y ambos tienen una probabilidad 
+de 1/2 de ocurrir.  Escribiendo las probabilidades en un vector, se define
 %
 $$ \V y = \mat{a \\ b} = \mat{1/2 \\ 1/2} $$
 %

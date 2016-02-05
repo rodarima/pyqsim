@@ -493,7 +493,8 @@ Tras repetir la simulación una cantidad $r = 10000$ veces, se analiza la media 
 varianza, y se comparan con las calculadas previamente de forma teórica. En la 
 tabla~\ref{tab:comp-qc} se puede observar como ambos resultados se acercan 
 mucho. En la figura~\ref{fig:comp-qc} se observa como el crecimiento es lineal, 
-de modo que la complejidad se aproxima a $O(n)$.
+de modo que la complejidad se aproxima a $O(n)$, tal y como se había calculado 
+teóricamente.
 
 %TODO Mencionar la ecuación de ejecuciones medias E[R].
 
@@ -547,9 +548,10 @@ de modo que la complejidad se aproxima a $O(n)$.
 	xlabel={Número de qubits $N$},
 	ylabel={Número esperado de ejecuciones R},
 ]
-\addplot [blue,mark=*] table [x=N, y=R-mean, col sep=comma] {csv/com_qc.csv};
-\addplot [red, dashed, mark=none] table [x=N, y=RT-mean, col sep=comma] 
+\addplot [red,mark=*,thick] table [x=N, y=R-mean, col sep=comma] 
 {csv/com_qc.csv};
+\addplot [black, dashed, mark=none, very thick] table [x=N, y=RT-mean, col 
+sep=comma] {csv/com_qc.csv};
 \legend{
 	$R_\mu$,
 	$R_\mu'$};
