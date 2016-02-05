@@ -196,53 +196,53 @@ superior, de este modo se obtiene
 % TODO: Explicar el origen de esta expresion
 \begin{equation}
 \ket{\psi_3} = \frac{1}{2^n} \sum_{x \in V} \sum_{z \in V}
-	(-1)^{\braket{z|x}} \ket{z, f(x)}
+	(-1)^{z \cdot x} \ket{z, f(x)}
 \end{equation}
 %
 Por consiguiente, el coeficiente de cada ket será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} (-1)^{\braket{z|x}}
+c_k = \frac{1}{2^n} (-1)^{z \cdot x}
 \end{equation}
 %
 Pero dado que $f(x) = f(x \oplus s)$, los kets $\ket{z, f(x)}$ y $\ket{z, f(x 
 \oplus s)}$ serán el mismo, por lo que el coeficiente para este ket será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x \oplus 
-s}}\right)
+c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot (x \oplus 
+s)}\right)
 \end{equation}
 %
-El producto interno $\braket{z|x \oplus s}$ puede descomponerse en $\braket{z|x} 
-\oplus \braket{z|s}$, y substituyendo
+El producto interno $z \cdot (x \oplus s)$ puede descomponerse en $ z \cdot x
+\oplus z \cdot s$, y substituyendo
 %
 \begin{equation}
 \begin{split}
-c_k & = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x} \oplus 
-\braket{z|s}} \right) \\
-	& = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x}}
-	(-1)^{\braket{z|s}} \right)
+c_k & = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x \oplus 
+z \cdot s} \right) \\
+	& = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x}
+	(-1)^{z \cdot s} \right)
 \end{split}
 \end{equation}
 %
-Cuando $\braket{z|s} = 1$, el coeficiente $c_k$ será
+Cuando $ z \cdot s = 1$, el coeficiente $c_k$ será
 %
 \begin{equation}
 \begin{split}
-c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} - (-1)^{\braket{z|x}} \right) =
+c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} - (-1)^{z \cdot x} \right) =
 	\frac{1}{2^n} (0) = 0
 \end{split}
 \end{equation}
 %
-Y cuando $\braket{z|s} = 0$, será
+Y cuando $ z \cdot s = 0$, será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} \left((-1)^{\braket{z|x}} + (-1)^{\braket{z|x}} \right)
+c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x} \right)
 	= \frac{1}{2^n} (\pm 2) = \pm 2^{1-n}
 \end{equation}
 %
 De modo que $c_k \neq 0$ si en el ket $\ket{z, f(x)}$ se cumple que 
-$\braket{z|s} = 0$. Así que sólo los estados de esta forma tendrán coeficientes 
+$z \cdot s = 0$. Así que sólo los estados de esta forma tendrán coeficientes 
 no nulos. En el caso del ejemplo será
 %
 \begin{equation}
@@ -256,7 +256,7 @@ no nulos. En el caso del ejemplo será
 \end{split}
 \end{equation}
 %
-Finalmente, tras anular los términos en los que $\braket{z|01} = 1$, es decir 
+Finalmente, tras anular los términos en los que $z \cdot 01 = 1$, es decir 
 $z=01$ y $z=11$, queda
 %
 \begin{equation}
@@ -265,13 +265,13 @@ $z=01$ y $z=11$, queda
 \end{equation}
 %
 En este estado, si se realiza una medición de $z$, el resultado siempre cumplirá 
-la restricción $\braket{z|s} = 0$. Una vez que se obtengan $n-1$ vectores 
+la restricción $z \cdot s = 0$. Una vez que se obtengan $n-1$ vectores 
 linealmente independientes, será posible construir un sistema de ecuaciones y 
 calcular $s$.
 
 En este ejemplo, después de medir la primera línea, el conjunto de vectores 
-posibles resulta $z \in \{00, 10\}$. En todo caso, se tiene que $\braket{z|s} = 
-0$ de modo que $\braket{00|s} = 0$ y $\braket{10|s} = 0$, produciendo las 
+posibles resulta $z \in \{00, 10\}$. En todo caso, se tiene que $ z \cdot s = 
+0$ de modo que $00 \cdot s = 0$ y $10 \cdot s = 0$, produciendo las 
 ecuaciones:
 %
 \begin{equation}
@@ -287,7 +287,7 @@ $s = 01$.
 \subsection{Análisis de complejidad}
 
 Para una función de $n$ bits, la salida del algoritmo tras medir, corresponderá 
-a un vector $z$ de $n$ bits, con $W = \{z / \braket{z|s} = 0\}$ y $z \in W$. Los 
+a un vector $z$ de $n$ bits, con $W = \{z / z \cdot s = 0\}$ y $z \in W$. Los 
 diferentes vectores de $W$, son exactamente $2^{n-1}$
 
 En cuanto se obtienen $n-1$ vectores independientes, el proceso concluye, ya que 
