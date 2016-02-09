@@ -11,25 +11,23 @@ En este trabajo se propone un simulador cuántico, que permite ejecutar circuito
 de la misma forma que realizaría un ordenador cuántico.
 
 \section{Motivación y objetivos}
-% TODO En que consiste 
+% Por qué motivos es necesario un simulador y que se desea con él.
 
 Los algoritmos cuánticos solucionan problemas de una forma más rápida que los 
 algoritmos convencionales. La principal razón por la que se ha desarrollado un 
-simulador es la de comprender intuitivamente la manera en la que funcionan las 
-técnicas que se emplean para resolver los problemas de forma más eficiente.
+simulador es la de comprender intuitivamente las técnicas que se emplean para 
+resolver los problemas de forma más eficiente.
 
 La simulación permite examinar paso a paso la ejecución de un algoritmo cuántico 
-proporcionando un medio para comprender las técnicas que son empleadas por los 
-algoritmos. Así como los resultados reales que se obtendrían en un ordenador 
-cuántico sin la necesidad de utilizarlo.
+proporcionando un medio para observar dichas técnicas de forma minuciosa. Por 
+otra parte, también se obtienen los resultados reales sin la necesidad de 
+disponer de un ordenador cuántico.
 
 Entre los objetivos que se buscan con un simulador de circuitos, se encuentra la 
 capacidad para ejecutar un circuito cuántico, con el objetivo de contrastar los 
-resultados experimentales con los valores teóricos.
-
-Además un análisis de la simulación debe revelar la complejidad del algoritmo 
-simulado, confirmando que se trata de una solución más eficiente que una 
-clásica.
+resultados experimentales con los valores teóricos. Permitiendo revelar la 
+complejidad del algoritmo simulado y determinando que se trata de una solución 
+más eficiente que una clásica.
 
 %
 
@@ -37,17 +35,17 @@ clásica.
 El proyecto se divide en varios capítulos, de forma que se exponen las ideas 
 gradualmente a medida que avanza el texto.
 
-En el capítulo 2 se realiza una introducción a la computación cuántica, para 
+En el capítulo 2 se realiza una introducción a la computación cuántica para 
 adquirir los conceptos previos en los que se basan los circuitos cuánticos, así 
 como la notación empleada. En el capítulo 3 se examinan las técnicas 
 fundamentales que usan los circuitos cuánticos para explotar las nuevas 
 posibilidades de cómputo. El capítulo 4 introduce un ejemplo concreto, el 
 problema de Simon, que es analizado de forma teórica. El capítulo 5 presenta el 
-diseño del simulador, así como la implementación con el circuito del algoritmo 
-de Simon.  Posteriormente en el capítulo 6 se analizan los resultados de la 
-simulación y se contrastan con los teóricos. Finalmente las conclusiones sobre 
-los resultados obtenidos se comentan en el capítulo 7, junto a las líneas 
-futuras de desarrollo.
+diseño del simulador, así como la implementación del algoritmo de Simon.  
+Posteriormente en el capítulo 6 se analizan los resultados de la simulación y se 
+contrastan con los teóricos. Finalmente las conclusiones sobre los resultados 
+obtenidos se comentan en el capítulo 7, junto a las líneas futuras de 
+desarrollo.
 
 \section{Estado del arte}
 % Comentar que otros simuladores hay, y que resultados obtienen
@@ -59,7 +57,7 @@ que se ha empleado en este simulador.
 %en un simulador.
  
 Adina BĂRÎLĂ \cite{adina} ha realizado la simulación del algoritmo de Simon con 
-3 qubits, empleando el lenguaje para cáculos cuánticos QCL desarrollado por 
+3 qubits, empleando el lenguaje para cálculos cuánticos QCL desarrollado por 
 Bernhard Ömer \cite{qcl}. Otro análisis de Peter Nyman en 2008 con Mathematica 
 consigue ejecutarlo hasta 6 qubits \cite{mathematica}.
 
@@ -448,8 +446,8 @@ matriz $A$ de $2 \times 2$ elementos complejos y se denominan
 
 Además, debido al segundo postulado de la mecánica cuántica, todos los 
 operadores cuánticos deben ser \textit{reversibles}, es decir que la matriz $A$ 
-debe ser \textit{autoadjunta} o \textit{hermítica}, cumpliendo que $A$ por su 
-transpuesta conjugada $A^\dagger$ sea la identidad:
+debe ser \textit{unitaria}, cumpliendo que $A$ por su transpuesta conjugada 
+$A^\dagger$ sea la identidad:
 $$ A A^\dagger = A^\dagger A = I$$
 %
 Cuando se aplica un operador $A$ sobre un qbit $\ket{\psi}$, se obtiene un 

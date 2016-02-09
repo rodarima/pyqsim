@@ -36,15 +36,15 @@ $$ \V x = \V y \oplus \V s \implies f(\V x) = f(\V y) $$
 Con un ejemplo de 2 bits, y una cadena $\V s = 01$, se define $f$:
 %
 \begin{center}
-\begin{tabular}{|c|c||c|c|}
-	\hline
+\begin{tabular}{cccc}
+	\toprule
 	$\V x$ & $f(\V x)$ & $\V x \oplus \V s$ & $f(\V x \oplus \V s)$\\
-	\hline
+	\midrule
 	00 & 00 & 01 & 00\\
 	01 & 00 & 00 & 00\\
 	10 & 01 & 11 & 01\\
 	11 & 01 & 10 & 01\\
-	\hline
+	\bottomrule
 \end{tabular}
 \end{center}
 %
@@ -145,15 +145,15 @@ Para comprender el funcionamiento del algoritmo cuántico, se empleará el mismo
 ejemplo anteriormente descrito, con sólo dos bits $n=2$ y de período $s=01$:
 %
 \begin{center}
-\begin{tabular}{|c|c|}
-	\hline
+\begin{tabular}{cc}
+	\toprule
 	$\V x$ & $f(\V x)$ \\
-	\hline
+	\midrule
 	00 & 00 \\
 	01 & 00 \\
 	10 & 01 \\
 	11 & 01 \\
-	\hline
+	\bottomrule
 \end{tabular}
 \end{center}
 %
@@ -625,13 +625,14 @@ $$ S_p = P_p \cdot Q_p$$
 %
 Al examinar las secuencias $Q_p$, se obtienen los valores:
 \begin{center}
-	\begin{tabular}{|c|c *{4}{|c}|}
-		\hline
-		$n$ & $Q_{n}$ & $Q_{n+1}$ & $Q_{n+2}$ & $Q_{n+3}$ & $Q_{n+4}$ \\ \hline
+	\begin{tabular}{cc *{4}{c}}
+		\toprule
+		$n$ & $Q_{n}$ & $Q_{n+1}$ & $Q_{n+2}$ & $Q_{n+3}$ & $Q_{n+4}$ \\
+		\midrule
 		3   & 3       & 7         & 15        & 31        & 63        \\
 		4   & 7       & 35        & 155       & 651       & 2667      \\
 		5   & 31      & 651       & 11811     & 2007878   & 3309747   \\
-		\hline
+		\bottomrule
 	\end{tabular}
 \end{center}
 %
@@ -679,15 +680,15 @@ De este modo, se pueden computar los valores teóricos esperados de ejecuciones
 que cabría esperar a la larga.
 \begin{table}[h]
 	\centering
-	\begin{tabular}{|c|*{9}{|c}|}
-		\hline
-		$n$      & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\ \hline
+	\begin{tabular}{c*{9}{c}}
+		\toprule
+		$n$      & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\ \midrule
 		$E[R]$   &
 2.000& 3.333& 4.476& 5.542& 6.575& 7.591& 8.598& 9.602& 10.60
 \\
 		$\frac{E[R]}{n}$ &
 1.000& 1.111& 1.119& 1.109& 1.096& 1.084& 1.075& 1.067& 1.060\\
-		\hline
+		\bottomrule
 	\end{tabular}
 \caption{Valor esperado de ejecuciones del algoritmo de Simon}
 \label{tabla_E}
