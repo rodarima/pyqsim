@@ -1,40 +1,44 @@
-\chapter{Algoritmo de Simon}
-\section{Algoritmo de Simon}
-\subsection{Descripción del problema}
+\chapter{Problema de Simon}
+
+A lo largo de este capítulo se presenta un problema sencillo, cuya solución se 
+analiza primero con un algoritmo clásico y posteriormente con un circuito 
+cuántico. La complejidad se calcula para ambas soluciones.
+
+\section{Descripción del problema}
 
 Daniel R. Simon encontró un problema que presentaba una complejidad exponencial 
 al tratar de resolverse mediante métodos de computación tradicionales 
 \cite{simon94}. Sin embargo, al abordarlo mediante una solución cuántica, dicha 
-complejidad disminuía de orden, a una lineal.
-
-El problema consiste en encontrar una cadena binaria desconocida, denominada 
-$s$, que contiene $n$ bits, relacionada con una función $f$. Sea $V$ el conjunto 
-de cadenas de $n$ bits, $V = \{0,1\}^n$, entonces la función $f$ asigna a cada 
-cadena de $V$ otra cadena del mismo conjunto, $f:V \rightarrow V$.
-
+complejidad disminuía de orden a una lineal.
+%
+El problema consiste en encontrar una cadena binaria desconocida, denotada como 
+$\V s$, que contiene $n$ bits, relacionada con una función $f$. Sea $V$ el 
+conjunto de cadenas de $n$ bits, $V = \{0,1\}^n$, entonces la función $f$ asigna 
+a cada cadena de $V$ otra cadena del mismo conjunto, $f:V \rightarrow V$.
+%
 Además la función cumple la restricción
 %
 \begin{equation}
 	\label{eq:simon_f}
-	f(x_1) = f(x_2) \iff x_1 = x_2 \oplus s
+	f(\V x) = f(\V y) \iff \V x = \V y \oplus \V s
 \end{equation}
 %
-Por una parte, si el resultado de dos salidas es idéntico, es decir $f(x_1) = 
-f(x_2)$ entonces entradas deben cumplir que $x_1 = x_2 \oplus s$:
+Por una parte, si el resultado de dos salidas es idéntico, es decir $f(\V x) = 
+f(\V y)$ entonces las entradas deben cumplir que $\V x = \V y \oplus \V s$:
 %
-$$ f(x_1) = f(x_2) \implies x_1 = x_2 \oplus s $$
+$$ f(\V x) = f(\V y) \implies \V x = \V y \oplus \V s $$
 %
-Y por otra parte, si dos pares de entradas cumplen $x_1 = x_2 \oplus s$ entonces 
-sus salidas serán idénticas:
+Y por otra parte, si dos pares de entradas cumplen $\V x = \V y \oplus \V s$ 
+entonces sus salidas serán idénticas:
 %
-$$ x_1 = x_2 \oplus s \implies f(x_1) = f(x_2) $$
+$$ \V x = \V y \oplus \V s \implies f(\V x) = f(\V y) $$
 %
-Con un ejemplo de 2 bits, y una cadena $s = 01$, se define $f$:
+Con un ejemplo de 2 bits, y una cadena $\V s = 01$, se define $f$:
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c|}
 	\hline
-	$x$ & $f(x)$ & $x \oplus s$ & $f(x \oplus s)$\\
+	$\V x$ & $f(\V x)$ & $\V x \oplus \V s$ & $f(\V x \oplus \V s)$\\
 	\hline
 	00 & 00 & 01 & 00\\
 	01 & 00 & 00 & 00\\
@@ -44,38 +48,40 @@ Con un ejemplo de 2 bits, y una cadena $s = 01$, se define $f$:
 \end{tabular}
 \end{center}
 %
-Se observa que $f(x)$ es idéntico a $f(x \oplus s)$, de modo que esta función 
-cumple los requisitos para el problema.
+Se observa que $f(\V x)$ es idéntico a $f(\V x \oplus \V s)$, de modo que esta 
+función cumple los requisitos para el problema.
 
-\subsubsection{Solución clásica}
+\section{Solución clásica}
 
 Una solución clásica consistiría en evaluar $f$ con entradas diferentes hasta 
-encontrar una entrada $x_1$ que produzca una salida que ya se hubiera observado 
-con otra entrada $x_2$. Entonces, debido a la restricción \ref{eq:simon_f} se 
-tiene que $x_2 = x_1 \oplus s$, y por lo tanto se puede calcular $s$ como $s = 
-x_1 \oplus x_2$.
+encontrar una entrada $\V x$ que produzca una salida que ya se hubiera observado 
+con otra entrada $\V y$. Entonces, debido a la restricción \ref{eq:simon_f} se 
+tiene que $\V y = \V x \oplus \V s$, y por lo tanto se puede calcular $\V s$ como $\V s = 
+\V x \oplus \V y$.
 
 Debido a que dos entradas producen la misma salida, y que todas las posibles 
-entradas forman pares de la forma $x_2 = x_1 \oplus s$, la función $f$ tendrá la 
-mitad de sus salidas iguales. Es decir, que sólo existen $2^{n/2}$ salidas 
-diferentes, por lo que al evaluar una más, $2^{n/2} + 1$ se asegura encontrar 
-dos entradas que produzcan la misma salida. De esta forma la complejidad se 
-sitúa en $\mathcal{O}(2^{n/2})$.
-
-Esta solución tiene el inconveniente de ser muy costosa computacionalmente, dado 
-que para encontrar una coincidencia en la salida es necesario evaluar la función 
-un número exponencial de veces con respecto al número de bits $n$.
-
+entradas forman pares de la forma $\V y = \V x \oplus \V s$, la función $f$ 
+tendrá la mitad de sus salidas iguales. Es decir, que sólo existen $2^{n}/2$ 
+salidas diferentes, por lo que al evaluar una más, $2^{n}/2 + 1$ se asegura 
+encontrar dos entradas que produzcan la misma salida. De esta forma la 
+complejidad se sitúa en $O(2^{n}/2)$. Dicha solución tiene el inconveniente de 
+ser muy costosa computacionalmente, dado que para encontrar una coincidencia en 
+la salida es necesario evaluar la función un número exponencial de veces con 
+respecto al número de bits $n$.
+%
 Empleando la función del ejemplo, bastaría con evaluarla $k$ veces con
 $$k = 2^{2/2}+1 = 3$$
-Entonces si $y_i = f(x_i)$, se obtiene $\V x = \mat{00 & 01 & 10}$ y $ \V y = 
-\mat{00 &00 & 01}$.  Como se puede observar $y_1 = y_2$, de modo que $x_1 = x_2 
-\oplus s$, y por lo tanto $s = x_1 \oplus x_2 = 00 \oplus 01 = 01$
+Tomando tres entradas diferentes cualesquiera, como $\V X = \mat{00 & 01 & 
+10}^T$, se calculan las correspondientes salidas
+$$ \V Y = \mat{f(00) & f(01) & f(10)}^T = \mat{00 &00 & 01}^T $$
+Y como se puede observar $\V Y_1 = \V Y_2 = 00$, de modo que
+$$\V s = \V Y_1 \oplus \V Y_2 = 00 \oplus 01 = 01$$
+Tal y como se definió en el ejemplo.
 
-\subsection{Solución cuántica}
+\section{Solución cuántica}
 %
-El algoritmo de Simon consiste en un circuito cuántico con dos líneas, cada una
-de $n$ qubits.
+La solución que propuso Simon consiste en un circuito cuántico que se describe a 
+continuación.
 %
 \begin{center}
 	\begin{tikzpicture}%[thick]
@@ -122,24 +128,26 @@ de $n$ qubits.
 	\end{tikzpicture}
 \end{center}
 %
-Primero el sistema se inicia con ambas líneas a $\ket{0^n}$. Luego se aplica un 
-operador de Hadamard sobre la primera, que creará una superposición de estados.  
-Posteriormente, el operador $U_f$ computa los resultados de la función $f$ de 
-forma simultánea. Para terminar, se revierte el operador de Hadamard sobre la 
-primera línea, que finalmente se mide.
+El circuito consta de dos líneas de $n$ qubits, la superior e inferior. El 
+funcionamiento el es siguiente. Primero el sistema se inicia con ambas líneas a 
+$\ket{0^n}$.  Luego se aplica un operador de Hadamard sobre la superior, que 
+creará una superposición de estados. Posteriormente, el operador $U_f$ computa 
+los resultados de la función $f$ de forma simultánea. Para terminar, se revierte 
+el operador de Hadamard sobre la línea superior, que finalmente se mide.
 
 Los estados asociados a cada paso de la computación, han sido etiquetados como 
 $\ket{\psi_i}$, de forma que en todo momento se pueda determinar el lugar al que 
-corresponden en el circuito.
+corresponden en el circuito. El circuito será analizado de forma detallada a 
+continuación.
 
 \subsection{Funcionamiento}
-Para comprender el funcionamiento del algoritmo, se empleará un ejemplo sencillo 
-con sólo dos bits, $n=2$ y de período $s=01$:
+Para comprender el funcionamiento del algoritmo cuántico, se empleará el mismo 
+ejemplo anteriormente descrito, con sólo dos bits $n=2$ y de período $s=01$:
 %
 \begin{center}
 \begin{tabular}{|c|c|}
 	\hline
-	$x$ & $f(x)$ \\
+	$\V x$ & $f(\V x)$ \\
 	\hline
 	00 & 00 \\
 	01 & 00 \\
@@ -149,8 +157,8 @@ con sólo dos bits, $n=2$ y de período $s=01$:
 \end{tabular}
 \end{center}
 %
-Sea $V = \{0,1\}^n$ entonces $f:V\rightarrow V$ y $f(x) = f(x\oplus s)$. De esta 
-forma, $f(00) = f(00 \oplus s) = f(01)$ y también $f(10) = f(10 \oplus s) = 
+Sea $V = \{0,1\}^n$ entonces $f:V\rightarrow V$ y $f(\V x) = f(\V x\oplus \V s)$. De esta 
+forma, $f(00) = f(00 \oplus \V s) = f(01)$ y también $f(10) = f(10 \oplus \V s) = 
 f(11)$.
 
 El sistema ha de iniciarse con ambas líneas a $\ket{0^n}$, de modo que:
@@ -164,7 +172,7 @@ A continuación, el operador de Hadamard es aplicado sobre la línea superior.
 \ket{\psi_1} & = (H^{\otimes n} \otimes I^{\otimes n}) \ket{\phi_0} \\
 	& = (H^{\otimes n} \otimes I^{\otimes n}) (\ket{0^n} \otimes \ket{0^n}) \\
 	& = (H^{\otimes n} \ket{0^n}) \otimes (I^{\otimes n} \ket{0^n}) \\
-	& = \frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, 0^n}
+	& = \frac{1}{\sqrt{2^n}} \sum_{\V x \in V} \ket{\V x, 0^n}
 \end{split}
 \end{equation}
 %
@@ -178,8 +186,8 @@ Produciendo el estado entrelazado
 Posteriormente, la puerta $U_f$ actúa sobre $\ket{\psi_1}$ transformándolo en
 %
 \begin{equation}
-\ket{\psi_2} = \frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, f(x) \oplus 00} = 
-\frac{1}{\sqrt{2^n}} \sum_{x \in V} \ket{x, f(x)}
+\ket{\psi_2} = \frac{1}{\sqrt{2^n}} \sum_{\V x \in V} \ket{\V x, f(\V x) \oplus 00} = 
+\frac{1}{\sqrt{2^n}} \sum_{\V x \in V} \ket{\V x, f(\V x)}
 \end{equation}
 %
 En este estado, la función $f$ está siendo evaluada simultáneamente en todo $V$, 
@@ -193,56 +201,58 @@ previamente descrita, dicho estado es
 %
 Finalmente, el operador de Hadamard es nuevamente aplicado sobre la línea 
 superior, de este modo se obtiene
-% TODO: Explicar el origen de esta expresion
+%
 \begin{equation}
-\ket{\psi_3} = \frac{1}{2^n} \sum_{x \in V} \sum_{z \in V}
-	(-1)^{z \cdot x} \ket{z, f(x)}
+\ket{\psi_3} = \frac{1}{2^n} \sum_{\V x \in V} \sum_{\V z \in V}
+	(-1)^{\V z \cdot \V x} \ket{z, f(\V x)}
 \end{equation}
 %
 Por consiguiente, el coeficiente de cada ket será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} (-1)^{z \cdot x}
+c_k = \frac{1}{2^n} (-1)^{\V z \cdot \V x}
 \end{equation}
 %
-Pero dado que $f(x) = f(x \oplus s)$, los kets $\ket{z, f(x)}$ y $\ket{z, f(x 
-\oplus s)}$ serán el mismo, por lo que el coeficiente para este ket será
+Pero dado que $f(\V x) = f(\V x \oplus \V s)$, los kets $\ket{\V z, f(\V x)}$ y
+$\ket{\V z, f(\V x \oplus s)}$ serán el mismo, por lo que el coeficiente para
+este ket será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot (x \oplus 
-s)}\right)
+c_k = \frac{1}{2^n} \left((-1)^{\V z \cdot \V x} + (-1)^{\V z \cdot (\V x \oplus 
+\V s)}\right)
 \end{equation}
 %
-El producto interno $z \cdot (x \oplus s)$ puede descomponerse en $ z \cdot x
-\oplus z \cdot s$, y substituyendo
+El producto interno $\V z \cdot (\V x \oplus \V s)$ puede descomponerse en $ \V 
+z \cdot \V x
+\oplus \V z \cdot \V s$, y substituyendo
 %
 \begin{equation}
 \begin{split}
-c_k & = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x \oplus 
-z \cdot s} \right) \\
-	& = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x}
-	(-1)^{z \cdot s} \right)
+c_k & = \frac{1}{2^n} \left((-1)^{\V z \cdot \V x} + (-1)^{\V z \cdot \V x \oplus 
+\V z \cdot \V s} \right) \\
+	& = \frac{1}{2^n} \left((-1)^{\V z \cdot \V x} + (-1)^{\V z \cdot \V x}
+	(-1)^{\V z \cdot \V s} \right)
 \end{split}
 \end{equation}
 %
-Cuando $ z \cdot s = 1$, el coeficiente $c_k$ será
+Cuando $ \V z \cdot \V s = 1$, el coeficiente $c_k$ será
 %
 \begin{equation}
 \begin{split}
-c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} - (-1)^{z \cdot x} \right) =
+c_k = \frac{1}{2^n} \left((-1)^{\V z \cdot \V x} - (-1)^{\V z \cdot \V x} \right) =
 	\frac{1}{2^n} (0) = 0
 \end{split}
 \end{equation}
 %
-Y cuando $ z \cdot s = 0$, será
+Y cuando $ \V z \cdot \V s = 0$, será
 %
 \begin{equation}
-c_k = \frac{1}{2^n} \left((-1)^{z \cdot x} + (-1)^{z \cdot x} \right)
+c_k = \frac{1}{2^n} \left((-1)^{\V z \cdot \V x} + (-1)^{\V z \cdot \V x} \right)
 	= \frac{1}{2^n} (\pm 2) = \pm 2^{1-n}
 \end{equation}
 %
-De modo que $c_k \neq 0$ si en el ket $\ket{z, f(x)}$ se cumple que 
-$z \cdot s = 0$. Así que sólo los estados de esta forma tendrán coeficientes 
+De modo que $c_k \neq 0$ si en el ket $\ket{\V z, f(\V x)}$ se cumple que 
+$\V z \cdot \V s = 0$. Así que sólo los estados de esta forma tendrán coeficientes 
 no nulos. En el caso del ejemplo será
 %
 \begin{equation}
@@ -256,22 +266,22 @@ no nulos. En el caso del ejemplo será
 \end{split}
 \end{equation}
 %
-Finalmente, tras anular los términos en los que $z \cdot 01 = 1$, es decir 
-$z=01$ y $z=11$, queda
+Finalmente, tras anular los términos en los que $\V z \cdot 01 = 1$, es decir 
+$\V z=01$ y $\V z=11$, queda
 %
 \begin{equation}
 	\ket{\psi_3} = 2^{1-n} \left( \ket{00,00} + \ket{10,00} + \ket{00,01} - 
 \ket{10,01} \right)
 \end{equation}
 %
-En este estado, si se realiza una medición de $z$, el resultado siempre cumplirá 
-la restricción $z \cdot s = 0$. Una vez que se obtengan $n-1$ vectores 
-linealmente independientes, será posible construir un sistema de ecuaciones y 
-calcular $s$.
+En este estado, si se realiza una medición de $\V z$, el resultado siempre cumplirá 
+la restricción $\V z \cdot \V s = 0$. Una vez que se obtengan $n-1$ vectores 
+linealmente independientes, será posible construir un sistema de ecuaciones lineales y 
+calcular $\V s$.
 
 En este ejemplo, después de medir la primera línea, el conjunto de vectores 
-posibles resulta $z \in \{00, 10\}$. En todo caso, se tiene que $ z \cdot s = 
-0$ de modo que $00 \cdot s = 0$ y $10 \cdot s = 0$, produciendo las 
+posibles resulta $\V z \in \{00, 10\}$. En todo caso, se tiene que $ \V z \cdot \V s = 
+0$ de modo que $00 \cdot \V s = 0$ y $10 \cdot \V s = 0$, produciendo las 
 ecuaciones:
 %
 \begin{equation}
@@ -281,20 +291,20 @@ ecuaciones:
 \end{split}
 \end{equation}
 %
-Cuyas soluciones son $s \in \{00, 01\}$, pero dado que $s \neq 00$, se obtiene 
-$s = 01$.
+Cuyas soluciones son $\V s \in \{00, 01\}$, pero dado que $\V s \neq 00$, se obtiene 
+$\V s = 01$.
 
 \subsection{Análisis de complejidad}
 
 Para una función de $n$ bits, la salida del algoritmo tras medir, corresponderá 
-a un vector $z$ de $n$ bits, con $W = \{z / z \cdot s = 0\}$ y $z \in W$. Los 
-diferentes vectores de $W$, son exactamente $2^{n-1}$
+a un vector $\V z \in W$ de $n$ bits, con $W = \{\V z / \V z \cdot \V s = 0\}$.  
+Los diferentes vectores de $W$, son exactamente $2^{n-1}$
 
 En cuanto se obtienen $n-1$ vectores independientes, el proceso concluye, ya que 
-es posible averiguar $s$. Sin embargo, todos los vectores de $W$ pueden salir 
+es posible averiguar $\V s$. Sin embargo, todos los vectores de $W$ pueden salir 
 con igual probabilidad.
 
-Si se disponen de $i$ vectores independientes de los $2^{n-1}$ posibles, hay 
+Si se dispone de $i$ vectores independientes de los $2^{n-1}$ posibles, hay 
 $2^i$ vectores que se pueden formar realizando combinaciones lineales de los $i$ 
 vectores independientes, y que no sirven. De modo que quedan $2^{n-1} - 2^i$ 
 vectores independientes. La probabilidad de obtener un nuevo vector en la 
@@ -668,6 +678,7 @@ $T_p^0$ en $E[R]$, quedando:
 De este modo, se pueden computar los valores teóricos esperados de ejecuciones 
 que cabría esperar a la larga.
 \begin{table}[h]
+	\centering
 	\begin{tabular}{|c|*{9}{|c}|}
 		\hline
 		$n$      & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\ \hline

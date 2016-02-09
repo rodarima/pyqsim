@@ -1,0 +1,98 @@
+\chapter{Notación}
+
+En la siguiente tabla se recoge a modo de resumen la notación empleada a lo 
+largo del proyecto.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{rl}
+		\toprule
+		Símbolo & Significado \\
+		\midrule
+		$A,B,C\ldots$
+		& Matrices y operadores\\
+
+		$A \otimes B$
+		& Producto tensorial de $A$ y $B$\\
+
+		$A^{\otimes n}$
+		& Potencia tensorial de $A$:
+		$A^{\otimes n} = A \otimes \ldots \otimes A$ ($n$ veces)\\
+
+		$\V x, \V y, \V z\ldots$
+		&Vectores columna\\
+
+		$\V x = 010$
+		&Vector en forma de cadena binaria: $\V x = \mat{0 & 1 & 0}^T$\\
+
+		$\V x_i$
+		&Elemento del vector $\V x$ en la posición $i$\\
+
+		$\V x[i]$
+		&Elemento del vector $\V x$ en la posición $i+1$\\
+
+		$A_{ij}$
+		&Elemento de $A$ en la fila $i$, columna $j$\\
+
+		$A[i,j]$
+		&Elemento de $A$ en la fila $i+1$, columna $j+1$\\
+
+		$A[i,:]$
+		&Vector fila correspondiente a la fila $i+1$\\
+
+		$A[:,j]$
+		&Vector columna correspondiente a la columna $j+1$\\
+
+		$\ket{\psi}$
+		&Estado cuántico descrito como un vector columna\\
+
+		$\ket{\V x}$
+		&Estado cuántico puro de un registro:
+		$\ket{\V x} = \ket{\V x_1} \otimes \ldots \otimes \ket{\V 
+		x_n}$\\
+
+		$\ket{i}$
+		&Igual que $\ket{\V x}$, pero tomando la representación binaria 
+		de $i$\\
+
+		$\ket0, \ket1$
+		&Estados cuáticos puros\\
+
+		$\ket{01}, \ket{0,1}, \ket0 \ket1$
+		&Producto tensorial $\ket0 \otimes\ket1$\\
+
+		$A^T$
+		&Matriz transpuesta: $A^T_{ji} = A_{ij}$\\
+
+		$\V z^T$
+		&Vector fila del vector columna $\V z$\\
+
+		$z^*$
+		&Número complejo conjugado de $z$: $(1+i)^* = (1-i)$\\
+
+		$\V z^*$
+		&Vector complejo conjugado de $\V z$: $(\V z^*)_i =
+		(\V z_i)^*$\\
+
+		$A^*$
+		&Matriz compleja conjugada de $A$: $(A^*)_{ij} =
+		(A_{ij})^*$\\
+
+		$A^\dagger$
+		&Matriz adjunta de $A$: $A^\dagger = (A^T)^*$\\
+
+		$x \oplus y$
+		&Operación XOR de los bits $x$ e $y$\\
+
+		$\V z = \V x \oplus \V y$
+		&Operación XOR bit a bit de $\V x$ e $\V y$:
+		$\V z_i = \V x_i \oplus \V y_i$\\
+
+		$z = \V x \cdot \V y$
+		&Producto interno binario de $\V x$ e $\V y$:
+		$z = \V x_1 \V y_1 \oplus \ldots \oplus \V x_n \V y_n$\\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+

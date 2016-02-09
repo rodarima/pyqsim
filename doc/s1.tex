@@ -1,8 +1,8 @@
 \chapter{Introducción}
 
 Los ordenadores son máquinas complejas que realizan cálculos. Se basan en la 
-lógica binaria, para almacenar toda la información en forma de ceros y unos.
-
+lógica binaria para almacenar toda la información en forma de ceros y unos.
+%
 La computación cuántica abre las puertas a una nueva forma de construir 
 ordenadores, y de operar con ellos. Aunque por ahora la construcción de tales 
 máquinas es compleja, su simulación es posible en los ordenadores clásicos.
@@ -11,35 +11,65 @@ En este trabajo se propone un simulador cuántico, que permite ejecutar circuito
 de la misma forma que realizaría un ordenador cuántico.
 
 \section{Motivación y objetivos}
-% En que consiste 
+% TODO En que consiste 
+
+Los algoritmos cuánticos solucionan problemas de una forma más rápida que los 
+algoritmos convencionales. La principal razón por la que se ha desarrollado un 
+simulador es la de comprender intuitivamente la manera en la que funcionan las 
+técnicas que se emplean para resolver los problemas de forma más eficiente.
+
+La simulación permite examinar paso a paso la ejecución de un algoritmo cuántico 
+proporcionando un medio para comprender las técnicas que son empleadas por los 
+algoritmos. Así como los resultados reales que se obtendrían en un ordenador 
+cuántico sin la necesidad de utilizarlo.
 
 Entre los objetivos que se buscan con un simulador de circuitos, se encuentra la 
 capacidad para ejecutar un circuito cuántico, con el objetivo de contrastar los 
-resultados experimentales con los valores teóricos. Debe permitir conseguir los 
-mismos resultados que el sistema real, y en un tiempo de simulación razonable.
+resultados experimentales con los valores teóricos.
+
+Además un análisis de la simulación debe revelar la complejidad del algoritmo 
+simulado, confirmando que se trata de una solución más eficiente que una 
+clásica.
 
 %
 
 \section{Organización}
+El proyecto se divide en varios capítulos, de forma que se exponen las ideas 
+gradualmente a medida que avanza el texto.
 
 En el capítulo 2 se realiza una introducción a la computación cuántica, para 
 adquirir los conceptos previos en los que se basan los circuitos cuánticos, así 
-como la notación empleada. En el capítulo 3, se examinan las técnicas 
+como la notación empleada. En el capítulo 3 se examinan las técnicas 
 fundamentales que usan los circuitos cuánticos para explotar las nuevas 
-posibilidades de cómputo. El capítulo 4, introduce un ejemplo concreto, el 
-algoritmo de Simon, que es analizado de forma teórica. El capítulo 5 presenta el 
+posibilidades de cómputo. El capítulo 4 introduce un ejemplo concreto, el 
+problema de Simon, que es analizado de forma teórica. El capítulo 5 presenta el 
 diseño del simulador, así como la implementación con el circuito del algoritmo 
-de Simon. Finalmente en el capítulo 6 se analizan los resultados de la 
-simulación y se contrastan con los teóricos.
+de Simon.  Posteriormente en el capítulo 6 se analizan los resultados de la 
+simulación y se contrastan con los teóricos. Finalmente las conclusiones sobre 
+los resultados obtenidos se comentan en el capítulo 7, junto a las líneas 
+futuras de desarrollo.
 
 \section{Estado del arte}
 % Comentar que otros simuladores hay, y que resultados obtienen
-Actualmente existe una larga lista de simuladores y herramientas para la 
-simulación, que son recopilados en la web \cite{quantiki}.
+Actualmente existe una larga lista de simuladores y bibliotecas de apoyo, que 
+son recopilados en la web \cite{quantiki}. La biblioteca \texttt{qutip} es la 
+que se ha empleado en este simulador.
 
+%Sólo se ha encontrado un caso en el que el algoritmo de Simon ha sido ejecutado 
+%en un simulador.
+ 
+Adina BĂRÎLĂ \cite{adina} ha realizado la simulación del algoritmo de Simon con 
+3 qubits, empleando el lenguaje para cáculos cuánticos QCL desarrollado por 
+Bernhard Ömer \cite{qcl}. Otro análisis de Peter Nyman en 2008 con Mathematica 
+consigue ejecutarlo hasta 6 qubits \cite{mathematica}.
 
+Otros enfoques permiten aprovechar las propiedades específicas del algoritmo de 
+Simon para simularlo con 512 qubits \cite{niklas}.  Sin embargo se apartan de la 
+idea de un simulador general para cualquier otro circuito.
 
-
+Por otro lado una gran cantidad de algoritmos cuánticos (más de 50) están siendo 
+continuamente descubiertos, y están registrados en una web del Instituto 
+Nacional de Estándares y Tecnología \cite{zoo}.
 
 \chapter{Computación cuántica}
 % Introducir suavemente el tema de la computación cuántica. Como surge, por que, 
@@ -54,10 +84,10 @@ La naturaleza se comporta de una forma sorprendentemente inesperada a medida que
 la escala a la que se observan los detalles se hace cada vez más pequeña.  
 Resulta muy extraño describir dicho comportamiento en comparación con las cosas 
 que estamos acostumbrados a ver en el día a día. Sin embargo, existe una serie 
-de reglas que se han ido descubriendo, y que siempre se cumplen (hasta ahora lo 
-han hecho). Además estas reglas son excepcionalmente simples, y pueden ser 
-descritas mediante las ecuaciones matemáticas que hasta ahora conocemos. Este 
-conjunto de reglas se conocen como los postulados de la mecánica cuántica.
+de reglas que se han ido descubriendo, y que permiten explicar los resultados 
+observados en los experimentos. Además estas reglas son excepcionalmente 
+simples, y pueden ser descritas mediante ecuaciones matemáticas. Este conjunto 
+de reglas se conocen como los postulados de la mecánica cuántica.
 
 Una de las ventajas de poder describir el comportamiento de algún suceso, es la 
 posibilidad de emplearlo de forma provechosa. Por ejemplo, saber que una 
@@ -69,8 +99,8 @@ diseñados para que se comporten como un mecanismo de cálculo. Actualmente los
 ordenadores emplean nuestro conocimiento de las leyes físicas como el 
 electromagnetismo para realizar cómputos. Del mismo modo, se pueden emplear 
 sistemas cuánticos dando lugar al término ordenador cuántico. La idea de 
-construir tal dispositivo ha sido propuesta por primera vez por Richard Feynman 
-en 1982 \cite{feynman-sim}, con el objetivo de simular sistemas cuánticos.
+construir tal dispositivo ha sido propuesta por Richard Feynman en 1982 
+\cite{feynman-sim}, con el objetivo de simular sistemas cuánticos.
 
 %\subsection{Computación cuántica}
 La computación cuántica es un nuevo paradigma de computación, que busca la
@@ -79,23 +109,23 @@ Fundamenta su utilidad en el hecho de que algunos problemas que tienen una alta
 complejidad en los ordenadores clásicos, y son intratables, pasan a ser
 tratables en un ordenador cuántico.
 
-Peter Shor descubrió en 1994 \cite{shor97} como resolver el problema de 
+Peter Shor descubrió en 1994 \cite{shor97} cómo resolver el problema de 
 factorización de un número compuesto en el producto de dos primos, como $15 = 
 3\cdot5$. La complejidad de este cómputo es tan alta para números elevados, que 
-se considera como base para algunos métodos de criptografía de como RSA. Se 
-supone que nadie sería capaz de encontrar esos dos números primos en mucho 
-tiempo. Pero empleando un ordenador cuántico, el tiempo se reduce lo suficiente 
-como para encontrarlos. De modo que la criptografía tendría que buscar otros 
-métodos.
+se considera como base para algunos métodos de criptografía como RSA. Se supone 
+que nadie sería capaz de encontrar esos dos números primos en mucho tiempo. Pero 
+empleando un ordenador cuántico, el tiempo se reduce lo suficiente como para 
+encontrarlos. De modo que la criptografía tendría que buscar otros métodos.
 
 La factorización de números mediante algoritmos cuánticos se ha llevado a cabo 
-de forma experimental, siendo el número 56153 el más grande hasta la fecha 
-\cite{factor}. 
+de forma experimental, siendo el número 56153 el número más grande descompuesto 
+hasta la fecha \cite{factor}. 
 
-Otro algoritmo cuántico fue descubierto en 1996 por Lov Grover \cite{grover96} 
-para encontrar un elemento en una lista desordenada de tamaño $n$ con una 
-probabilidad de $1/2$.  Mejorando el tiempo empleado por el mejor algoritmo 
-probabilístico conocido de $O(n)$ a $O(\sqrt{n})$.
+Otro algoritmo cuántico fue descubierto en 1996 por Lov Grover \cite{grover96}.  
+Consiste en encontrar un elemento en una lista desordenada de tamaño $n$, con 
+una probabilidad de al menos $1/2$. Esta solución mejora el tiempo empleado por 
+el mejor algoritmo probabilístico conocido con complejidad $O(n)$ a sólo 
+$O(\sqrt{n})$.
 
 Una de las dificultades a la hora de diseñar un algoritmo cuántico es la gran 
 diferencia de comportamiento, comparado con un algoritmo convencional o clásico.  
@@ -103,10 +133,16 @@ Nuestra intuición y formas actuales para diseñar algoritmos, fallan al tratar 
 comprender el proceso. Este es quizás uno de los motivos por los cuales no se 
 han descubierto muchos algoritmos cuánticos \cite{shor03}.
 
+En las próximas secciones se realiza una descripción de los fundamentos teóricos 
+en los que se basan los algoritmos cuánticos con el objetivo de comprender su 
+funcionamiento.
+
 \section{El bit y el qubit}
 La forma de almacenar la información en un ordenador cuántico difiere en algunos 
 aspectos a la forma en la que se almacena actualmente en los ordenadores 
-convencionales.
+convencionales. A continuación se realiza un análisis partiendo de los bits, 
+pasando por sistemas probabilísticos, y finalmente desembocando en el qubit, 
+introduciendo los cambios de forma gradual.
 
 \subsection{Bit clásico}
 %Explicar lo que es un bit, y diferenciar entre el estado interno y lo que 
@@ -131,6 +167,7 @@ el \textit{significado lógico}. En el caso de la tarjeta perforada, esta
 relación puede darse de la siguiente forma: Si hay un agujero, entonces 
 representa un 0; en caso contrario, un 1. Para representar un bit, se empleará 
 un estado $\V x$, de forma que los bits 0 y 1 se definen respectivamente como
+% TODO Notación?
 $$ \V x^0 = \mat{1 \\ 0}, \quad \V x^1 = \mat{0 \\ 1}, \quad
 \V x \in \{\V x^0, \V x^1\} $$
 
@@ -205,21 +242,21 @@ El número de resultados posibles aumenta con el número de monedas $n$ de la
 forma $2^n$. Si ambas monedas se describen como un bit probabilístico, se 
 obtiene
 $$ \V y_A = \mat{1/2 \\ 1/2} \quad \V y_B = \mat{1/2 \\ 1/2} $$
-Siendo $\V y_m$ la descripción del estado de la moneda $m$. Entonces, la 
+Siendo $\V y_m$ el vector que describe el estado de la moneda $m$.  Entonces, la 
 probabilidad de obtener cada uno de los cuatro diferentes estados al lanzar 
 ambas, se puede describir en forma de vector.
 Sea $\V y_m[k]$ la probabilidad de que la moneda $m$ salga $k$, entonces la 
-probabilidad de que salga $k_A$ y luego $k_B$ será:
-$$ \V y_A[k_A] \cdot \V y_B[k_B] $$
+probabilidad de que salga $k_A$ en la moneda $A$ y $k_B$ en la moneda $B$, será:
+$$ \V y_A[k_A]  \V y_B[k_B] $$
 De modo que se puede construir un vector $\V y$ que describa todas las 
 posibilidades:
 $$ \V y = \mat{
-	\V y_A[0] \cdot \V y_B[0] \\ \V y_A[0] \cdot \V y_B[1] \\
-	\V y_A[1] \cdot \V y_B[0] \\ \V y_A[1] \cdot \V y_B[1]
+	\V y_A[0]  \V y_B[0] \\ \V y_A[0]  \V y_B[1] \\
+	\V y_A[1]  \V y_B[0] \\ \V y_A[1]  \V y_B[1]
 }
 = \mat{
-	\V y_A[0] \cdot \V y_B \\
-	\V y_A[1] \cdot \V y_B
+	\V y_A[0]  \V y_B \\
+	\V y_A[1]  \V y_B
 } $$
 Esta operación se conoce como el producto tensorial y conocer sus propiedades
 será fundamental.
@@ -267,8 +304,8 @@ El producto tensorial cumple varias propiedades importantes.
 \otimes C) $ y $(A + B) \otimes C = (A \otimes C) + (B \otimes C)$
 
 \item Es distributivo respecto a la multiplicación de matrices $A \otimes (B 
-\cdot C) = (A \otimes B) \cdot (A \otimes C) $ y $(A \cdot B) \otimes C = (A 
-\otimes C) \cdot (B \otimes C)$
+ C) = (A \otimes B)  (A \otimes C) $ y $(A  B) \otimes C = (A 
+\otimes C)  (B \otimes C)$
 
 \item Para un escalar $k$, cumple $(kA) \otimes B = A \otimes (kB) = k (A 
 \otimes B)$
@@ -297,11 +334,11 @@ $$
 \V z = \mat{\alpha_1 \alpha_2 & \alpha_1 \beta_2
 	& \beta_1 \alpha_2 & \beta_1 \beta_2}^T $$
 %
-Por ahora no hay ninguna diferencia apreciable en la forma en la que comporta un 
-sistema cuántico frente a uno probabilístico. Pero no será durante mucho tiempo.
-El sistema de dos monedas $\V y$ está sujeto a la restricción de que al lanzar 
-una moneda la suma de las probabilidades de los posibles resultados debe ser la 
-unidad, esto es
+Donde $T$ indica la transpuesta. Por ahora no hay ninguna diferencia apreciable 
+en la forma en la que se comporta un sistema cuántico frente a uno 
+probabilístico.  Sin embargo se podrá apreciar a continuación. El sistema de dos 
+monedas $\V y$ está sujeto a la restricción de que al lanzar una moneda la suma 
+de las probabilidades de los posibles resultados debe ser la unidad, esto es
 %
 $$ \V y_A[0] + \V y_A[1] = 1, \quad \V y_B[0] + \V y_B[1] = 1$$
 %
@@ -336,8 +373,7 @@ pero sin embargo $\alpha_1 \beta_2 = 0$, lo cual es imposible.
 Este extraño suceso no existe en el mundo clásico, y no se puede realizar con 
 las monedas. Es único del comportamiento cuántico. Se denomina 
 \textit{entrelazamiento cuántico} cuando un sistema cuántico compuesto no puede 
-ser descrito mediante el producto de sus constituyentes. Se dice que se 
-encuentra entrelazado.
+ser descrito mediante el producto de sus constituyentes.
 
 \section{Notación de Dirac o bra-ket}
 A medida que aumenta el número de qubits de un registro cuántico, se hace cada 
@@ -356,24 +392,28 @@ Y de forma correspondiente, los bras, como duales de los kets
 $$ \bra{0} = \ket{0}^\dagger = \mat{1 & 0}, \quad
 \bra 1 = \ket{1}^\dagger = \mat{0 & 1} $$
 %
-Entonces un qubit $\V z$ puede describirse como una combinación lineal de kets 
+El símbolo $^\dagger$ se emplea convencionalmente para expresar la tranpuesta 
+conjugada. Un qubit $\V z$ puede describirse como una combinación lineal de kets 
 $\ket{0}$ y $\ket{1}$
 $$ \V z = \mat{\alpha \\ \beta} = \alpha \ket{0} + \beta \ket{1}$$
 Dado que cualquier qubit puede escribirse partiendo de los kets $\ket{0}$ y 
-$\ket{1}$, forman una base vectorial y se les denomina vectores base, 
-\textit{kets base} o también \textit{estados puros}.
+$\ket{1}$, dichos kets forman una base vectorial y se les denomina vectores 
+base, \textit{kets base} o también \textit{estados puros}.
+%
+El primer postulado de la mecánica cuántica establece que el estado de un 
+sistema cuántico se puede describir mediante un vector ket $\ket{\psi}$.
 %
 De forma general, se define un estado cuántico o registro de $n$ qubits como el 
 ket $\ket{\psi}$ con $X = \{0,1\}^n$:
-$$ \ket{\psi} = \sum_{x \in X} \alpha_x \ket{x} $$
+$$ \ket{\psi} = \sum_{\V x \in X} \alpha_{\V x} \ket{\V x} $$
 Por ejemplo para $n = 2$, se tiene $X = \{00, 01, 10, 11\}$, y el ket 
 $\ket{\psi}$:
 $$ \ket{\psi} = \alpha_{00} \ket{00} + \alpha_{01} \ket{01}
 + \alpha_{10} \ket{10} + \alpha_{11} \ket{11} =
 \mat{\alpha_{00} & \alpha_{01} & \alpha_{10} & \alpha_{11}}^T $$
-El conjunto de kets $\ket{x}$ para todo $x \in X$ forma de nuevo una base de 
-vectores, para el registro $\ket{\psi}$. Al escribir un ket como $\ket{01}$ se 
-hace referencia al producto tensorial:
+El conjunto de kets $\ket{\V x}$ para todo $\V x \in X$ forma de nuevo una base 
+de vectores, para el registro $\ket{\psi}$. Al escribir un ket como $\ket{01}$ 
+se hace referencia al producto tensorial:
 $$ \ket{01} = \ket{0} \otimes \ket{1} $$
 Y también se puede escribir sin el símbolo $\otimes$, como $\ket{0}\ket{1}$. De 
 igual forma, para estados más grandes como $\ket{0110} = 
@@ -406,8 +446,9 @@ Las operaciones que se pueden realizar sobre un qubit se representan como una
 matriz $A$ de $2 \times 2$ elementos complejos y se denominan 
 \textit{operadores}.
 
-Además, todos los operadores cuánticos deben ser \textit{reversibles}, es decir 
-que la matriz $A$ debe ser \textit{unitaria}, cumpliendo que $A$ por su 
+Además, debido al segundo postulado de la mecánica cuántica, todos los 
+operadores cuánticos deben ser \textit{reversibles}, es decir que la matriz $A$ 
+debe ser \textit{autoadjunta} o \textit{hermítica}, cumpliendo que $A$ por su 
 transpuesta conjugada $A^\dagger$ sea la identidad:
 $$ A A^\dagger = A^\dagger A = I$$
 %
@@ -426,7 +467,7 @@ Que aplicada sobre los estados puros los invierte.
 $$ NOT\ket{0} = \mat{0 & 1\\1 & 0} \mat{1\\0} = \mat{0\\1} = \ket{1} $$
 $$ NOT\ket{1} = \mat{0 & 1\\1 & 0} \mat{0\\1} = \mat{1\\0} = \ket{0} $$
 %
-Y sobre un estado en superposición $\ket{\psi}$, invierte sus amplitudes
+Y sobre un estado en superposición $\ket{\psi}$, intercambia sus amplitudes
 %
 $$ NOT\ket{\psi} = \mat{0 & 1\\1 & 0} \mat{\alpha \\ \beta} =
 \mat{\beta\\\alpha} $$
@@ -478,27 +519,28 @@ superpuesto:
 %
 $$ H \ket{0} = \frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt 2}\ket{1} $$
 %
-% TODO Explicar la fórmula general del operador de Hadamard
+%
 Sea $V =  \{0,1\}^n$, el operador de Hadamard para $n$ qubits $H^{\otimes n}$, 
-aplicado sobre un estado $\ket{ x}$, con $ x \in V$, se puede generalizar de 
+aplicado sobre un estado $\ket{\V x}$, con $\V x \in V$, se puede generalizar de 
 la forma
 %
-$$ H^{\otimes n} \ket{ x} = \frac 1 {\sqrt {2^n}} \sum_{ z \in V} (-1)^{ x 
-\cdot  z} \ket{ z}$$
+$$ H^{\otimes n} \ket{\V x} = \frac 1 {\sqrt {2^n}} \sum_{\V z \in V} (-1)^{\V x 
+\cdot \V z} \ket{\V z}$$
 %
-Donde $ x \cdot  z$ representa el producto interno de $ x$ y $ z$, bit a 
-bit módulo dos:
+Donde $ \V x \cdot  \V z$ representa el producto interno de $\V x$ y $\V z$, 
+definido como:
+% TODO: Emplear \odot como producto interno?
+$$ \V x \cdot \V z = \V x_1 \V z_1 \oplus \V x_2 \V z_2 \oplus \ldots \oplus \V 
+x_n \V z_n$$
 %
-$$  x \cdot  z = x_1 z_1 + x_2 z_2 + \ldots + x_n z_n \mod 2$$
-%
-El operador identidad $I$ deja un estado tal y como estaba, no realiza ninguna 
-acción, y se define
+Siendo $\oplus$ la operación XOR bit a bit. El operador identidad $I$ deja un 
+estado tal y como estaba, no realiza ninguna acción, y se define
 %
 $$ I = \mat{1&0 \\ 0&1}$$
 %
-Otros son el desplazamiento de fase $R_\theta$, la puerta SWAP que intercambia 
-dos qubits, la puerta not controlada CNOT que realiza la negación del segundo 
-qubit cuando el primero es $\ket{1}$.
+Otros operadores relevantes son el desplazamiento de fase $R_\theta$, la puerta 
+SWAP que intercambia dos qubits, la puerta not controlada CNOT que realiza la 
+negación del segundo qubit cuando el primero es $\ket{1}$.
 $$ R_\theta = \mat{1 & 0 \\ 0 & e^{i\theta}}, \quad
 SWAP = \mat{1&0&0&0 \\ 0&0&1&0 \\ 0&1&0&0 \\ 0&0&0&1}, \quad
 CNOT = \mat{1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0}
@@ -523,7 +565,7 @@ $$ NOT\; H \ket{0} = NOT\left(\frac{1}{\sqrt 2}\ket{0} + \frac{1}{\sqrt
 \frac{1}{\sqrt 2}\ket{1} + \frac{1}{\sqrt 2}\ket{0} = \frac{1}{\sqrt 2}(\ket{0} 
 + \ket{1}) $$
 
-\subsubsection{Circuitos cuánticos}
+\subsection{Circuitos cuánticos}
 
 Los \textit{circuitos cuánticos} son agrupaciones de operadores aplicados en un 
 orden determinado, que tienen un propósito. Se pueden describir como una matriz 
@@ -535,11 +577,9 @@ Los circuitos cuánticos se describen habitualmente con diagramas que incluyen
 varios elementos.
 
 Las líneas horizontales representan qubits o registros de qubits. Las puertas 
-cuánticas se colocan intersecando las líneas que representan los qubits en los 
-que actúan.
-
-Por ejemplo el operador de Hadamard, aplicado sobre el qubit $\ket{0}$, se 
-representa con el siguiente circuito.
+cuánticas se colocan sobre las líneas que representan los qubits en los que 
+actúan. Por ejemplo el operador de Hadamard, aplicado sobre el qubit $\ket{0}$, 
+se representa con el siguiente circuito.
 %
 \begin{center}
 	\begin{tikzpicture}%[thick]
@@ -651,7 +691,7 @@ circuitos complejos, que se representan de forma sencilla.
 \end{tikzpicture}
 \end{center}
 %
-Que es equivalente a $(H \otimes H)(NOT\otimes I)(H \otimes I) \ket{00} $. Se 
+Que es lo mismo que $(H \otimes H)(NOT\otimes I)(H \otimes I) \ket{00} $. Se 
 observa como las líneas son equivalentes a aplicar el operador identidad $I$.
 %
 \begin{center}
@@ -684,10 +724,10 @@ observa como las líneas son equivalentes a aplicar el operador identidad $I$.
 \end{center}
 %
 
-\subsubsection{Operadores de medición}
+\subsection{Medición}
 
 Existe una operación que es diferente de todas las demás puertas cuánticas. Se 
-trata de los operadores de medición, representados por la letra $M$, o otras 
+trata de los operadores de medición, representados por la letra $M$, u otras 
 veces por el dibujo de un aparato de medida analógico.
 %
 \begin{center}
@@ -713,25 +753,27 @@ veces por el dibujo de un aparato de medida analógico.
 \end{tikzpicture}
 \end{center}
 %
-Este operador realiza la medición de una línea, y produce un resultado binario.  
-Destruyendo el estado cuántico en el proceso de medida. El resultado de medir un 
-qubit será un bit. En el caso de medir un registro, será un resultado binario 
-correspondiente a sus estados puros. Las dos líneas paralelas que salen del 
-circuito tras el operador $M$ representan una línea de información clásica.
+Este operador realiza la medición de una línea de qubits, y produce un resultado 
+en bits clásicos. Destruyendo el estado cuántico en el proceso de medida. El 
+resultado de medir un qubit será un bit. En el caso de medir un registro, será 
+un resultado binario correspondiente a sus estados puros. Las dos líneas 
+paralelas que salen del circuito tras el operador $M$ representan una línea de 
+información clásica.
 
-No puede ser representado por una matriz unitaria, ya que el resultado no es 
-reversible.  Una vez realizada una medición, el estado cuántico se colapsa. Una 
-de las interesantes cuestiones de los estados entrelazados como el estado de 
-Bell denominado por $\ket{\beta_{00}}$:
+La operación de medición, no puede ser representada por una matriz unitaria, ya 
+que el resultado no es reversible. Una vez realizada una medición, el estado 
+cuántico se colapsa. Una de las interesantes cuestiones de los estados 
+entrelazados como el estado de Bell representado por $\ket{\beta_{00}}$, es que 
+es posible realizar una medida sobre uno de sus qubits.
 %
 $$ \ket{\beta_{00}} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) $$
 %
-Es que es posible realizar una medida sobre uno de sus qubits. El resultado será 
-0 o 1 con una probabilidad del 50\%. Inmediatamente al conocer el estado de uno 
-de los qubits, el otro también se conoce. Este hecho, que intrigó a Einstein, 
-Podolsky y Rosen \cite{EPR}, produjo la formulación de la paradoja EPR, en la 
-que se discutía como era posible que al realizar la medición de un qubit, el 
-otro inmediatamente se alterase aunque ambos qubits estuvieran separados.
+El resultado será 0 o 1 con una probabilidad del 50\%. Inmediatamente al conocer 
+el estado de uno de los qubits, el otro también se conoce. Este hecho, que 
+intrigó a Einstein, Podolsky y Rosen \cite{EPR}, produjo la formulación de la 
+paradoja EPR, en la que se discutía como era posible que al realizar la medición 
+de un qubit, el otro inmediatamente se alterase aunque ambos qubits estuvieran 
+separados.
 
 Este hecho, ha sido comprobado de forma experimental con resultados positivos, 
 contradiciendo totalmente la intuición. Además es posible aprovechar sus 

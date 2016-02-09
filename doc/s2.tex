@@ -1,18 +1,18 @@
 \chapter{Circuitos cuánticos}
-El objetivo de los circuitos cuánticos es el de aprovechar las propiedades que 
-otorga la computación cuántica, para resolver problemas de forma más rápida y 
-eficiente que los algoritmos convencionales. El estudio de sus propiedades 
-permite determinar como aprovecharlas.
+El objetivo de los circuitos cuánticos es el de aprovechar las propiedades de la 
+computación cuántica, para resolver problemas de forma más rápida y eficiente 
+que los algoritmos convencionales. El estudio estas propiedades permite 
+determinar como aprovecharlas.
 
 \section{Técnicas fundamentales}
-La mayoría de los circuitos emplean alguna de estas técnicas básicas, en las que 
-se apoya la aceleración de la computación cuántica.
+El paralelismo cuántico y la interferencia son dos técnicas básicas que emplean 
+los circuitos cuánticos para lograr una mejora en la complejidad.
 
-\subsection{Paralelismo}
+\subsection{Paralelismo cuántico}
 Una de las técnicas en las que se basan los algoritmos cuánticos para acelerar 
 su ejecución, consiste en la posibilidad de ejecutar muchas acciones a la vez.  
 Esta característica se debe a la propiedad que posee un estado cuántico de 
-encontrarse en superposición. Por ejemplo el estado
+encontrarse en superposición, por ejemplo el estado $\ket{\psi}$.
 %
 $$ \ket{\psi} = \frac{1}{\sqrt 2}(\ket{0} + \ket{1}) $$
 %
@@ -49,24 +49,24 @@ obteniendo finalmente:
 $$ \ketp 1 = \frac{1}{\sqrt 2}(\ket{0}\ket{f(0)} + \ket{1}\ket{f(1)}) $$
 %
 En este estado, se observa como la función $f$ se evalúa simultáneamente en 0 y 
-en 1. De forma que en un sólo paso, se realizan dos evaluaciones de $f$. Esta 
+en 1. De forma que en un único paso, se realizan dos evaluaciones de $f$. Esta 
 propiedad se conoce con el nombre de \textit{paralelismo cuántico}.
 Sin embargo, no es posible observar los estados entrelazados, ya que el proceso 
 de medición hace que se colapsen a uno de ellos. Es necesario realizar más 
 operaciones para poder extraer la información deseada.
 
 \subsection{Interferencia}
-
-El efecto de interferencia proviene de las ondas, pues dos ondas con la misma 
-frecuencia con la misma fase se suman, pero con fases opuestas se destruyen.  
-Esta propiedad, presente en el comportamiento cuántico, permite aprovechar los 
+Otra técnica empleada en los circuitos cuánticos es la interferencia. El efecto 
+de interferencia proviene de las ondas, pues dos ondas con la misma frecuencia 
+con la misma fase se suman, pero con fases opuestas se destruyen.  Esta 
+propiedad, presente en el comportamiento cuántico, permite aprovechar los 
 estados superpuestos computados en paralelo, y transformarlos para poder obtener 
 información útil de todos ellos.
-Un ejemplo, consiste en una función binaria $f:\{0,1\} \rightarrow \{0,1\}$, a 
-la que se desea determinar si $f(0) = f(1)$ o si por el contrario son 
-diferentes. Una solución clásica es determinar $f(0)$, luego $f(1)$, y luego 
-comparar los valores. Pero requiere evaluar \textit{secuencialmente} la función 
-dos veces. Una alternativa es emplear un circuito cuántico.
+Un ejemplo consiste en una función binaria $f:\{0,1\} \rightarrow \{0,1\}$, que 
+se desea determinar si es biyectiva, $f(0) \neq f(1)$, o si no lo es, $f(0) = 
+f(1)$. Una solución clásica es calcular $f(0)$, luego $f(1)$, y comparar los 
+valores. Pero requiere evaluar \textit{secuencialmente} la función dos veces.  
+Una alternativa es emplear un circuito cuántico.
 Partiendo de un estado inicial de dos qubits $\ketp 0 = \ket{01}$, y del mismo 
 operador $U_f$ anteriormente descrito, el objetivo ahora será determinar que 
 ocurre cuando se ejecuta la operación:
@@ -76,13 +76,13 @@ capacidades de la computación cuántica \cite{deutsch85}.
 Primero, el operador de Hadamard actúa sobre ambos qubits
 $$ \ketp1 = (H \otimes H)(\ket{0} \otimes \ket{1}) =
 (H \ket{0} \otimes H \ket{1})$$
-Transformándolos a un estado superpuesto
+transformándolos a un estado superpuesto
 $$H \ket 0 = \frac{1}{\sqrt 2}(\ket 0 + \ket 1), \quad
 H \ket 1 = \frac{1}{\sqrt 2}(\ket 0 - \ket 1)$$
-Expresado conjuntamente como
+expresado conjuntamente como
 $$ \ketp1 = \left( \frac{1}{\sqrt 2}(\ket 0 + \ket 1) \right)
 \otimes \left( \frac{1}{\sqrt 2}(\ket 0 - \ket 1) \right) $$
-Que se puede simplificar a
+que se puede expresar como
 $$ \ketp1 = \frac{1}{2} \, \Big( \ox 0 0 - \ox 0 1 + \ox 1 0 - \ox 1 1 \Big) $$
 Finalmente el operador $U_f$, definido como $ U_f \ket{x}\ket{y} = \ket{x}\ket{y 
 \oplus f(x)}$, se aplica sobre $\ketp1$, transformándolo en
@@ -93,17 +93,17 @@ Finalmente el operador $U_f$, definido como $ U_f \ket{x}\ket{y} = \ket{x}\ket{y
 &\ox 1 {1 \oplus f(1)} - \ox 1 {1 \oplus f(1)} \Big)
 \end{split}
 \end{equation*}
-Que se puede expresar como
+y extrayendo factor común $\ket{0}$ y $\ket{1}$ se obtiene
 \begin{equation*}
 \begin{split}
 \ketp2 = \frac{1}{2} \, \Big(
-& \ket{0} \otimes ( \ket{0 \oplus f(0)} - \ket{1 \oplus f(0)} + \\
-& \ket{1} \otimes ( \ket{1 \oplus f(1)} - \ket{1 \oplus f(1)} \Big)
+& \ket{0} \otimes ( \ket{0 \oplus f(0)} - \ket{1 \oplus f(0)} ) + \\
+& \ket{1} \otimes ( \ket{1 \oplus f(1)} - \ket{1 \oplus f(1)} ) \Big)
 \end{split}
 \end{equation*}
 Y observando el hecho de que
 $$ \ket{0 \oplus k} - \ket{1 \oplus k} = (-1)^k (\ket 0 - \ket 1) $$
-Para $k = f(0)$ y $k = f(1)$, se simplifica en
+Para $k = f(0)$ y $k = f(1)$, se convierte en
 \begin{equation*}
 \begin{split}
 \ketp2 = \frac{1}{2} \, \Big(
@@ -116,9 +116,7 @@ $$
 \ketp2 = \frac{1}{2} \, \Big((-1)^{f(0)} \ket{0} + (-1)^{f(1)}\ket 1 \Big) 
 \otimes \Big(\ket 0 - \ket 1) \Big)
 $$
-Este es un estado muy interesante. Para identificar lo que ocurre, es necesario 
-realizar una observación. Sea $a = (-1)^{f(0)}$ y $b = (-1)^{f(1)}$, se 
-reescribe
+Sea $a = (-1)^{f(0)}$ y $b = (-1)^{f(1)}$, se reescribe
 $$
 \ketp2 = \frac{1}{2} \, \Big(a \ket{0} + b \ket 1 \Big) \otimes \Big(\ket 0 - 
 \ket 1) \Big)
@@ -174,7 +172,7 @@ la solución. La probabilidad de encontrar la solución correcta al final del
 algoritmo se reduce a medida que se realizan más iteraciones.
 
 El algoritmo de Simon, que se analizará de forma minuciosa posteriormente, 
-emplea la técnica de iteración, para obtener en cada ejecución nueva información 
+emplea la técnica de iteración para obtener en cada ejecución nueva información 
 que permite acercarse a la solución.
 
 %\section{Implementación}

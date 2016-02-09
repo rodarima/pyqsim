@@ -56,7 +56,7 @@ no había sido construida).}
 \newline
 
 La simulación debe ser realizada teniendo en cuenta el tiempo de procesamiento 
-requerido por la CPU. Es importante investigar como reducirlo para conseguir que 
+requerido por la CPU. Es importante investigar cómo reducirlo para conseguir que 
 la simulación sea eficiente.
 
 Para calcular con precisión los datos medidos sobre cada simulación, se realizan 
@@ -200,7 +200,7 @@ emplear una representación con escala logarítmica. En la
 figura~\ref{fig:tiempo-qc} se observa como crecen los tiempos de ejecución con 
 el número de qubits. Para $N = 20$ es necesario un tiempo de simulación 
 aproximado de un minuto. La simulación, pese a ser extremadamente costosa, se 
-puede esbozar para $N \leq 20$.
+puede realizar hasta $N \leq 20$.
 
 %
 \begin{figure}[!htb]
@@ -391,10 +391,10 @@ espacio necesario a medida que aumentan los qubits.
 	$S_D$};
 \end{axis}
 \end{tikzpicture}
-\caption{Espacio necesario para la simulación. Se muestra en línea continua el 
-espacio real, y en discontinua el aproximado. El espacio requerido sin emplear 
-matrices huecas, usando matrices densas se muestra como $S_D$. La memoria 
-disponible para la simulación es $S_{MAX} = 2^{29}$.}
+\caption{Espacio necesario para la simulación en bytes (escala logarítmica). Se
+muestra en línea continua el espacio real, y en discontinua el aproximado. El 
+espacio requerido sin emplear matrices huecas, usando matrices densas se muestra 
+como $S_D$. La memoria disponible para la simulación es $S_{MAX} = 2^{29}$.}
 \label{fig:espacio-qc}
 \end{figure}
 %
@@ -416,7 +416,7 @@ $n$ bits, son necesarios $N = 2n$ qubits. Obteniendo la limitación $n \leq 12$.
 
 \subsection{Medición y computación clásica}
 % El tamaño necesario para el resto de etapas es insignificante
-Una vez obtenido el estado $\ketp 3$, tras la costosa simulación, el resto de 
+Una vez obtenido el estado $\ketp 3$, tras la costosa simulación, los demás 
 componentes del simulador apenas requieren memoria.
 El proceso de medición, denominado $M$, toma el vector $\ketp 3$ y calcula la 
 distribución de probabilidad resultante de medir la línea superior. Esta 
@@ -430,7 +430,8 @@ Debido a que tras el proceso de simulación, al finalizar la etapa $QC_f$, ya no
 es necesario mantener los operadores $U_f$ y $H$ almacenados, se libera un 
 espacio
 $$ S(U_f) + S(H) = 2^N \log_2 20 \approx 2^N \cdot 4.32$$
-Más que suficiente para los vectores $v_p$ y $v_n$ con $N \geq 2$.
+Dicho espacio es más que suficiente para los vectores $v_p$ y $v_n$ con $N \geq 
+2$.
 
 El proceso de cómputo clásico posterior, denotado $CC$, requiere que $M$ 
 mantenga las distribuciones de probabilidad en memoria. Además, calcula para 
@@ -567,3 +568,33 @@ observa el valor experimental $R_\mu$ comparado con el teórico $R_\mu'$.}
 
 %\bibliography{bibliography}{}
 %\bibliographystyle{plain}
+
+
+\chapter{Conclusiones y trabajo futuro}
+
+En los capítulos anteriores se ha presentado el diseño y la implementación de un 
+simulador capaz de llevar a cabo la ejecución de un algoritmo cuántico.  La 
+complejidad del problema es analizada primero de forma teórica, calculando el 
+número esperado de ejecuciones $E[R]$. Posteriormente se analiza la complejidad 
+del algoritmo de forma experimental a través de la simulación.
+Ambos resultados indican que se trata de un algoritmo con una complejidad de 
+$O(n)$, confirmando que un algoritmo cuántico puede resolver un problema mucho 
+más eficientemente que uno clásico, que requeriría un tiempo de $O(2^{n-1})$. De 
+esta forma se satisface el objetivo principal de determinar la complejidad de un 
+algoritmo cuántico.
+
+También se aprecia la dificultad que presenta realizar la simulación de un 
+sistema cuántico dado que los recursos tanto de espacio como de tiempo crecen de 
+forma exponencial con el número de qubits. Richard Feynman realizó la 
+observación de que un sistema clásico no podría simular eficientemente uno 
+cuántico, y este simulador presenta un ejemplo en el que se aprecia dicha 
+dificultad. Tan sólo es posible realizar una simulación hasta los 20 qubits, 
+limitando el uso de algoritmos más complejos. Una posible mejora de cara al 
+futuro sería la investigación de técnicas para reducir los recursos necesarios 
+por los circuitos y permitir simulaciones con más qubits.
+
+Por otra parte, para ayudar en la tarea de determinar la complejidad de los 
+algoritmos, el simulador podría incluír técnicas automatizadas de análisis 
+mediante ejecuciones reiteradas, con el objetivo de presentar los resultados de 
+forma gráfica. Por ahora estas técnicas se realizan de forma manual en la 
+implementación de los algoritmos cuánticos
