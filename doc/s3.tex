@@ -70,7 +70,7 @@ la salida es necesario evaluar la función un número exponencial de veces con
 respecto al número de bits $n$.
 %
 Empleando la función del ejemplo, bastaría con evaluarla $k$ veces con
-$$k = 2^{2/2}+1 = 3$$
+$$k = 2^2/2+1 = 3$$
 Tomando tres entradas diferentes cualesquiera, como $\V X = \mat{00 & 01 & 
 10}^T$, se calculan las correspondientes salidas
 $$ \V Y = \mat{f(00) & f(01) & f(10)}^T = \mat{00 &00 & 01}^T $$
@@ -169,7 +169,7 @@ A continuación, el operador de Hadamard es aplicado sobre la línea superior.
 %
 \begin{equation}
 \begin{split}
-\ket{\psi_1} & = (H^{\otimes n} \otimes I^{\otimes n}) \ket{\phi_0} \\
+\ket{\psi_1} & = (H^{\otimes n} \otimes I^{\otimes n}) \ket{\psi_0} \\
 	& = (H^{\otimes n} \otimes I^{\otimes n}) (\ket{0^n} \otimes \ket{0^n}) \\
 	& = (H^{\otimes n} \ket{0^n}) \otimes (I^{\otimes n} \ket{0^n}) \\
 	& = \frac{1}{\sqrt{2^n}} \sum_{\V x \in V} \ket{\V x, 0^n}
@@ -517,9 +517,8 @@ si no se obtiene.
 
 Dado que son necesarios exactamente $n-1$ vectores, todas las ejecuciones 
 contendrán exactamente dos unos.  Además no puede haber ejecuciones que consigan 
-haber conseguido 2 unos antes de terminar, dado que entonces habrían resuelto el 
-problema en menos pasos de los necesarios.  Las 
-3 posibles ejecuciones son:
+haber obtenido dos unos antes de terminar, pues entonces habrían resuelto el 
+problema en menos pasos de los necesarios.  Las 3 posibles ejecuciones son:
 \begin{itemize}
 \item Conseguirlos al final de todo: 0011
 \item Conseguir uno en la segunda ejecución y otro al final: 0101
@@ -557,7 +556,6 @@ I^0I^1
 \NI 0 \NI 0 + \NI 0 \NI 1  + \NI 1 \NI 1
 }_{S_p}) $$
 %
-
 El siguiente paso, será determinar como se forman las secuencias $S_p$.
 Dado que son necesarios $n-1$ vectores linealmente independientes, el resto de 
 ejecuciones $p - (n-1)$ proporcionan vectores dependientes o repetidos. Es decir 

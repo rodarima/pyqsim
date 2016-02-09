@@ -7,9 +7,9 @@ resultados obtenidos sean idénticos a los que se obtendrían en una máquina
 cuántica que ejecute el mismo circuito.
 
 La principal desventaja en un simulador cuántico, es que la simulación es un 
-proceso muy costoso, que crece en complejidad de forma exponencial con el tamaño 
-de la entrada. Sin embargo, permite analizar el comportamiento de un algoritmo, 
-y comprobar que el comportamiento simulado es el predicho de forma teórica.
+proceso muy costoso, que crece en complejidad de forma exponencial con el número 
+de qubits. Sin embargo, permite analizar el comportamiento de un algoritmo, y 
+comprobar que el comportamiento simulado es el predicho de forma teórica.
 
 El proceso de simulación se basa en dos partes. Primero se determinan todas las 
 puertas del circuito, y se aplican al estado inicial de forma secuencial. De 
@@ -147,42 +147,40 @@ propiedad para reducir el espacio de almacenamiento.
 
 \subsection{Matrices huecas}
 
-Si la matriz \textbf{A} contiene \textit{muchos} elementos nulos, se considera 
-una matriz \textit{hueca}. Aprovechar esta propiedad permite: por una parte 
-reducir el número de elementos que es necesario almacenar, y por otra, reducir 
-el número de sumas y multiplicaciones al operar con la matriz.
-$$ \textbf{A} = \mat{ a_{11} & \cdots & a_{1n} \\
+Si la matriz $A$ contiene \textit{muchos} elementos nulos, se considera una 
+matriz \textit{hueca}. Aprovechar esta propiedad permite: por una parte reducir 
+el número de elementos que es necesario almacenar, y por otra, reducir el número 
+de sumas y multiplicaciones al operar con la matriz.
+$$ A = \mat{ a_{11} & \cdots & a_{1n} \\
 		\vdots &   & \vdots \\
 		a_{m1} & \cdots & a_{mn}\\
 	}
 $$
 
-Sea $N_z$ el número de elementos no nulos de \textbf{A}. Entonces la 
-\textit{densidad} de una matriz se define como dicho número entre el total, 
-$N_z/mn$.
+Sea $N_z$ el número de elementos no nulos de $A$. Entonces la \textit{densidad} 
+de una matriz se define como dicho número entre el total, $N_z/mn$.
 
 \subsubsection{Almacenamiento por coordenadas COO}
 
-La matriz $\textbf{A} \in \mathbb{M}^{m\times n}$ puede almacenarse en tres 
-vectores AA, JR y JC; de forma que AA contiene todos los elementos no nulos 
-junto con JR y JC que almacenan los índices de la fila y columna 
-respectivamente. Este esquema se conoce como almacenamiento por coordenadas 
-(COO).
+La matriz $A \in M^{m\times n}$ puede almacenarse en tres vectores $\V a$, $\V r$ y 
+$\V c$; de forma que $\V a$ contiene todos los elementos no nulos junto con $\V r$ y 
+$\V c$ que almacenan los índices de la fila y columna respectivamente. Este 
+esquema se conoce como almacenamiento por coordenadas (COO).
 
 Sea $S_e$ y $S_i$ el tamaño de almacenamiento de un elemento de la matriz y de 
 un índice respectivamente, entonces el espacio necesario es
-$$ S_{COO} = S_eN_z + 2S_iN_z = O(N_z)$$
+$$ S_{COO} = S_eN_z + 2S_iN_z$$
 En comparación con la representación íntegra de la matriz, se conseguiría una 
 reducción del espacio si
 $$ N_z/mn < \frac{S_e}{S_e + 2S_i} $$
 
 \begin{ejemplo}
-La matriz \textbf{A} de $5\times5$ elementos, contiene 10 no nulos, de un total 
-de 25, que se almacenan en el vector AA. A cada uno le corresponde un índice en 
-JR que indica la fila, y otro en JC con la columna. El elemento 8 se encuenta en 
-AA[7]. Entonce JR[7] indica la tercera fila en la matriz, y JC[7] la tercera 
-columna.
-$$ \textbf{A} = \mat{
+La matriz $A$ de $5\times5$ elementos, contiene 10 no nulos, de un total de 25, 
+que se almacenan en el vector $\V a$. A cada uno le corresponde un índice en $\V r$ 
+que indica la fila, y otro en $\V c$ con la columna. El elemento 8 se encuenta en 
+$\V a_7$.  Entonces $\V r_7$ indica la tercera fila en la matriz, y $\V c_7$ la 
+tercera columna.
+$$ A = \mat{
 	1 & 0 & 0 & 2 & 0 \\
 	3 & 4 & 0 & 5 & 0 \\
 	9 & 0 & \textbf{8} & 0 & 0 \\
@@ -190,9 +188,9 @@ $$ \textbf{A} = \mat{
 	0 & 0 & 0 & 0 & 4 }
 \quad
 \begin{aligned}
-	AA = \arr{ 1 & 2 & 3 & 4 & 5 & 9 & \textbf{8} & 6 & 5 & 4} \\
-	JR = \arr{ 1 & 1 & 2 & 2 & 2 & 3 & \textbf{3} & 4 & 4 & 5} \\
-	JC = \arr{ 1 & 4 & 1 & 2 & 4 & 1 & \textbf{3} & 3 & 4 & 5}
+	\V a = \arr{ 1 & 2 & 3 & 4 & 5 & 9 & \textbf{8} & 6 & 5 & 4} \\
+	\V r = \arr{ 1 & 1 & 2 & 2 & 2 & 3 & \textbf{3} & 4 & 4 & 5} \\
+	\V c = \arr{ 1 & 4 & 1 & 2 & 4 & 1 & \textbf{3} & 3 & 4 & 5}
 \end{aligned}
 $$
 \end{ejemplo}
@@ -200,14 +198,14 @@ $$
 \subsubsection{Almacenamiento por filas comprimidas (CSR)}
 
 El almacenamiento por coordenadas contiene información redundante. Los elementos 
-de la misma fila repiten el mismo índice en JR. Para reducir el espacio, se 
-puede emplear sólo el índice en AA del primer elemento de cada fila.
+de la misma fila repiten el mismo índice en $\V r$. Para reducir el espacio, se 
+puede emplear sólo el índice en $\V a$ del primer elemento de cada fila.
 
-De este modo, AA almacena los valores no nulos, ordenados por filas. El vector 
-JA mantendrá las posiciones de las columnas para cada elemento de AA, y 
-finalmente, IA, el índice en AA del primer elemento de la fila. Adicionalmente 
-IA termina con un elemento extra, que indica el final de la última fila, con 
-valor $N_z + 1$.
+De este modo, $\V a$ almacena los valores no nulos, ordenados por filas. El vector 
+$\V j$ mantendrá las posiciones de las columnas para cada elemento de $\V a$, y 
+finalmente, $\V i$, el índice en $\V a$ del primer elemento de la fila.  
+Adicionalmente $\V i$ termina con un elemento extra, que indica el final de la 
+última fila, con valor $N_z + 1$.
 
 El tamaño necesario para almacenar una matriz de $m$ filas en CSR es
 $$ S_{CSR} = S_e N_z + S_i (N_z + m + 1) $$
@@ -215,7 +213,7 @@ El espacio necesario sería menor que en COO, si $m + 1 < N_z$.
 
 \begin{ejemplo} En la misma matriz:
 
-$$ \textbf{A} = \mat{
+$$ A = \mat{
 	1 & 0 & 0 & 2 & 0 \\
 	3 & 4 & 0 & 5 & 0 \\
 	9 & 0 & \textbf{8} & 0 & 0 \\
@@ -223,18 +221,18 @@ $$ \textbf{A} = \mat{
 	0 & 0 & 0 & 0 & 4 }
 \quad
 \begin{aligned}
-	AA = \arr{ 1 & 2 & 3 & 4 & 5  & 9 & \textbf{8} & 6 & 5 & 4} \\
-	JA = \arr{ 1 & 4 & 1 & 2 & 4  & 1 & \textbf{3} & 3 & 4 & 5}\\
-	IA = \arr{ 1 & 3 & \textbf{6} & 8 & 10 & 11}
+	\V a = \arr{ 1 & 2 & 3 & 4 & 5  & 9 & \textbf{8} & 6 & 5 & 4} \\
+	\V j = \arr{ 1 & 4 & 1 & 2 & 4  & 1 & \textbf{3} & 3 & 4 & 5}\\
+	\V i = \arr{ 1 & 3 & \textbf{6} & 8 & 10 & 11}
 \end{aligned}
 $$
 
-Para acceder al elemento (3, 3), primero se calcula la posición en AA del 
-elemento que comienza la tercera fila, este índice es IA[3] = 6. La tercera fila 
-se sitúa en AA desde IA[3] = 6 hasta IA$[3+1]-1$ = 7.  Para determinar la 
-columna se recorren los índices de JA desde 6 hasta 7, buscando la columna 3, 
-que se encuentra en JA[7] = 3. De modo que el elemento buscado se encuentra en 
-AA[7] = 8.
+Para acceder al elemento $A_{33}$, primero se calcula la posición en $\V a$ del 
+elemento que comienza la tercera fila, este índice es $\V i_3 = 6$. La tercera 
+fila se sitúa en $\V a$ desde $\V i_3 = 6$ hasta $\V i_{3+1}-1 = 7$.  Para determinar 
+la columna se recorren los índices de $\V j$ desde 6 hasta 7, buscando la columna 
+3, que se encuentra en $\V j_7 = 3$. De modo que el elemento buscado se encuentra 
+en $\V a_7 = 8$.
 
 \subsection{Operadores secuenciales}
 Un circuito cuántico, que contiene varios operadores que se aplican de forma 
@@ -242,8 +240,8 @@ secuencial, es equivalente a un único operador que realiza todo el proceso. Est
 operador $C$ sería el resultado de multiplicar las matrices que conforman las 
 operaciones en cada etapa, en el mismo orden. En el caso del algoritmo de Simon:
 %
-$$ C = (H^{\otimes n} \otimes I^{\otimes n}) \cdot U_f \cdot (H^{\otimes n} 
-\otimes I^{\otimes n})$$
+$$ C = (H^{\otimes n} \otimes I^{\otimes n}) U_f (H^{\otimes n} \otimes 
+I^{\otimes n})$$
 %
 Calcular el producto de las matrices es computacionalmente muy costoso, incluso 
 prohibitivo para un $n$ grande. Adicionamente, los operadores que sólo actúan 
@@ -259,14 +257,14 @@ Sea $B = I^{\otimes n}$, y tanto $A$ como $B$ sean matrices de $2^n\times 2^n$,
 los elementos de $D = A \otimes B$ se determinan como
 \begin{equation}
 \begin{split}
-	D[i,j] &= A[i_H, j_H] \cdot B[i_L, j_L]\\
+	D[i,j] &= A[i_H, j_H] B[i_L, j_L]\\
 	i_H &= \floor{i/2^n} \\
 	j_H &= \floor{j/2^n} \\
 	i_L &= i \mod 2^n \\
 	j_L &= j \mod 2^n \\
 \end{split}
 \end{equation}
-Debido a que $B[i, j]$ es la identidad, cuando $i \neq j, B[i,j] = 0$. Los 
+Debido a que $B[i, j]$ es la identidad, cuando $i \neq j$, $B[i,j] = 0$ y los 
 cálculos se simplifican.
 %
 El estado $\ket{\psi}$ de $2n$ qubits, con $m = 2^{2n}-1$, se puede descomponer 
@@ -339,15 +337,16 @@ $\ket{\psi'} \longleftarrow \mat{0 & 0 & \ldots & 0}^T$\;
 \subsection{Operadores y estados}
 
 El circuito de Simon requiere dos líneas de $n$ qubits, por lo tanto, un estado 
-requiere $N=2n$ qubits, un total de $2^{2n}$ amplitudes.
-El entorno de simulación cuenta con una memoria limitada de 512 Mb = $2^{29}$ 
-bytes.
+requiere $N=2n$ qubits, un total de $2^{2n}$ amplitudes. El entorno de 
+simulación cuenta con una memoria limitada de 512 MB = $2^{29}$ bytes.
 
 Sea $S_e = 16 = 2^4$ bytes, el tamaño de un número complejo. Un estado 
-$\ket{\psi}$, empleará $2^{2n}\cdot S_e = 2^{2n+4}$ bytes. Limitando el espacio 
-de la simulación: $2^{2n+4} \leq 2^{29}$ entonces $2n+4 \leq 29 \implies n \leq 
-25/2 = 12.5$. Sólo sería posible almacenar estados de un tamaño de hasta $n=12$.
-Al emplear las matrices huecas, el tamaño se reduce
+$\ket{\psi}$, empleará $2^{2n}\cdot S_e = 2^{2n+4}$ bytes si almacena todas las 
+amplitudes.  Limitando el espacio de la simulación: $2^{2n+4} \leq 2^{29}$ 
+entonces $2n+4 \leq 29 \implies n \leq 25/2 = 12.5$. Sólo sería posible 
+almacenar estados de un tamaño de hasta $n=12$.
+Al emplear las matrices huecas, el tamaño se reduce, como se muestra en la 
+siguiente tabla.
 
 \begin{table}[h]
 	\centering
@@ -486,12 +485,12 @@ a 14 se realiza el bucle que iterativamente calcula el estado resultante  en
 \subsubsection{Operador $U_f$}
 \noindent
 La operación $U_f$ se define, a partir de una función $f$, como
-$$ U_f \ket{x} \ket{y} = \ket{x} \ket{y \oplus f(x)} $$
+$$ U_f \ket{\V x} \ket{\V y} = \ket{\V x} \ket{\V y \oplus f(\V x)} $$
 Esta operación, puede describirse como una matriz de $2^{2n} \times 2^{2n}$,
-aplicada sobre el estado $\ket{x} \ket{y}$, que es un vector de $2^{2n}$ 
-componentes, siendo $n$ el número de qubits de $\ket x$ y también de $\ket y$.  
-Sea $m = 2^{2n} -1$, se tiene
-$$ U_f \ket x \ket y = \mat{
+aplicada sobre el estado $\ket{\V x} \ket{\V y}$, que es un vector de $2^{2n}$ 
+componentes, siendo $n$ el número de qubits de $\ket{\V x}$ y también de $\ket{
+\V y}$.  Sea $m = 2^{2n} -1$, se tiene
+$$ U_f \ket{\V x} \ket{\V y} = \mat{
 	u_{00} & \ldots & u_{0m} \\
 	\vdots &        & \vdots \\
 	u_{m0} & \ldots & u_{mm} \\
@@ -504,15 +503,15 @@ $$ U_f \ket x \ket y = \mat{
 	b_{0} \\ \vdots \\ b_{m} \\
 }
 $$
-El estado $\ket{x} \ket{y}$ se puede escribir también como
+El estado $\ket{\V x} \ket{\V y}$ se puede escribir también como
 %
-$$ \ket{x} \ket{y} = \sum_{k=0}^m a_k \ket{k_H}\ket{k_L} $$
+$$ \ket{\V x} \ket{\V y} = \sum_{k=0}^m a_k \ket{k_H}\ket{k_L} $$
 %
 % TODO Indicar que \ket{110} se puede escrbir como \ket{k} con k = 6
 %
 Siendo $k_H = \floor{k/2^n}$ y $k_L = k \mod 2^n$. De modo que al aplicar $U_f$,
 %
-$$ U_f \ket x \ket y = \sum_{k=0}^m a_k\ U_f \ket{k_H}\ket{k_L} =
+$$ U_f \ket{\V x} \ket{\V y} = \sum_{k=0}^m a_k\ U_f \ket{k_H}\ket{k_L} =
 \sum_{k=0}^m a_k \ket{k_H}\ket{k_L \oplus f(k_H)} $$
 %
 El estado $\ket{k_H} \ket{k_L}$ es un vector de $2^{2n}$ componentes, con un 1 
@@ -586,3 +585,11 @@ def simon(self, bits, f):
 
 	return phi3
 \end{pycode}
+
+Los estados $\ket{\V x}$ y $\ket{\V y}$ se inicializan a cero en las líneas 2 y 
+3. En la línea 5 se calcula el operador $U_f$ partiendo de la función $f$ dada.  
+Luego se obtiene el producto tensorial de $\ket{\V x}$ y $\ket{\V y}$ que será 
+el estado inicial $\ketp 0 $ en la línea 7. Finalmente se aplican los operadores 
+$\opn H n \otimes \opn I n$, $U_f$ y otra vez $\opn H n \otimes \opn I n$, tal y 
+como describe el circuito de Simon. El estado final $\ketp3$ es devuelto para 
+ser almacenado.

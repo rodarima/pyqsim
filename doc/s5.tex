@@ -149,8 +149,9 @@ un tiempo de simulación razonable.
 \end{table}
 
 Se observa en la tabla~\ref{tab:cpu-qc} como se incrementa el tiempo a medida 
-que crece en número de qubits. La parte final $QC_f$ requiere un orden de 
-magnitud superior que $QC_0$. Ambas requieren un tiempo superior a $O(2^N)$.
+que crece el número de qubits. La parte final $QC_f$ requiere un tiempo de un 
+orden de magnitud superior al de $QC_0$. Ambas requieren un tiempo superior a 
+$O(2^N)$.
 
 \subsection{Tiempo empleado en $M$ y $CC$}
 Tras calcular el estado final del circuito, se analiza el proceso de medición 
@@ -384,10 +385,10 @@ espacio necesario a medida que aumentan los qubits.
 \addplot [purple, dashed, domain=4:6.25]{(4*x+4)};
 \legend{
 	$S_{MAX}$,
-	$S_T (QC_0)$,
 	$S_T (QC_f)$,
-	$S_T' (QC_0)$,
+	$S_T (QC_0)$,
 	$S_T' (QC_f)$,
+	$S_T' (QC_0)$,
 	$S_D$};
 \end{axis}
 \end{tikzpicture}
@@ -427,8 +428,8 @@ $$ S(v_p) = S(v_n) = 2^{n} \cdot 4 = 2^{N/2} \cdot 4 $$
 Obteniéndose un espacio requerido para la medición
 $$ S_T(M) = S(v_p) + S(v_n) = 2^{N/2} \cdot 8 $$
 Debido a que tras el proceso de simulación, al finalizar la etapa $QC_f$, ya no 
-es necesario mantener los operadores $U_f$ y $H$ almacenados, se libera un 
-espacio
+es necesario mantener los operadores $U_f$ y $\opn H n$ almacenados, se libera 
+un espacio
 $$ S(U_f) + S(H) = 2^N \log_2 20 \approx 2^N \cdot 4.32$$
 Dicho espacio es más que suficiente para los vectores $v_p$ y $v_n$ con $N \geq 
 2$.
