@@ -1,0 +1,52 @@
+Simulador cuántico del circuito de Simon.
+==========================================
+Rodrigo Arias Mallo <rodrigo.arias@udc.es>
+
+2016F10
+
+Descripción
+-----------
+El simulador se encuentra en qc.py y ejecuta el algoritmo de Simon de forma 
+secuencial calculando el valor medio de ejecuciones al aumentar n.
+
+Ejemplo:
+$ python qc.py
+N = 2: Mean 1.972e+00, var 1.935e+00, steps 10000
+N = 3: Mean 3.323e+00, var 2.459e+00, steps 10000
+N = 4: Mean 4.496e+00, var 2.634e+00, steps 10000
+N = 5: Mean 5.548e+00, var 2.678e+00, steps 10000
+N = 6: Mean 6.573e+00, var 2.724e+00, steps 10000
+
+Por otro lado los valores teóricos se pueden calcular mediante el programa E.py.
+
+Ejemplo:
+$ python E.py
+N=2	E[R]=2.0000	E/n=1.000	Var=2.000
+N=3	E[R]=3.3333	E/n=1.111	Var=2.444
+N=4	E[R]=4.4762	E/n=1.119	Var=2.608
+N=5	E[R]=5.5429	E/n=1.109	Var=2.679
+N=6	E[R]=6.5751	E/n=1.096	Var=2.712
+N=7	E[R]=7.5910	E/n=1.084	Var=2.728
+N=8	E[R]=8.5989	E/n=1.075	Var=2.736
+N=9	E[R]=9.6028	E/n=1.067	Var=2.740
+N=10	E[R]=10.6047	E/n=1.060	Var=2.742
+N=11	E[R]=11.6057	E/n=1.055	Var=2.743
+
+
+Dependencias
+------------
+Para ejecutar el software es necesario tener instalado python 3, con los 
+paquetes qutip y numpy.
+
+
+Análisis del simulador
+----------------------
+Para analizar el uso de recursos en la simulación, los programas cpu.py y mem.py 
+analizan respectivamente el uso de CPU y memoria. La complejidad se analiza 
+mediante complexity.py, y se contrasta con la teórica. Los resultados son 
+almacenados en bases de datos en formato CSV.
+
+Url del proyecto
+----------------
+Para más información consultar el repositorio del proyecto:
+https://github.com/rodarima/pyqsim

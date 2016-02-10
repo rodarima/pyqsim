@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
 
+# pyqsim - Quantum simulator of Simon algorithm.
+# Copyright (C) 2016 Rodrigo Arias <rodrigo.arias@udc.es>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import numpy as np
 import qutip
 import scipy.sparse.coo as coo
@@ -381,7 +397,7 @@ def main():
 	#cp.run()
 
 	#N = 9
-	for N in range(2, 8):
+	for N in range(2, 7):
 		qs = QSimon({"bits":N})
 		config = qs.random_config(N)
 		#print(config)
@@ -389,7 +405,7 @@ def main():
 		qm = QMeasure(st, np.arange(N, N*2))
 		cp = CPostprocess(N, qm)
 		cp.run()
-		#cp.profile(10000, title='N = %d'%N)
+		cp.profile(10000, title='N = %d'%N)
 
 	#st = qs.run({'f':np.array([1, 0, 1, 0])})
 	##config = qs.random_config(N)

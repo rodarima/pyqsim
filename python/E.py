@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def I(i,n):
 	return 1 - 2**(i-n+1)
 
@@ -106,3 +107,4 @@ def calc_R(n):
 	Var = E2 - E**2
 	return (E, Var)
 
+test()
