@@ -3,15 +3,18 @@ digraph {
 	node [shape=plaintext];
 
 	"Bit" -> "Pbit";
-	"Bit" -> "Qbit";
+//	"Bit" -> "Qbit";
 
-	"Pbit" -> "Qbit" [style=dotted, constraint=false];
+	"Pbit" -> "Qbit"; // [style=dotted, constraint=false];
 
-	"Qbit" -> "Registro\ncuántico";
+	"Qbit" -> "Superposición";
+//	"Qbit" -> "Registro\ncuántico";
 	"Superposición" -> "Registro\ncuántico";
 
 	"Registro\ncuántico" -> "Medición";
 	//"Qbit" -> "Medición";
+
+	"Registro\ncuántico" -> "Entrelazamiento";
 
 	"Registro\ncuántico" -> "Operador";
 
@@ -22,7 +25,10 @@ digraph {
 
 	"Prob. Simon" -> "Sol. clásica";
 
-	"Prob. Simon" -> "Alg. Simon";
+	"Prob. Simon" -> "Sol. cuántica";
 
-	"Circuito\ncuántico" -> "Alg. Simon";
+	"Circuito\ncuántico" -> "Sol. cuántica";
+
+	"Técnicas" -> "Sol. cuántica";
+	"Circuito\ncuántico" -> "Técnicas";
 }

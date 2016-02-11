@@ -20,16 +20,16 @@ while [ 1 ]; do
 		echo -e "\a"
 		continue
 	fi
-	bibtex $FILE
-	pdflatex $TEX_FLAGS $TEX
-	if [ "$?" != "0" ]; then
-		echo -e "\a"
-		continue
-	fi
-	pdflatex $TEX_FLAGS $TEX
-	if [ "$?" != "0" ]; then
-		echo -e "\a"
-		continue
-	fi
+#	bibtex $FILE
+#	pdflatex $TEX_FLAGS $TEX
+#	if [ "$?" != "0" ]; then
+#		echo -e "\a"
+#		continue
+#	fi
+#	pdflatex $TEX_FLAGS $TEX
+#	if [ "$?" != "0" ]; then
+#		echo -e "\a"
+#		continue
+#	fi
 	kill -HUP $(pidof mupdf) $(pidof mu)
 done

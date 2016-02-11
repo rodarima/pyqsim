@@ -1,0 +1,143 @@
+\documentclass{beamer}
+
+% Fórmulas matemáticas con fuente adecuada
+\usefonttheme[onlymath]{serif}
+
+%\documentclass[12pt,a4paper]{report}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage{braket}
+
+% Código fuente
+%\usepackage{fontspec}
+\usepackage{minted}
+\newminted{py}{%
+		linenos,
+		fontsize=\small,
+		tabsize=4,
+		mathescape,
+}
+
+% Tamaño de los números de la las líneas en el código fuente
+\renewcommand\theFancyVerbLine{\footnotesize\arabic{FancyVerbLine}}
+
+% Emplear "tabla" y no "cuadro" para las tablas.
+% Romper líneas por sílabas en español
+\usepackage[spanish,es-nosectiondot,es-tabla]{babel}
+
+% Usar estilo de libro para las tablas
+\usepackage{booktabs}
+
+% Gráficas
+\usepackage{pgfplots}
+
+% Emplear un tamaño más pequeño para las etiquetas
+\usepackage[font=footnotesize]{caption}
+
+% Cargar tablas de csv
+\usepackage{pgfplotstable}
+
+% Urls
+\usepackage{url}
+
+% Algoritmos
+\usepackage[spanish, ruled]{algorithm2e}
+
+% Imágenes vectoriales en SVG
+\usepackage{svg}
+
+% Dedicatoria
+\newenvironment{dedication}{
+\thispagestyle{empty}% no header and footer
+\cleardoublepage           % we want a new page
+\thispagestyle{empty}% no header and footer
+\vspace*{\stretch{1}}% some space at the top 
+\itshape             % the text is in italics
+\raggedleft          % flush to the right margin
+}
+{\par % end the paragraph
+\vspace{\stretch{3}} % space at bottom is three times that at the top
+\clearpage           % finish off the page
+%\cleardoublepage
+}
+
+% Dimensiones de los márgenes.
+%\usepackage[margin=3cm]{geometry}
+%\usepackage[top=3cm, bottom=3cm, left=3.5cm, right=2.5cm]{geometry}
+
+% Macros para ayudar a la redacción
+% Vector
+\newcommand*\mat[1]{ \begin{pmatrix} #1 \end{pmatrix}}
+\newcommand*\arr[1]{ \begin{bmatrix} #1 \end{bmatrix}}
+\newcommand*\V[1]{ \boldsymbol{#1}}
+% Ket psi
+\newcommand*\ketp[1]{\ket{\psi_{#1}}}
+% Floor
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+% Absolute value
+\newcommand\abs[1]{\left|#1\right|}
+
+% Probabilidad I y ¬I
+\newcommand*\NO[1]{ \overline{#1}}
+\newcommand*\NI[1]{ \overline{I^{#1}}\,}
+
+% Operador identidad I^{\otimes n}
+\newcommand*\opn[2]{{#1}^{\otimes #2}}
+
+% Producto pensorial
+\newcommand\ox[2]{\ket{#1} \otimes \ket{#2}}
+
+% Apartado de un ejemplo
+\theoremstyle{definition}
+\newtheorem{ejemplo}{Ejemplo}[section]
+
+% Gráficos con tikz
+%\usepackage{tikz}
+%
+%\usetikzlibrary{calc,fadings,decorations.pathreplacing}
+%\usetikzlibrary{backgrounds,fit}
+%
+%\usetikzlibrary{shapes,arrows,chains}
+%\usetikzlibrary{decorations.markings}
+%
+%\newcommand\pgfmathsinandcos[3]{%
+%  \pgfmathsetmacro#1{sin(#3)}%
+%  \pgfmathsetmacro#2{cos(#3)}%
+%}
+%\newcommand\LongitudePlane[3][current plane]{%
+%  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+%  \pgfmathsinandcos\sint\cost{#3} % azimuth
+%  \tikzset{#1/.estyle={cm={\cost,\sint*\sinEl,0,\cosEl,(0,0)}}}
+%}
+%\newcommand\LatitudePlane[3][current plane]{%
+%  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+%  \pgfmathsinandcos\sint\cost{#3} % latitude
+%  \pgfmathsetmacro\yshift{\cosEl*\sint}
+%  \tikzset{#1/.estyle={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
+%}
+%\newcommand\DrawLongitudeCircle[2][1]{
+%  \LongitudePlane{\angEl}{#2}
+%%  \tikzset{current plane/.prefix style={scale=#1}}
+%   % angle of "visibility"
+%  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+%  \draw[current plane] (\angVis:1) arc (\angVis:\angVis+180:1);
+%  \draw[current plane,dashed] (\angVis-180:1) arc (\angVis-180:\angVis:1);
+%}
+%\newcommand\DrawLatitudeCircle[2][1]{
+%  \LatitudePlane{\angEl}{#2}
+%%	\tikzset{current plane/.prefix style={scale=#1}}
+%  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+%  % angle of "visibility"
+%  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+%  \draw[current plane] (\angVis:1) arc (\angVis:-\angVis-180:1);
+%  \draw[current plane,dashed] (180-\angVis:1) arc (180-\angVis:\angVis:1);
+%}
+
+% Numerar las diapositivas
+\beamertemplatenavigationsymbolsempty
+
+\setbeamerfont{page number in head/foot}{size=\large}
+\setbeamertemplate{footline}[frame number]
+

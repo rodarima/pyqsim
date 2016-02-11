@@ -1,0 +1,149 @@
+\input{preamble2}
+% Propiedades
+\title{Diseño, desarrollo, implementación y prueba de un simulador cuántico para 
+el algoritmo de Simon}
+
+\author{Rodrigo Arias Mallo (rodrigo.arias@udc.es)}
+
+\begin{document}
+
+%\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\clearpage 
+
+%\tableofcontents
+
+%\clearpage 
+
+% Diapositiva inicial
+\frame{\titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Introducción}
+
+\begin{itemize}
+\item Que es esto?
+\item Por que?
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Problema de Simon}
+Sea $f$ una función binaria
+$$f:\{0,1\}^n \rightarrow \{0,1\}^n$$
+que cumple la propiedad
+$$ f(\V x) = f(\V y) \iff \V x = \V y \oplus \V s$$
+con $\V x, \V y, \V s \in \{0,1\}^n$ y el período $\V s \neq \V 0$.
+
+\vspace{1cm}
+
+\textbf{Objetivo: }Encontrar $\V s$ partiendo de la función $f$.
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Función $f$ de ejemplo}
+
+Ejemplo de 2 bits, y un período $\V s = 01$
+
+\begin{center}
+\begin{tabular}{cccc}
+	\toprule
+	$\V x$ & $f(\V x)$ & $\V x \oplus \V s$ & $f(\V x \oplus \V s)$\\
+	\midrule
+	00 & 00 & 01 & 00\\
+	01 & 00 & 00 & 00\\
+	10 & 01 & 11 & 01\\
+	11 & 01 & 10 & 01\\
+	\bottomrule
+\end{tabular}
+\end{center}
+
+$$ f(\V x) = f(\V y) \iff \V x = \V y \oplus \V s$$
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Solución clásica}
+\begin{itemize}
+\item Una solución sencilla consiste en probar entradas hasta obtener una salida 
+repetida.
+
+\item Hay $2^n/2$ salidas diferentes.
+
+\item Es necesario probar al menos $2^n/2 + 1$ entradas: $O(2^n)$.
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Solución cuántica: $O(2^n) \rightarrow O(n)$}
+\begin{itemize}
+\item Para solucionar este problema, Daniel R. Simon propuso una solución 
+empleando la \textbf{computación cuántica}.
+\item Soluciona el problema en $O(n)$.
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Introducción a la computación cuántica}
+\begin{itemize}
+\item La computación cuántica emplea las propiedades de la materia a escala 
+atómica.
+\item El comportamiento de la materia se describe mediante los postulados de la 
+mecánica cuántica
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{El bit}
+Para almacenar la información clásica se emplea el bit, que puede representarse 
+mediante un vector $\V x$.
+$$ \V x = \mat{p \\ q} $$
+Con  $p, q \in \{0,1\}$ y cumpliendo la restricción $p \oplus q = 1$.
+
+Se encuentra en uno de los dos estados posibles
+$$ \text{bit 0} = \mat{1 \\ 0},\quad \text{bit 1} = \mat{0 \\ 1} $$
+
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{El bit probabilístico}
+%
+El estado de moneda perfecta al ser lanzada al aire, se puede describir mediante 
+un vector $\V y$.
+$$ \V y = \mat{1/2 \\ 1/2} = \mat{a \\ b} $$
+Con $a,b \in \mathbb R$ y cumpliendo la restricción $a + b = 1$.
+Siendo $a$ la probabilidad de que salga cara, y $b$ la de que salga cruz.  Al 
+caer:
+$$ \V y_{\text{cara}} = \mat{1 \\ 0},\quad
+\V y_{\text{cruz}} = \mat{0 \\ 1}$$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{El bit cuántico o qubit}
+El estado de un sistema cuántico también se puede representar mediante un vector 
+$\V z$.
+$$ \V z = \mat{\alpha \\ \beta} $$
+Con $\alpha, \beta \in \mathbb C$ y cumpliendo la restricción $|\alpha|^2 + 
+|\beta|^2 = 1$. La probabilidad de que salga 0 es $|\alpha|^2$ y de que salga 1 
+es $|\beta|^2$. Al medir:
+$$ \V z_{\text{cero}} = \mat{1 \\ 0},\quad
+\V z_{\text{uno}} = \mat{0 \\ 1}$$
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Notación de Dirac}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
