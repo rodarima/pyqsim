@@ -3,7 +3,8 @@
 \title{Diseño, desarrollo, implementación y prueba de un simulador cuántico para 
 el algoritmo de Simon}
 
-\author{Rodrigo Arias Mallo (rodrigo.arias@udc.es)}
+\author{\textbf{Autor:} Rodrigo Arias Mallo \\
+\textbf{Director:} Vicente Moret Bonillo}
 
 \begin{document}
 
@@ -20,22 +21,35 @@ el algoritmo de Simon}
 \frame{\titlepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}
 \frametitle{Introducción}
 
+\textbf{Resumen:} Resolución de un problema mediante un algoritmo cuántico.  
+Simulación y comprobación de los resultados.
+
+\tableofcontents
 \begin{itemize}
-\item Que es esto?
-\item Por que?
+\item Presentación del problema
+\item Solución clásica
+\item Solución cuántica
+\item Complejidad teórica
+\item Simulador
+\item Resultados experimentales
+\item Conclusiones y trabajo futuro
 \end{itemize}
 
 \end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}
 \frametitle{Problema de Simon}
+
 Sea $f$ una función binaria
 $$f:\{0,1\}^n \rightarrow \{0,1\}^n$$
 que cumple la propiedad
-$$ f(\V x) = f(\V y) \iff \V x = \V y \oplus \V s$$
+$$ f(\V x) = f(\V y) \iff \V y = \V x \oplus \V s$$
 con $\V x, \V y, \V s \in \{0,1\}^n$ y el período $\V s \neq \V 0$.
 
 \vspace{1cm}
@@ -63,7 +77,7 @@ Ejemplo de 2 bits, y un período $\V s = 01$
 \end{tabular}
 \end{center}
 
-$$ f(\V x) = f(\V y) \iff \V x = \V y \oplus \V s$$
+$$ f(\V x) = f(\V y) \iff \V y = \V x \oplus \V s$$
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,61 +101,369 @@ empleando la \textbf{computación cuántica}.
 \item Soluciona el problema en $O(n)$.
 \end{itemize}
 
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{Introducción a la computación cuántica}
-\begin{itemize}
-\item La computación cuántica emplea las propiedades de la materia a escala 
-atómica.
-\item El comportamiento de la materia se describe mediante los postulados de la 
-mecánica cuántica
-\end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{El bit}
-Para almacenar la información clásica se emplea el bit, que puede representarse 
-mediante un vector $\V x$.
-$$ \V x = \mat{p \\ q} $$
-Con  $p, q \in \{0,1\}$ y cumpliendo la restricción $p \oplus q = 1$.
-
-Se encuentra en uno de los dos estados posibles
-$$ \text{bit 0} = \mat{1 \\ 0},\quad \text{bit 1} = \mat{0 \\ 1} $$
-
-
+\input{simon}
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{El bit probabilístico}
+\frametitle{Funcionamiento}
+\input{simon}
+Primero se inicializa el circuito con ceros.
+$$ \ket{\psi_0} = \ket{00,00} $$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Funcionamiento}
+\input{simon}
+Se aplica el operador de Hadamard sobre la línea superior, obteniendo un estado 
+entrelazado.
+$$
+\ket{\psi_1} = \frac{1}{2} \Big(\ket{00,00} + \ket{01,00} + \ket{10,00} + 
+\ket{11,00} \Big)
+$$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Funcionamiento}
+\input{simon}
+El operador $U_f$ realiza el cómputo de $f$ en paralelo.
+$$
+	\ket{\psi_2} = \frac{1}{2} \Big(\ket{00,f(00)} + \ket{01,f(01)} + 
+\ket{10,f(10)} + \ket{11,f(11)}\Big)
+$$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Funcionamiento}
+\input{simon}
+Finalmente el operador de Hadamard se aplica de nuevo, produciendo el efecto de 
+interferencia.
+\begin{equation*}
+\begin{split}
+\ket{\psi_3} = 1/4 \big( &
+		+ \ket{00,00} + \cred{\ket{01,00}}+ \ket{10,00} + \cred{\ket{11,00}}\\
+	& + \ket{00,00} - \cred{\ket{01,00}}+ \ket{10,00} - \cred{\ket{11,00}}\\
+	& + \ket{00,01} + \cred{\ket{01,01}}- \ket{10,01} - \cred{\ket{11,01}}\\
+	& + \ket{00,01} - \cred{\ket{01,01}}- \ket{10,01} + \cred{\ket{11,01}}
+	\big)
+\end{split}
+\end{equation*}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Funcionamiento}
+\input{simon}
+Obteniéndose
+\begin{equation*}
+	\ket{\psi_3} = 1/2 \left( \ket{\mathbf{00},00} + \ket{\mathbf{00},01} + 
+\ket{\mathbf{10},00} - \ket{\mathbf{10},01} \right)
+\end{equation*}
+Al medir la línea superior se obtienen vectores $\V x$ tal que $\V x \cdot \V s 
+= 0$, con igual probabilidad.
+$$ \V x \in \{00, 10\} $$
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Complejidad teórica}
+Una vez obtenidos $n-1$ vectores $\V x$ linealmente independientes, se puede 
+resolver el sistema de ecuaciones y calcular $\V s$.
+\begin{equation*}
+\begin{cases}
+	& \V x^{(1)} \cdot \V s = 0 \\
+	& \V x^{(2)} \cdot \V s = 0 \\
+	& \vdots \\
+	& \V x^{(n-1)} \cdot \V s = 0 \\
+\end{cases}
+\end{equation*}
+El número de ejecuciones promedio $E[R]$ será:
+$$ E[R] = \sum^{\infty}_{j=1} j \cdot p(R=j) $$
+Siendo $p(R=j)$ la probabilidad de terminar en $j$ iteraciones.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Complejidad teórica}
+
+Construyendo una recurrencia, se calcula $E[R]$
+$$ E[R] = \prod^{n-2}_{j=0} (1 - 2^{j-n+1}) \cdot \sum_{p=1}^\infty p \cdot 
+2^{(p-n+1)(-n+1)} \cdot {p-1 \choose n-2}_{q=2} $$
+Obteniendose computacionalmente los valores:
+\begin{center}
+	\small
+	\begin{tabular}{c*{9}{c}}
+		\toprule
+		$n$      & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10\\
+		\midrule
+		$E[R]$   &
+2.00& 3.33& 4.47& 5.54& 6.57& 7.59& 8.59& 9.60& 10.60
+\\
+		$\frac{E[R]}{n}$ &
+1.00& 1.11& 1.12& 1.11& 1.10& 1.08& 1.08& 1.07& 1.06\\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+Se observa una complejidad lineal: $O(n)$
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Simulador cuántico}
+
+Realiza la simulación del circuito, la medición y el procesado clásico final, 
+imitando el comportamiento de un ordenador cuántico.
+
+\begin{center}
+\resizebox{\linewidth}{!}{
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered]
+\tikzstyle{line} = [draw, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
 %
-El estado de moneda perfecta al ser lanzada al aire, se puede describir mediante 
-un vector $\V y$.
-$$ \V y = \mat{1/2 \\ 1/2} = \mat{a \\ b} $$
-Con $a,b \in \mathbb R$ y cumpliendo la restricción $a + b = 1$.
-Siendo $a$ la probabilidad de que salga cara, y $b$ la de que salga cruz.  Al 
-caer:
-$$ \V y_{\text{cara}} = \mat{1 \\ 0},\quad
-\V y_{\text{cruz}} = \mat{0 \\ 1}$$
+\begin{tikzpicture}[node distance = 3cm, auto]%, transform canvas={scale=0.7}]
+	% Place nodes
+	\node[block] (quantum) {Simulación cuántica};
+	\node[block, right of=quantum] (measure) {Medición};
+	\node[block, right of=measure] (classic) {Procesado clásico};
+	\node[decision, right of=classic] (end) {Fin?};
+	% Draw edges
+	\draw [line] (quantum.west)+(-1cm,0) -- (quantum.west);
+	\draw [line] (quantum) -> (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic) -- (end);
+	\draw [line] (end.south) |-+(0,-1em)-| node [near start, above] {No} 
+(quantum.south);
+	\draw [line] (end.east) -- node [near start] {Sí} +(1cm, 0);
+
+\end{tikzpicture}
+}
+\end{center}
+%
+
+\textbf{Problema:} La simulación cuántica es muy costosa.
+
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{El bit cuántico o qubit}
-El estado de un sistema cuántico también se puede representar mediante un vector 
-$\V z$.
-$$ \V z = \mat{\alpha \\ \beta} $$
-Con $\alpha, \beta \in \mathbb C$ y cumpliendo la restricción $|\alpha|^2 + 
-|\beta|^2 = 1$. La probabilidad de que salga 0 es $|\alpha|^2$ y de que salga 1 
-es $|\beta|^2$. Al medir:
-$$ \V z_{\text{cero}} = \mat{1 \\ 0},\quad
-\V z_{\text{uno}} = \mat{0 \\ 1}$$
+\frametitle{Diseño del simulador}
+
+Permite reutilizar el estado final $\ketp3$ tras la simulación cuántica para 
+realizar las mediciones.
+
+\begin{center}
+\resizebox{\linewidth}{!}{
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, text width=4.5em, text badly centered, 
+inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered]
+\tikzstyle{line} = [draw, decoration={markings,mark=at position 
+1 with {\arrow[scale=1.5]{latex'}}}, postaction={decorate}]
+%
+\begin{tikzpicture}[node distance = 3cm, auto]
+	% Place nodes
+	\node[block] (quantum) {Simulación cuántica};
+	\node[block, right of=quantum] (measure) {Medición};
+	\node[block, right of=measure] (classic) {Procesado clásico};
+	\node[decision, right of=classic] (end) {Fin?};
+	% Draw edges
+	\draw [line] (quantum.west)+(-1cm,0) -- (quantum.west);
+	\draw [line] (quantum) -> (measure);
+	\draw [line] (measure) -- (classic);
+	\draw [line] (classic) -- (end);
+	\draw [line] (end.south) |-+(0,-1em)-| node [near start, above] {No} 
+(measure.south);
+	\draw [line] (end.east) -- node [near start] {Sí} +(1cm, 0);
+
+\end{tikzpicture}
+
+}
+\end{center}
+%
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Estructuras de datos}
+\begin{itemize}
+\item Para almacenar los estados y operadores se emplean \textbf{matrices 
+huecas}.
+\item Permiten ahorrar espacio y reducir el número de operaciones.
+\item Implementados en paquetes de cálculo como \texttt{scipy}
+\item Varios formatos (COO y CSR).
+\end{itemize}
+
+\vspace{1cm}
+
+El simulador está implementado en \texttt{python} empleando los paquetes 
+\texttt{qutip}, \texttt{scipy} y \texttt{numpy}.
 
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Notación de Dirac}
+\frametitle{Complejidad de la simulación}
+
+Toda la simulación es analizada para determinar su rendimiento, midiendo el 
+tiempo y el espacio empleados.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Tiempo de la simulación}
+
+%
+\begin{figure}[!htb]
+\centering
+\footnotesize
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+	name=cpu,
+	width=0.9\linewidth,
+	height=7cm,
+%	no marks,
+	mark options={mark size=1},
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(0.0,1.0)},anchor=north west},
+	xlabel={Número de qubits $N$},
+	ylabel={Tiempo empleado (segundos)},
+]
+\addplot table [x=N, y=qc0-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=qcf-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=m-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot table [x=N, y=cc-mean, col sep=comma] {csv/table_cpu.csv};
+\addplot [dashed] table [x=N, y=all-mean, col sep=comma] {csv/table_cpu.csv};
+\legend{
+	$T_\mu(QC_0)$,
+	$T_\mu(QC_f)$,
+	$T_\mu(M)$,
+	$T_\mu(CC)$,
+	$T_\mu(SIM)$
+};
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Tiempo de simulación en escala logarítmica.}
+\label{fig:tiempo-qc}
+\end{figure}
+%
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Espacio de la simulación}
+%
+\begin{figure}[!htb]
+\footnotesize
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+	name=qc0,
+	width=0.9\linewidth,
+	height=7cm,
+%	no marks,
+	mark options={mark size=1},
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(1.0,0.0)},anchor=south east},
+	xlabel={Número de qubits $N$},
+	ylabel={Espacio ocupado $\log_2 S$},
+]
+\addplot [red] coordinates {(0,29) (20.5,29)};
+\addplot [blue,mark=*] table [x=N, y=log2_all_qcf, col sep=comma] 
+{csv/table_qcf.csv};
+\addplot [black,mark=*] table [x=N, y=log2_all_qc0, col sep=comma] 
+{csv/table_qc0.csv};
+\addplot [blue, dashed] table [x=N, y=log2_approx_qcf, col sep=comma] 
+{csv/table_qcf.csv};
+\addplot [black, dashed] table [x=N, y=log2_approx_qc0, col sep=comma] 
+{csv/table_qc0.csv};
+\addplot [purple, dashed, domain=4:6.25]{(4*x+4)};
+\legend{
+	$S_{MAX}$,
+	$S_T (QC_f)$,
+	$S_T (QC_0)$,
+	$S_T' (QC_f)$,
+	$S_T' (QC_0)$,
+	$S_D$};
+\end{axis}
+\end{tikzpicture}
+\caption{Espacio necesario para la simulación en bytes (escala logarítmica). El 
+espacio requerido sin emplear matrices huecas, usando matrices densas se muestra 
+como $S_D$. La memoria disponible para la simulación es $S_{MAX} = 2^{29}$.}
+\label{fig:espacio-qc}
+\end{figure}
+%
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Complejidad experimental del algoritmo de Simon}
+%
+\begin{figure}[!htb]
+\footnotesize
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+	name=qc0,
+	width=0.9\linewidth,
+	height=7cm,
+%	no marks,
+	mark options={mark size=1},
+	thick,
+	grid=both,
+	xtick={4,...,20},
+	ytick={2,3,...,20},
+	xmin=3.5,xmax=20.5,
+	legend style={at={(1.0,0.0)},anchor=south east},
+	xlabel={Número de qubits $N$},
+	ylabel={Número esperado de ejecuciones R},
+]
+\addplot [red,mark=*,thick] table [x=N, y=R-mean, col sep=comma] 
+{csv/com_qc.csv};
+\addplot [black, dashed, mark=none, very thick] table [x=N, y=RT-mean, col 
+sep=comma] {csv/com_qc.csv};
+\legend{
+	$R_\mu$,
+	$R_\mu'$};
+\end{axis}
+\end{tikzpicture}
+\caption{Número esperado de iteraciones a medida que aumentan los qubits. Se 
+observa el valor experimental $R_\mu$ comparado con el teórico $R_\mu'$.}
+\label{fig:comp-qc}
+\end{figure}
+%
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Conclusiones}
+
+\begin{itemize}
+\item La computación cuántica puede resolver problemas \textbf{mucho} más rápido 
+que la computación clásica.
+\item Realizar la simulación de un circuito cuántico es muy costoso.
+\item La simulación de circuitos permite comprobar los resultados teóricos.
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Trabajo futuro}
+\begin{itemize}
+\item Probar otros algoritmos cuánticos.
+\item Realizar el análisis de un algoritmo cuántico de forma automática, para 
+determinar su complejidad.
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Preguntas}
+¿Preguntas o comentarios?
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

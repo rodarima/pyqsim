@@ -89,51 +89,55 @@
 % Producto pensorial
 \newcommand\ox[2]{\ket{#1} \otimes \ket{#2}}
 
+% Colores
+\newcommand*\cred[1]{{\color{red} {#1}}}
+\newcommand*\cgre[1]{{\color{green} {#1}}}
+
 % Apartado de un ejemplo
 \theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[section]
 
 % Gráficos con tikz
-%\usepackage{tikz}
-%
-%\usetikzlibrary{calc,fadings,decorations.pathreplacing}
-%\usetikzlibrary{backgrounds,fit}
-%
-%\usetikzlibrary{shapes,arrows,chains}
-%\usetikzlibrary{decorations.markings}
-%
-%\newcommand\pgfmathsinandcos[3]{%
-%  \pgfmathsetmacro#1{sin(#3)}%
-%  \pgfmathsetmacro#2{cos(#3)}%
-%}
-%\newcommand\LongitudePlane[3][current plane]{%
-%  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
-%  \pgfmathsinandcos\sint\cost{#3} % azimuth
-%  \tikzset{#1/.estyle={cm={\cost,\sint*\sinEl,0,\cosEl,(0,0)}}}
-%}
-%\newcommand\LatitudePlane[3][current plane]{%
-%  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
-%  \pgfmathsinandcos\sint\cost{#3} % latitude
-%  \pgfmathsetmacro\yshift{\cosEl*\sint}
-%  \tikzset{#1/.estyle={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
-%}
-%\newcommand\DrawLongitudeCircle[2][1]{
-%  \LongitudePlane{\angEl}{#2}
-%%  \tikzset{current plane/.prefix style={scale=#1}}
-%   % angle of "visibility"
-%  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
-%  \draw[current plane] (\angVis:1) arc (\angVis:\angVis+180:1);
-%  \draw[current plane,dashed] (\angVis-180:1) arc (\angVis-180:\angVis:1);
-%}
-%\newcommand\DrawLatitudeCircle[2][1]{
-%  \LatitudePlane{\angEl}{#2}
-%%	\tikzset{current plane/.prefix style={scale=#1}}
-%  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
-%  % angle of "visibility"
-%  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
-%  \draw[current plane] (\angVis:1) arc (\angVis:-\angVis-180:1);
-%  \draw[current plane,dashed] (180-\angVis:1) arc (180-\angVis:\angVis:1);
-%}
+\usepackage{tikz}
+
+\usetikzlibrary{calc,fadings,decorations.pathreplacing}
+\usetikzlibrary{backgrounds,fit}
+
+\usetikzlibrary{shapes,arrows,chains}
+\usetikzlibrary{decorations.markings}
+
+\newcommand\pgfmathsinandcos[3]{%
+  \pgfmathsetmacro#1{sin(#3)}%
+  \pgfmathsetmacro#2{cos(#3)}%
+}
+\newcommand\LongitudePlane[3][current plane]{%
+  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+  \pgfmathsinandcos\sint\cost{#3} % azimuth
+  \tikzset{#1/.estyle={cm={\cost,\sint*\sinEl,0,\cosEl,(0,0)}}}
+}
+\newcommand\LatitudePlane[3][current plane]{%
+  \pgfmathsinandcos\sinEl\cosEl{#2} % elevation
+  \pgfmathsinandcos\sint\cost{#3} % latitude
+  \pgfmathsetmacro\yshift{\cosEl*\sint}
+  \tikzset{#1/.estyle={cm={\cost,0,0,\cost*\sinEl,(0,\yshift)}}} %
+}
+\newcommand\DrawLongitudeCircle[2][1]{
+  \LongitudePlane{\angEl}{#2}
+%  \tikzset{current plane/.prefix style={scale=#1}}
+   % angle of "visibility"
+  \pgfmathsetmacro\angVis{atan(sin(#2)*cos(\angEl)/sin(\angEl))} %
+  \draw[current plane] (\angVis:1) arc (\angVis:\angVis+180:1);
+  \draw[current plane,dashed] (\angVis-180:1) arc (\angVis-180:\angVis:1);
+}
+\newcommand\DrawLatitudeCircle[2][1]{
+  \LatitudePlane{\angEl}{#2}
+%	\tikzset{current plane/.prefix style={scale=#1}}
+  \pgfmathsetmacro\sinVis{sin(#2)/cos(#2)*sin(\angEl)/cos(\angEl)}
+  % angle of "visibility"
+  \pgfmathsetmacro\angVis{asin(min(1,max(\sinVis,-1)))}
+  \draw[current plane] (\angVis:1) arc (\angVis:-\angVis-180:1);
+  \draw[current plane,dashed] (180-\angVis:1) arc (180-\angVis:\angVis:1);
+}
 
 % Numerar las diapositivas
 \beamertemplatenavigationsymbolsempty
