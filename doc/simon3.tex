@@ -1,0 +1,44 @@
+\begin{center}
+	\begin{tikzpicture}%[thick]
+	% `operator' will only be used by Hadamard (H) gates here.
+	\tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+	%
+	\matrix[row sep=0.4cm, column sep=1cm] (circuit) {
+		% First row
+		\node (q1) {$\ket{00}$}; &
+		\node[operator] (H11) {$H^{\otimes 2}$}; &
+		\node[operator] (P13) {}; &
+		\node[operator] (H11) {$H^{\otimes 2}$}; &
+		\node[operator] (M11) {$M$};&
+		\coordinate (end1); \\
+		% Second row.
+		\node (q2) {$\ket{00}$}; & & \node[operator] (P23) {}; & & & \coordinate 
+(end2);\\
+		% Third row
+		\node (q31) {}; & \node (q32) {}; & \node (q33) {}; &
+		\node (q34) {}; & \node (q35) {}; & \node (q36) {}; \\
+		\node (q41) {}; & \node (q42) {}; & \node (q43) {}; &
+		\node (q44) {}; & \node (q45) {}; & \node (q46) {}; \\
+	};
+	\node[operator] (Uf) [fit = (P13) (P23), minimum width=1cm] {$U_f$};
+
+%	\node (arr0) [fit = (q31) (q32)] {$\uparrow$};
+%	\node (arr1) [fit = (q32) (q33)] {$\uparrow$};
+%	\node (arr2) [fit = (q33) (q34)] {$\uparrow$};
+	\node (arr3) [fit = (q34) (q35)] {$\uparrow$};
+
+%	\node (psi0) [fit = (q41) (q42)] {$\ket{\psi_0}$};
+%	\node (psi1) [fit = (q42) (q43)] {$\ket{\psi_1}$};
+%	\node (psi2) [fit = (q43) (q44)] {$\ket{\psi_2}$};
+	\node (psi3) [fit = (q44) (q45)] {$\ket{\psi_3}$};
+
+	\node[fill=white, fit=(end1) (end2)] (cover) {};
+
+	\begin{pgfonlayer}{background}
+		% Draw lines.
+		\draw[thick] (q1) -- (M11)  (q2) -- (end2);
+		\draw[thick, double, double distance=2pt] (M11) -- (end1);
+	\end{pgfonlayer}
+	%
+\end{tikzpicture}
+\end{center}

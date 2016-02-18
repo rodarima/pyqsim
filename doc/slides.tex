@@ -54,7 +54,7 @@ con $\V x, \V y, \V s \in \{0,1\}^n$ y el período $\V s \neq \V 0$.
 
 \vspace{1cm}
 
-\textbf{Objetivo: }Encontrar $\V s$ partiendo de la función $f$.
+\textbf{Objetivo: }Encontrar $\V s$ tratando la función $f$ como una caja negra.
 
 
 \end{frame}
@@ -67,17 +67,23 @@ Ejemplo de 2 bits, y un período $\V s = 01$
 \begin{center}
 \begin{tabular}{cccc}
 	\toprule
-	$\V x$ & $f(\V x)$ & $\V x \oplus \V s$ & $f(\V x \oplus \V s)$\\
+	$\V x$ & $f(\V x)$ \\
 	\midrule
-	00 & 00 & 01 & 00\\
-	01 & 00 & 00 & 00\\
-	10 & 01 & 11 & 01\\
-	11 & 01 & 10 & 01\\
+	00 & 00 \\
+	01 & 00 \\
+	10 & 01 \\
+	11 & 01 \\
 	\bottomrule
 \end{tabular}
 \end{center}
 
-$$ f(\V x) = f(\V y) \iff \V y = \V x \oplus \V s$$
+\begin{equation*}
+\begin{split}
+f(\V x) = f(\V y) &\iff \V y = \V x \oplus \V s \\
+f(00) = f(01) & \iff 01 = 00 \oplus 01 \\
+f(10) = f(11) & \iff 11 = 10 \oplus 01 \\
+\end{split}
+\end{equation*}
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,11 +92,16 @@ $$ f(\V x) = f(\V y) \iff \V y = \V x \oplus \V s$$
 \begin{itemize}
 \item Una solución sencilla consiste en probar entradas hasta obtener una salida 
 repetida.
-
+%
+$$ f(00) = f(01) \implies 01 = 00 \oplus \V s \implies \V s = 00 \oplus 01 = 
+01$$
+%
 \item Hay $2^n/2$ salidas diferentes.
 
-\item Es necesario probar al menos $2^n/2 + 1$ entradas: $O(2^n)$.
+\item Es necesario probar en el peor caso $2^n/2 + 1$ entradas: $O(2^n)$.
 \end{itemize}
+%$$ \mat{f(00) & f(01) & f(10)} = \mat{00 & 00 & 01}$$
+%Emplear la propiedad para calcular $\V s$.
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -105,39 +116,40 @@ empleando la \textbf{computación cuántica}.
 
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Funcionamiento}
-\input{simon}
+\input{simon0}
 Primero se inicializa el circuito con ceros.
 $$ \ket{\psi_0} = \ket{00,00} $$
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Funcionamiento}
-\input{simon}
+\input{simon1}
 Se aplica el operador de Hadamard sobre la línea superior, obteniendo un estado 
-entrelazado.
+\textbf{entrelazado}.
 $$
 \ket{\psi_1} = \frac{1}{2} \Big(\ket{00,00} + \ket{01,00} + \ket{10,00} + 
 \ket{11,00} \Big)
 $$
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Funcionamiento}
-\input{simon}
-El operador $U_f$ realiza el cómputo de $f$ en paralelo.
+\input{simon2}
+El operador $U_f$ definido como $ U_f \ket{\V x} \ket{\V y} = \ket{\V x} \ket{\V 
+y \oplus f(\V x)} $, realiza el cómputo de $f$ en \textbf{paralelo}.
 $$
 	\ket{\psi_2} = \frac{1}{2} \Big(\ket{00,f(00)} + \ket{01,f(01)} + 
 \ket{10,f(10)} + \ket{11,f(11)}\Big)
 $$
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Funcionamiento}
-\input{simon}
+\input{simon3}
 Finalmente el operador de Hadamard se aplica de nuevo, produciendo el efecto de 
-interferencia.
+\textbf{interferencia}.
 \begin{equation*}
 \begin{split}
 \ket{\psi_3} = 1/4 \big( &
@@ -152,7 +164,7 @@ interferencia.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Funcionamiento}
-\input{simon}
+\input{simon3}
 Obteniéndose
 \begin{equation*}
 	\ket{\psi_3} = 1/2 \left( \ket{\mathbf{00},00} + \ket{\mathbf{00},01} + 
@@ -187,7 +199,7 @@ Siendo $p(R=j)$ la probabilidad de terminar en $j$ iteraciones.
 Construyendo una recurrencia, se calcula $E[R]$
 $$ E[R] = \prod^{n-2}_{j=0} (1 - 2^{j-n+1}) \cdot \sum_{p=1}^\infty p \cdot 
 2^{(p-n+1)(-n+1)} \cdot {p-1 \choose n-2}_{q=2} $$
-Obteniendose computacionalmente los valores:
+Obteniéndose computacionalmente los valores:
 \begin{center}
 	\small
 	\begin{tabular}{c*{9}{c}}
@@ -303,11 +315,13 @@ El simulador está implementado en \texttt{python} empleando los paquetes
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Complejidad de la simulación}
-
-Toda la simulación es analizada para determinar su rendimiento, midiendo el 
-tiempo y el espacio empleados.
-
+\frametitle{Análisis de la simulación}
+\begin{itemize}
+\item Análisis de \textbf{tiempo} y \textbf{espacio} de la simulación
+\item Análisis de \textbf{complejidad} del circuito cuántico.
+\item La simulación del circuito cuántico se divide en dos etapas $QC_0$ y 
+$QC_f$ para permitir un análisis más detallado.
+\end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
@@ -443,8 +457,8 @@ observa el valor experimental $R_\mu$ comparado con el teórico $R_\mu'$.}
 \frametitle{Conclusiones}
 
 \begin{itemize}
-\item La computación cuántica puede resolver problemas \textbf{mucho} más rápido 
-que la computación clásica.
+\item La computación cuántica puede resolver algunos problemas \textbf{mucho} 
+más rápido que la computación clásica.
 \item Realizar la simulación de un circuito cuántico es muy costoso.
 \item La simulación de circuitos permite comprobar los resultados teóricos.
 \end{itemize}
@@ -462,9 +476,7 @@ determinar su complejidad.
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Preguntas}
-¿Preguntas o comentarios?
-
+Gracias por su atención.
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
